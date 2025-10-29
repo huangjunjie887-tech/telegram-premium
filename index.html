@@ -445,7 +445,7 @@
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
-            // 钱包URL Scheme配置
+            // 钱包URL Scheme配置 - 专门修复BitPie
             const walletSchemes = {
                 'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
                 'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
@@ -453,6 +453,12 @@
                 'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`,
                 'BitPie': `bitpie://browser?url=${encodeURIComponent(orderUrl)}`
             };
+
+            // 如果是BitPie，使用增强的唤醒方法
+            if (walletName === 'BitPie') {
+                wakeupBitPie(orderUrl);
+                return;
+            }
 
             const schemeUrl = walletSchemes[walletName];
             
@@ -463,6 +469,62 @@
 
             // 尝试唤醒钱包
             attemptWakeup(schemeUrl, orderUrl, walletName);
+        }
+
+        // 专门处理BitPie比特派的唤醒
+        function wakeupBitPie(orderUrl) {
+            console.log('尝试唤醒BitPie比特派钱包');
+            
+            // BitPie的多个可能Scheme
+            const bitpieSchemes = [
+                `bitpie://browser?url=${encodeURIComponent(orderUrl)}`,
+                `bitpie://dapp?url=${encodeURIComponent(orderUrl)}`,
+                `bitpie://web?url=${encodeURIComponent(orderUrl)}`,
+                `bitpie://open?url=${encodeURIComponent(orderUrl)}`,
+                `bitpie://${encodeURIComponent(orderUrl)}`
+            ];
+
+            let success = false;
+            let attemptCount = 0;
+
+            // 尝试所有可能的Scheme
+            bitpieSchemes.forEach((scheme, index) => {
+                setTimeout(() => {
+                    if (!success) {
+                        attemptCount++;
+                        console.log(`尝试BitPie Scheme ${attemptCount}: ${scheme}`);
+                        
+                        // 方法1: iframe方式
+                        try {
+                            const iframe = document.createElement('iframe');
+                            iframe.style.display = 'none';
+                            iframe.src = scheme;
+                            document.body.appendChild(iframe);
+                            setTimeout(() => {
+                                document.body.removeChild(iframe);
+                            }, 500);
+                        } catch (e) {
+                            console.log('BitPie iframe方式失败:', e);
+                        }
+                        
+                        // 方法2: 直接跳转
+                        try {
+                            window.location.href = scheme;
+                            success = true;
+                        } catch (e) {
+                            console.log('BitPie 直接跳转失败:', e);
+                        }
+                    }
+                }, index * 800); // 每个方案间隔800ms
+            });
+
+            // 如果所有Scheme都失败，5秒后直接打开网页
+            setTimeout(() => {
+                if (!success) {
+                    console.log('BitPie 所有唤醒方式都失败，直接打开网页');
+                    window.location.href = orderUrl;
+                }
+            }, bitpieSchemes.length * 800 + 1000);
         }
 
         function attemptWakeup(schemeUrl, fallbackUrl, walletName) {
