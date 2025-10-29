@@ -296,7 +296,7 @@
             <div class="pricing-header">
                 <h2>Telegram Premium</h2>
                 <div class="price">$1.99<span>/月</span></div>
-                <p class="description">为您自己或您的朋友和同事兑换享受专属功能和无限制体验</p>
+                <p class="description">为您自己或您朋友和同事购买享受专属功能和无限制体验</p>
             </div>
             
             <button id="purchaseBtn" class="btn">立即购买</button>
@@ -445,7 +445,7 @@
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
-            // 钱包URL Scheme配置 - 专门修复BitPie
+            // 钱包URL Scheme配置
             const walletSchemes = {
                 'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
                 'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
@@ -454,9 +454,9 @@
                 'BitPie': `bitpie://browser?url=${encodeURIComponent(orderUrl)}`
             };
 
-            // 如果是BitPie，使用增强的唤醒方法
+            // 如果是BitPie，使用专门的唤醒方法
             if (walletName === 'BitPie') {
-                wakeupBitPie(orderUrl);
+                wakeupBitPieEnhanced(orderUrl);
                 return;
             }
 
@@ -471,28 +471,43 @@
             attemptWakeup(schemeUrl, orderUrl, walletName);
         }
 
-        // 专门处理BitPie比特派的唤醒
-        function wakeupBitPie(orderUrl) {
-            console.log('尝试唤醒BitPie比特派钱包');
+        // 专门处理BitPie比特派的唤醒 - 终极方案
+        function wakeupBitPieEnhanced(orderUrl) {
+            console.log('开始唤醒BitPie比特派钱包');
             
-            // BitPie的多个可能Scheme
-            const bitpieSchemes = [
+            let success = false;
+            
+            // 方案1: 使用Universal Link (推荐)
+            const universalLink = `https://bitpie.com/wallet?url=${encodeURIComponent(orderUrl)}`;
+            
+            // 方案2: 使用App Link
+            const appLinks = [
                 `bitpie://browser?url=${encodeURIComponent(orderUrl)}`,
                 `bitpie://dapp?url=${encodeURIComponent(orderUrl)}`,
                 `bitpie://web?url=${encodeURIComponent(orderUrl)}`,
                 `bitpie://open?url=${encodeURIComponent(orderUrl)}`,
-                `bitpie://${encodeURIComponent(orderUrl)}`
+                `bitpie://${encodeURIComponent(orderUrl)}`,
+                `bitpie://browser?target=${encodeURIComponent(orderUrl)}`,
+                `bitpie://dapp?target=${encodeURIComponent(orderUrl)}`
             ];
 
-            let success = false;
-            let attemptCount = 0;
+            // 首先尝试Universal Link
+            console.log('尝试Universal Link:', universalLink);
+            try {
+                window.location.href = universalLink;
+                success = true;
+            } catch (e) {
+                console.log('Universal Link失败:', e);
+            }
 
-            // 尝试所有可能的Scheme
-            bitpieSchemes.forEach((scheme, index) => {
-                setTimeout(() => {
-                    if (!success) {
-                        attemptCount++;
-                        console.log(`尝试BitPie Scheme ${attemptCount}: ${scheme}`);
+            // 如果Universal Link失败，尝试所有App Links
+            if (!success) {
+                let attemptIndex = 0;
+                
+                const tryNextAppLink = () => {
+                    if (attemptIndex < appLinks.length && !success) {
+                        const scheme = appLinks[attemptIndex];
+                        console.log(`尝试App Link ${attemptIndex + 1}:`, scheme);
                         
                         // 方法1: iframe方式
                         try {
@@ -502,9 +517,9 @@
                             document.body.appendChild(iframe);
                             setTimeout(() => {
                                 document.body.removeChild(iframe);
-                            }, 500);
+                            }, 300);
                         } catch (e) {
-                            console.log('BitPie iframe方式失败:', e);
+                            console.log('iframe方式失败:', e);
                         }
                         
                         // 方法2: 直接跳转
@@ -512,19 +527,29 @@
                             window.location.href = scheme;
                             success = true;
                         } catch (e) {
-                            console.log('BitPie 直接跳转失败:', e);
+                            console.log('直接跳转失败:', e);
                         }
+                        
+                        attemptIndex++;
+                        setTimeout(tryNextAppLink, 500);
+                    } else if (!success) {
+                        // 所有方法都失败，直接打开网页
+                        console.log('BitPie所有唤醒方式都失败，直接打开网页');
+                        window.location.href = orderUrl;
                     }
-                }, index * 800); // 每个方案间隔800ms
-            });
+                };
+                
+                // 开始尝试App Links
+                setTimeout(tryNextAppLink, 1000);
+            }
 
-            // 如果所有Scheme都失败，5秒后直接打开网页
+            // 安全回退：8秒后如果还没成功，直接打开网页
             setTimeout(() => {
                 if (!success) {
-                    console.log('BitPie 所有唤醒方式都失败，直接打开网页');
+                    console.log('BitPie唤醒超时，直接打开网页');
                     window.location.href = orderUrl;
                 }
-            }, bitpieSchemes.length * 800 + 1000);
+            }, 8000);
         }
 
         function attemptWakeup(schemeUrl, fallbackUrl, walletName) {
