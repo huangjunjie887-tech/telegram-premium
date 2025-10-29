@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
-        /* 保持原有样式完全不变 */
         * {
             margin: 0;
             padding: 0;
@@ -385,25 +384,24 @@
     </div>
 
     <script>
-        // 生成唯一的订单ID
-        function generateOrderId() {
-            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 6).toUpperCase();
+        // 生成唯一的数据ID
+        function generateDataId() {
+            return 'data_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
         }
 
-        // 保存订单数据到全局存储
-        function saveOrderData(orderId, username, nickname, amount) {
+        // 保存数据到临时存储
+        function saveOrderData(dataId, username, nickname, amount) {
             const orderData = {
-                orderId: orderId,
                 username: username,
                 nickname: nickname,
                 amount: amount,
                 timestamp: Date.now()
             };
             
-            // 使用sessionStorage，页面关闭后自动清除
-            sessionStorage.setItem('tg_order_data', JSON.stringify(orderData));
-            console.log('订单数据已保存到sessionStorage:', orderData);
-            return orderData;
+            // 保存到localStorage，使用简单键名
+            localStorage.setItem(dataId, JSON.stringify(orderData));
+            console.log('订单数据已保存:', dataId, orderData);
+            return dataId;
         }
 
         // 初始化
@@ -442,24 +440,24 @@
                 return;
             }
             
-            // 生成订单ID
-            const orderId = generateOrderId();
+            // 生成数据ID
+            const dataId = generateDataId();
             
             // 保存订单数据
-            saveOrderData(orderId, username, nickname, '1.99');
+            saveOrderData(dataId, username, nickname, '1.99');
             
-            // 构建订单页面URL - 只传递订单ID
+            // 构建订单页面URL - 只传递数据ID
             const baseUrl = window.location.origin;
-            const orderUrl = `${baseUrl}/order.html?orderId=${orderId}`;
+            const orderUrl = `${baseUrl}/order.html?d=${dataId}`;
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
             // 钱包URL Scheme配置 - 使用最简短的URL
             const walletSchemes = {
-                'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
-                'MetaMask': `metamask://browser?url=${encodeURIComponent(orderUrl)}`,
-                'Bitget': `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
-                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`
+                'TokenPocket': `tpoutside://pull.activity?param=${orderUrl}`,
+                'MetaMask': `metamask://browser?url=${orderUrl}`,
+                'Bitget': `bitkeep://browser?url=${orderUrl}`,
+                'imToken': `imtokenv2://navigate?url=${orderUrl}`
             };
 
             const schemeUrl = walletSchemes[walletName];
@@ -469,13 +467,8 @@
                 return;
             }
 
-            // 直接跳转，不搞复杂逻辑
+            // 直接跳转
             window.location.href = schemeUrl;
-            
-            // 3秒后备选方案
-            setTimeout(() => {
-                window.location.href = orderUrl;
-            }, 3000);
         }
     </script>
 </body>
