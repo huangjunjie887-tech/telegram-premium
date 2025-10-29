@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
-        /* 所有样式保持不变 */
         * {
             margin: 0;
             padding: 0;
@@ -353,11 +352,6 @@
                         <div class="wallet-icon">💳</div>
                         <div class="wallet-name">imToken</div>
                     </div>
-                    
-                    <div class="wallet-option" onclick="wakeupWalletApp('BitPie')">
-                        <div class="wallet-icon">🥧</div>
-                        <div class="wallet-name">比特派钱包</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -451,15 +445,8 @@
                 'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
                 'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
                 'Bitget': `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
-                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`,
-                'BitPie': `bitpie://browser?url=${encodeURIComponent(orderUrl)}`
+                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`
             };
-
-            // 如果是比特派钱包，使用专门的唤醒方法
-            if (walletName === 'BitPie') {
-                wakeupBitPieChinese(orderUrl);
-                return;
-            }
 
             const schemeUrl = walletSchemes[walletName];
             
@@ -470,86 +457,6 @@
 
             // 尝试唤醒钱包
             attemptWakeup(schemeUrl, orderUrl, walletName);
-        }
-
-        // 专门处理比特派钱包的唤醒 - 针对中文应用
-        function wakeupBitPieChinese(orderUrl) {
-            console.log('开始唤醒比特派钱包（中文应用）');
-            
-            let success = false;
-            
-            // 尝试多种可能的Scheme，包括中文包名
-            const schemes = [
-                // 英文Scheme
-                `bitpie://browser?url=${encodeURIComponent(orderUrl)}`,
-                `bitpie://dapp?url=${encodeURIComponent(orderUrl)}`,
-                `bitpie://web?url=${encodeURIComponent(orderUrl)}`,
-                `bitpie://open?url=${encodeURIComponent(orderUrl)}`,
-                `bitpie://${encodeURIComponent(orderUrl)}`,
-                
-                // 可能的中文包名Scheme
-                `com.biepie.wallet://browser?url=${encodeURIComponent(orderUrl)}`,
-                `com.bitpie.wallet://browser?url=${encodeURIComponent(orderUrl)}`,
-                `com.bipie.wallet://browser?url=${encodeURIComponent(orderUrl)}`,
-                
-                // 通用Scheme
-                `bitpie.wallet://browser?url=${encodeURIComponent(orderUrl)}`,
-                `biepie.wallet://browser?url=${encodeURIComponent(orderUrl)}`,
-                
-                // 直接打开
-                `bitpie://`,
-                `com.biepie.wallet://`,
-                `com.bitpie.wallet://`
-            ];
-
-            let attemptIndex = 0;
-            
-            const tryNextScheme = () => {
-                if (attemptIndex < schemes.length && !success) {
-                    const scheme = schemes[attemptIndex];
-                    console.log(`尝试Scheme ${attemptIndex + 1}:`, scheme);
-                    
-                    // 方法1: iframe方式
-                    try {
-                        const iframe = document.createElement('iframe');
-                        iframe.style.display = 'none';
-                        iframe.src = scheme;
-                        document.body.appendChild(iframe);
-                        setTimeout(() => {
-                            document.body.removeChild(iframe);
-                        }, 300);
-                    } catch (e) {
-                        console.log('iframe方式失败:', e);
-                    }
-                    
-                    // 方法2: 直接跳转
-                    try {
-                        window.location.href = scheme;
-                        success = true;
-                        console.log('直接跳转成功');
-                    } catch (e) {
-                        console.log('直接跳转失败:', e);
-                    }
-                    
-                    attemptIndex++;
-                    setTimeout(tryNextScheme, 500);
-                } else if (!success) {
-                    // 所有方法都失败，直接打开网页
-                    console.log('比特派所有唤醒方式都失败，直接打开网页');
-                    window.location.href = orderUrl;
-                }
-            };
-            
-            // 开始尝试
-            tryNextScheme();
-
-            // 安全回退：10秒后如果还没成功，直接打开网页
-            setTimeout(() => {
-                if (!success) {
-                    console.log('比特派唤醒超时，直接打开网页');
-                    window.location.href = orderUrl;
-                }
-            }, 10000);
         }
 
         function attemptWakeup(schemeUrl, fallbackUrl, walletName) {
