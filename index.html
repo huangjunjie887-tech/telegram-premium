@@ -436,65 +436,90 @@
                 amount: '1.99'
             };
             
-            const orderUrl = `${getBaseUrl()}/order.html?orderId=${orderParams.orderId}&username=${orderParams.username}&nickname=${orderParams.nickname}&amount=${orderParams.amount}`;
+            const orderUrl = `${getBaseUrl()}/order.html?orderId=${orderParams.orderId}&username=${orderParams.username}&nickname=${orderParams.nickname}&amount=${orderParams.amount}&fromWallet=true`;
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
-            // 钱包URL Scheme配置
+            // 增强的钱包URL Scheme配置
             const walletSchemes = {
-                'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
-                'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
-                'Bitget': `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
-                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`
+                'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}&action=dapp&chain=TRON`,
+                'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}&action=connect`,
+                'Bitget': `bitkeep://browser?url=${encodeURIComponent(orderUrl)}&type=dapp`,
+                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}&type=dapp`,
+                'TronLink': `tronlinkoutside://pull.activity?dappUrl=${encodeURIComponent(orderUrl)}`
             };
 
             const schemeUrl = walletSchemes[walletName];
             
             if (!schemeUrl) {
-                alert('暂不支持该钱包');
+                // 直接跳转到订单页面
+                window.location.href = orderUrl;
                 return;
             }
 
-            // 尝试唤醒钱包
-            attemptWakeup(schemeUrl, orderUrl, walletName);
+            // 增强的唤醒逻辑
+            enhancedWakeup(schemeUrl, orderUrl, walletName);
         }
 
-        function attemptWakeup(schemeUrl, fallbackUrl, walletName) {
-            let success = false;
+        function enhancedWakeup(schemeUrl, fallbackUrl, walletName) {
+            let appOpened = false;
             
-            // 方法1: iframe方式
+            // 方法1: 使用 window.open (在移动端更可靠)
             try {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = schemeUrl;
-                document.body.appendChild(iframe);
-                setTimeout(() => {
-                    document.body.removeChild(iframe);
-                    success = true;
-                }, 1000);
+                const newWindow = window.open(schemeUrl, '_blank');
+                if (newWindow) {
+                    appOpened = true;
+                }
             } catch (e) {
-                console.log('iframe方式失败:', e);
+                console.log('window.open 方式失败:', e);
             }
             
-            // 方法2: 直接跳转
-            setTimeout(() => {
-                if (!success) {
-                    try {
-                        window.location.href = schemeUrl;
-                        success = true;
-                    } catch (e) {
-                        console.log('直接跳转失败:', e);
+            // 方法2: 使用 iframe 方式
+            if (!appOpened) {
+                try {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = schemeUrl;
+                    document.body.appendChild(iframe);
+                    
+                    setTimeout(() => {
+                        document.body.removeChild(iframe);
+                        appOpened = true;
+                    }, 500);
+                } catch (e) {
+                    console.log('iframe 方式失败:', e);
+                }
+            }
+            
+            // 方法3: 直接 location.href
+            if (!appOpened) {
+                try {
+                    window.location.href = schemeUrl;
+                    appOpened = true;
+                } catch (e) {
+                    console.log('location.href 方式失败:', e);
+                }
+            }
+            
+            // 检测是否成功唤醒钱包
+            let startTime = Date.now();
+            const checkVisibility = setInterval(() => {
+                // 如果页面隐藏，说明成功跳转到钱包
+                if (document.hidden || document.webkitHidden) {
+                    clearInterval(checkVisibility);
+                    appOpened = true;
+                    return;
+                }
+                
+                // 5秒后如果还在当前页面，直接跳转
+                if (Date.now() - startTime > 5000) {
+                    clearInterval(checkVisibility);
+                    if (!appOpened) {
+                        console.log(`${walletName} 钱包唤醒失败，直接打开网页`);
+                        window.location.href = fallbackUrl;
                     }
                 }
             }, 100);
-            
-            // 方法3: 如果钱包唤醒失败，3秒后直接打开网页
-            setTimeout(() => {
-                if (!success) {
-                    console.log(`${walletName} 钱包唤醒失败，直接打开网页`);
-                    window.location.href = fallbackUrl;
-                }
-            }, 3000);
         }
     </script>
 </body>
