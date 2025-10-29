@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
+        /* 保持原有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -384,26 +385,6 @@
     </div>
 
     <script>
-        // 生成唯一的数据ID
-        function generateDataId() {
-            return 'data_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
-        }
-
-        // 保存数据到临时存储
-        function saveOrderData(dataId, username, nickname, amount) {
-            const orderData = {
-                username: username,
-                nickname: nickname,
-                amount: amount,
-                timestamp: Date.now()
-            };
-            
-            // 保存到localStorage，使用简单键名
-            localStorage.setItem(dataId, JSON.stringify(orderData));
-            console.log('订单数据已保存:', dataId, orderData);
-            return dataId;
-        }
-
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('purchaseBtn').addEventListener('click', function() {
@@ -430,7 +411,7 @@
             });
         });
 
-        // 唤醒钱包APP - 终极解决方案
+        // 唤醒钱包APP - 只负责唤醒，不传递参数
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -440,19 +421,22 @@
                 return;
             }
             
-            // 生成数据ID
-            const dataId = generateDataId();
+            // 保存用户数据到sessionStorage
+            const orderData = {
+                username: username,
+                nickname: nickname,
+                amount: '1.99',
+                timestamp: Date.now()
+            };
+            sessionStorage.setItem('tg_order_data', JSON.stringify(orderData));
             
-            // 保存订单数据
-            saveOrderData(dataId, username, nickname, '1.99');
-            
-            // 构建订单页面URL - 只传递数据ID
+            // 直接打开订单页面 - 不传递任何参数
             const baseUrl = window.location.origin;
-            const orderUrl = `${baseUrl}/order.html?d=${dataId}`;
+            const orderUrl = `${baseUrl}/order.html`;
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
-            // 钱包URL Scheme配置 - 使用最简短的URL
+            // 钱包URL Scheme配置
             const walletSchemes = {
                 'TokenPocket': `tpoutside://pull.activity?param=${orderUrl}`,
                 'MetaMask': `metamask://browser?url=${orderUrl}`,
