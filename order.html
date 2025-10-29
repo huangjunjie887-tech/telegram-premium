@@ -221,16 +221,23 @@
             line-height: 1.4;
         }
         
-        .debug-info {
-            background: rgba(128, 128, 128, 0.2);
-            border: 1px solid #808080;
-            border-radius: 0.75rem;
+        .loading {
+            text-align: center;
             padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.75rem;
-            text-align: left;
-            line-height: 1.3;
-            display: none;
+        }
+        
+        .loading-spinner {
+            width: 2rem;
+            height: 2rem;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #ffd700;
+            animation: spin 1s ease-in-out infinite;
+            margin: 0 auto 1rem auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.7.0/dist/web3.min.js"></script>
@@ -247,10 +254,10 @@
                 <h2>订单信息</h2>
             </div>
             
-            <!-- 调试信息 -->
-            <div id="debugInfo" class="debug-info">
-                <strong>调试信息:</strong>
-                <div id="debugContent"></div>
+            <!-- 加载状态 -->
+            <div id="loadingMessage" class="loading">
+                <div class="loading-spinner"></div>
+                <p>正在加载订单信息...</p>
             </div>
             
             <!-- 错误信息 -->
@@ -259,7 +266,7 @@
                 <p id="errorText">订单参数不完整，请返回重新下单</p>
             </div>
             
-            <div id="orderInfo" class="order-info">
+            <div id="orderInfo" class="order-info" style="display: none;">
                 <div class="info-row">
                     <span class="info-label">订单名称:</span>
                     <span class="info-value">Telegram Premium 订阅</span>
@@ -282,7 +289,7 @@
                 </div>
             </div>
             
-            <div class="payment-info">
+            <div id="paymentInfo" class="payment-info" style="display: none;">
                 <h3>💳 支付信息</h3>
                 <div class="payment-detail">
                     <strong>金额:</strong> <span id="paymentAmount">1.99 USDT</span>
@@ -295,7 +302,7 @@
                 </div>
             </div>
 
-            <div class="instructions">
+            <div class="instructions" style="display: none;" id="paymentInstructions">
                 <h4>💰 支付指导</h4>
                 <p>1. 确保钱包中有足够的 USDT</p>
                 <p>2. 点击"确认支付"后，钱包会弹出交易确认</p>
@@ -303,7 +310,7 @@
             </div>
             
             <!-- 钱包连接状态 -->
-            <div id="walletStatus" class="wallet-status">
+            <div id="walletStatus" class="wallet-status" style="display: none;">
                 <h3>🔗 钱包连接状态</h3>
                 <p id="walletAddress">正在检测钱包环境...</p>
                 <button id="connectWalletBtn" class="btn" style="display: none;">连接钱包</button>
@@ -325,83 +332,76 @@
         let userAccount;
         let orderData = {};
 
-        // 调试函数
-        function debugLog(message) {
-            console.log(message);
-            const debugContent = document.getElementById('debugContent');
-            if (debugContent) {
-                debugContent.innerHTML += message + '<br>';
+        // 从本地存储获取订单数据
+        function getOrderData(orderId) {
+            const storageKey = 'tg_premium_order_' + orderId;
+            const storedData = localStorage.getItem(storageKey);
+            
+            if (!storedData) {
+                console.error('未找到订单数据:', storageKey);
+                return null;
+            }
+            
+            try {
+                const orderData = JSON.parse(storedData);
+                
+                // 检查数据是否过期（1小时）
+                const oneHour = 60 * 60 * 1000;
+                if (Date.now() - orderData.timestamp > oneHour) {
+                    localStorage.removeItem(storageKey);
+                    console.error('订单数据已过期');
+                    return null;
+                }
+                
+                console.log('从本地存储获取订单数据:', orderData);
+                return orderData;
+            } catch (error) {
+                console.error('解析订单数据失败:', error);
+                return null;
             }
         }
 
-        // 显示调试信息
-        function showDebugInfo() {
-            document.getElementById('debugInfo').style.display = 'block';
-        }
-
-        // 检查是否在钱包DApp浏览器中
-        function isInWalletBrowser() {
-            const hasEthereum = !!window.ethereum;
-            const hasTronWeb = !!window.tronWeb;
-            const userAgent = navigator.userAgent.toLowerCase();
+        // 显示订单信息
+        function displayOrderInfo(data) {
+            document.getElementById('orderId').textContent = data.orderId;
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('nickname').textContent = data.nickname;
+            document.getElementById('amount').textContent = '$' + data.amount;
+            document.getElementById('paymentAmount').textContent = data.amount + ' USDT';
             
-            debugLog(`Ethereum: ${hasEthereum}, TronWeb: ${hasTronWeb}`);
-            debugLog(`UserAgent: ${userAgent}`);
-            
-            return hasEthereum || hasTronWeb || 
-                   userAgent.includes('tokenpocket') || 
-                   userAgent.includes('metamask') ||
-                   userAgent.includes('bitget') ||
-                   userAgent.includes('imtoken');
+            // 显示订单信息区域
+            document.getElementById('orderInfo').style.display = 'block';
+            document.getElementById('paymentInfo').style.display = 'block';
+            document.getElementById('paymentInstructions').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'none';
         }
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 显示调试信息（开发时开启）
-            // showDebugInfo();
-            
             // 获取URL参数
             const urlParams = new URLSearchParams(window.location.search);
-            
-            debugLog('URL参数:');
-            for (let [key, value] of urlParams.entries()) {
-                debugLog(`${key}: ${value}`);
-            }
-            
-            // 检查必要参数
             const orderId = urlParams.get('orderId');
-            const username = urlParams.get('username');
-            const nickname = urlParams.get('nickname');
-            const amount = urlParams.get('amount');
-            const source = urlParams.get('source');
-
-            debugLog(`参数检查: orderId=${orderId}, username=${username}, nickname=${nickname}, amount=${amount}, source=${source}`);
-
-            // 验证参数完整性
-            if (!orderId || !username || !nickname || !amount) {
-                const errorMsg = `订单参数不完整: orderId=${orderId}, username=${username}, nickname=${nickname}, amount=${amount}`;
-                debugLog(errorMsg);
-                showError(errorMsg);
+            
+            console.log('获取到订单ID:', orderId);
+            
+            if (!orderId) {
+                showError('订单ID参数缺失');
                 return;
             }
-
-            orderData = {
-                orderId: orderId,
-                username: username, // 不解码，直接使用
-                nickname: nickname, // 不解码，直接使用
-                amount: amount,
-                source: source
-            };
-
-            debugLog(`订单数据: ${JSON.stringify(orderData)}`);
-
+            
+            // 从本地存储获取订单数据
+            const storedOrderData = getOrderData(orderId);
+            
+            if (!storedOrderData) {
+                showError('订单数据不存在或已过期，请返回重新下单');
+                return;
+            }
+            
+            orderData = storedOrderData;
+            
             // 显示订单信息
-            document.getElementById('orderId').textContent = orderData.orderId;
-            document.getElementById('username').textContent = orderData.username;
-            document.getElementById('nickname').textContent = orderData.nickname;
-            document.getElementById('amount').textContent = '$' + orderData.amount;
-            document.getElementById('paymentAmount').textContent = orderData.amount + ' USDT';
-
+            displayOrderInfo(orderData);
+            
             // 检测钱包环境并自动连接
             checkWalletEnvironment();
             
@@ -414,10 +414,10 @@
 
         // 检测钱包环境
         function checkWalletEnvironment() {
-            debugLog('开始检测钱包环境...');
+            console.log('开始检测钱包环境...');
             
-            if (isInWalletBrowser()) {
-                debugLog('检测到钱包DApp环境');
+            if (window.ethereum || window.tronWeb) {
+                console.log('检测到钱包DApp环境');
                 document.getElementById('walletStatus').style.display = 'block';
                 document.getElementById('walletStatus').classList.add('status-connecting');
                 document.getElementById('walletAddress').textContent = '检测到钱包环境，正在连接...';
@@ -427,7 +427,7 @@
                     autoConnectWallet();
                 }, 1000);
             } else {
-                debugLog('未检测到钱包DApp环境');
+                console.log('未检测到钱包DApp环境');
                 document.getElementById('walletStatus').style.display = 'block';
                 document.getElementById('walletAddress').textContent = '未在钱包DApp环境中，请手动连接';
                 document.getElementById('connectWalletBtn').style.display = 'block';
@@ -438,27 +438,27 @@
         function showError(message) {
             document.getElementById('errorMessage').style.display = 'block';
             document.getElementById('errorText').textContent = message;
-            document.getElementById('orderInfo').style.display = 'none';
+            document.getElementById('loadingMessage').style.display = 'none';
             document.getElementById('payBtn').style.display = 'none';
         }
 
         // 自动连接钱包
         async function autoConnectWallet() {
             try {
-                debugLog('开始自动连接钱包...');
+                console.log('开始自动连接钱包...');
                 
                 if (window.tronWeb) {
-                    debugLog('检测到 TronLink 钱包');
+                    console.log('检测到 TronLink 钱包');
                     await connectTronLink();
                 } else if (window.ethereum) {
-                    debugLog('检测到 Ethereum 钱包');
+                    console.log('检测到 Ethereum 钱包');
                     await connectEthereumWallet();
                 } else {
-                    debugLog('未检测到支持的钱包对象');
+                    console.log('未检测到支持的钱包对象');
                     showManualConnect();
                 }
             } catch (error) {
-                debugLog('自动连接失败: ' + error.message);
+                console.error('自动连接失败:', error);
                 showManualConnect();
             }
         }
@@ -468,22 +468,22 @@
             let retryCount = 0;
             const maxRetries = 10;
             
-            debugLog('开始连接 TronLink...');
+            console.log('开始连接 TronLink...');
             
             const checkTronLink = setInterval(() => {
                 if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
                     clearInterval(checkTronLink);
                     userAccount = window.tronWeb.defaultAddress.base58;
                     updateWalletStatus(userAccount, 'TronLink');
-                    debugLog('TronLink 连接成功: ' + userAccount);
+                    console.log('TronLink 连接成功: ' + userAccount);
                     
                 } else if (retryCount >= maxRetries) {
                     clearInterval(checkTronLink);
-                    debugLog('TronLink 连接超时');
+                    console.log('TronLink 连接超时');
                     showManualConnect();
                 } else {
                     retryCount++;
-                    debugLog(`等待 TronLink 就绪... (${retryCount}/${maxRetries})`);
+                    console.log(`等待 TronLink 就绪... (${retryCount}/${maxRetries})`);
                 }
             }, 500);
         }
@@ -491,7 +491,7 @@
         // 连接 Ethereum 钱包
         async function connectEthereumWallet() {
             try {
-                debugLog('请求 Ethereum 钱包连接...');
+                console.log('请求 Ethereum 钱包连接...');
                 const accounts = await window.ethereum.request({
                     method: 'eth_requestAccounts'
                 });
@@ -500,13 +500,13 @@
                     userAccount = accounts[0];
                     web3 = new Web3(window.ethereum);
                     updateWalletStatus(userAccount, 'MetaMask');
-                    debugLog('Ethereum 钱包连接成功: ' + userAccount);
+                    console.log('Ethereum 钱包连接成功: ' + userAccount);
                 } else {
-                    debugLog('用户拒绝连接钱包');
+                    console.log('用户拒绝连接钱包');
                     showManualConnect();
                 }
             } catch (error) {
-                debugLog('Ethereum 钱包连接失败: ' + error.message);
+                console.error('Ethereum 钱包连接失败:', error);
                 showManualConnect();
             }
         }
@@ -551,7 +551,7 @@
 
             try {
                 if (window.tronWeb) {
-                    debugLog('开始 TronLink 支付...');
+                    console.log('开始 TronLink 支付...');
                     const transaction = await window.tronWeb.transactionBuilder.sendTrx(
                         'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub',
                         1990000, // 1.99 USDT (6位小数)
@@ -561,7 +561,7 @@
                     const signedTransaction = await window.tronWeb.trx.sign(transaction);
                     const result = await window.tronWeb.trx.sendRawTransaction(signedTransaction);
                     
-                    debugLog('交易结果: ' + JSON.stringify(result));
+                    console.log('交易结果:', result);
                     
                     // 显示支付成功
                     document.getElementById('payBtn').style.display = 'none';
@@ -576,7 +576,7 @@
                 }
                 
             } catch (error) {
-                debugLog('支付失败: ' + error.message);
+                console.error('支付失败:', error);
                 alert('支付失败: ' + error.message);
             }
         }

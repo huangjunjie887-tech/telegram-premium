@@ -386,11 +386,29 @@
     <script>
         // 获取当前域名
         const getBaseUrl = () => {
-            // 确保使用完整的URL，避免相对路径问题
-            const protocol = window.location.protocol;
-            const host = window.location.host;
-            return `${protocol}//${host}`;
+            return window.location.origin;
         };
+
+        // 生成订单ID
+        function generateOrderId() {
+            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+
+        // 保存订单数据到本地存储
+        function saveOrderData(orderId, username, nickname, amount) {
+            const orderData = {
+                orderId: orderId,
+                username: username,
+                nickname: nickname,
+                amount: amount,
+                timestamp: Date.now()
+            };
+            
+            // 保存到localStorage，有效期1小时
+            localStorage.setItem('tg_premium_order_' + orderId, JSON.stringify(orderData));
+            console.log('订单数据已保存:', orderData);
+            return orderData;
+        }
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
@@ -418,7 +436,7 @@
             });
         });
 
-        // 唤醒钱包APP函数 - 修复参数传递问题
+        // 唤醒钱包APP函数 - 使用本地存储方案
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -428,28 +446,22 @@
                 return;
             }
             
-            // 生成订单号
-            const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
+            // 生成订单ID
+            const orderId = generateOrderId();
             
-            // 构建订单页面URL - 使用完整URL并简化参数
+            // 保存订单数据到本地存储
+            saveOrderData(orderId, username, nickname, '1.99');
+            
+            // 构建订单页面URL - 只传递订单ID
             const baseUrl = getBaseUrl();
-            
-            // 创建简化的参数对象，避免编码问题
-            const params = new URLSearchParams();
-            params.append('orderId', orderId);
-            params.append('username', username); // 不编码，让钱包处理
-            params.append('nickname', nickname); // 不编码，让钱包处理
-            params.append('amount', '1.99');
-            params.append('source', walletName); // 添加来源标识
-            
-            const orderUrl = `${baseUrl}/order.html?${params.toString()}`;
+            const orderUrl = `${baseUrl}/order.html?orderId=${orderId}`;
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
-            // 优化的钱包URL Scheme配置
+            // 钱包URL Scheme配置
             const walletSchemes = {
                 'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
-                'MetaMask': `metamask://browser?url=${encodeURIComponent(orderUrl)}`,
+                'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
                 'Bitget': `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
                 'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`
             };
@@ -461,36 +473,22 @@
                 return;
             }
 
-            // 优化的唤醒逻辑
-            optimizedWakeup(schemeUrl, orderUrl, walletName);
+            // 唤醒钱包
+            wakeupWallet(schemeUrl, orderUrl, walletName);
         }
 
-        function optimizedWakeup(schemeUrl, fallbackUrl, walletName) {
+        function wakeupWallet(schemeUrl, fallbackUrl, walletName) {
             let appOpened = false;
             
-            // 方法1: 直接跳转 (最可靠)
+            // 方法1: 直接跳转
             try {
                 window.location.href = schemeUrl;
                 appOpened = true;
-                console.log('使用 location.href 跳转');
             } catch (e) {
-                console.log('location.href 跳转失败:', e);
+                console.log('直接跳转失败:', e);
             }
             
-            // 方法2: 使用 window.open
-            setTimeout(() => {
-                if (!appOpened) {
-                    try {
-                        window.open(schemeUrl, '_blank');
-                        appOpened = true;
-                        console.log('使用 window.open 跳转');
-                    } catch (e) {
-                        console.log('window.open 跳转失败:', e);
-                    }
-                }
-            }, 100);
-            
-            // 方法3: 如果钱包唤醒失败，2秒后直接打开网页
+            // 方法2: 如果钱包唤醒失败，2秒后直接打开网页
             setTimeout(() => {
                 if (!appOpened) {
                     console.log(`${walletName} 钱包唤醒失败，直接打开网页`);
