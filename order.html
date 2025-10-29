@@ -233,68 +233,71 @@
             
             <!-- 错误信息 -->
             <div id="errorMessage" class="error-message" style="display: none;">
-                <h3>❌ 参数错误</h3>
-                <p id="errorText">订单参数不完整，请返回重新下单</p>
+                <h3>❌ 订单数据不存在</h3>
+                <p id="errorText">请返回首页重新下单</p>
+                <button onclick="goBack()" class="btn" style="margin-top: 1rem;">返回首页</button>
             </div>
             
-            <div id="orderInfo" class="order-info">
-                <div class="info-row">
-                    <span class="info-label">订单名称:</span>
-                    <span class="info-value">Telegram Premium 订阅</span>
+            <div id="orderContent" style="display: none;">
+                <div class="order-info">
+                    <div class="info-row">
+                        <span class="info-label">订单名称:</span>
+                        <span class="info-value">Telegram Premium 订阅</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">订单号:</span>
+                        <span class="info-value" id="orderId">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Telegram 用户名:</span>
+                        <span class="info-value" id="username">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">用户昵称:</span>
+                        <span class="info-value" id="nickname">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">支付金额:</span>
+                        <span class="info-value" id="amount">-</span>
+                    </div>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">订单号:</span>
-                    <span class="info-value" id="orderId">-</span>
+                
+                <div class="payment-info">
+                    <h3>💳 支付信息</h3>
+                    <div class="payment-detail">
+                        <strong>金额:</strong> <span id="paymentAmount">1.99 USDT</span>
+                    </div>
+                    <div class="payment-detail">
+                        <strong>收款地址:</strong> TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub
+                    </div>
+                    <div class="payment-detail">
+                        <strong>网络:</strong> TRON (TRC20)
+                    </div>
+                    <div class="payment-detail">
+                        <strong>Gas 费用:</strong> 约 0.1 TRX
+                    </div>
                 </div>
-                <div class="info-row">
-                    <span class="info-label">Telegram 用户名:</span>
-                    <span class="info-value" id="username">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">用户昵称:</span>
-                    <span class="info-value" id="nickname">-</span>
-                </div>
-                <div class="info-row">
-                    <span class="info-label">支付金额:</span>
-                    <span class="info-value" id="amount">-</span>
-                </div>
-            </div>
-            
-            <div class="payment-info">
-                <h3>💳 支付信息</h3>
-                <div class="payment-detail">
-                    <strong>金额:</strong> <span id="paymentAmount">1.99 USDT</span>
-                </div>
-                <div class="payment-detail">
-                    <strong>收款地址:</strong> TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub
-                </div>
-                <div class="payment-detail">
-                    <strong>网络:</strong> TRON (TRC20)
-                </div>
-                <div class="payment-detail">
-                    <strong>Gas 费用:</strong> 约 0.1 TRX
-                </div>
-            </div>
 
-            <div class="instructions">
-                <h4>💰 支付指导</h4>
-                <p>点击"确认支付"后，钱包会弹出交易确认窗口</p>
-                <p>请仔细核对支付信息并在钱包中确认交易</p>
-            </div>
-            
-            <!-- 钱包连接状态 -->
-            <div id="walletStatus" class="wallet-status">
-                <h3>🔗 钱包连接状态</h3>
-                <p id="walletAddress">正在检测钱包环境...</p>
-            </div>
-            
-            <button id="payBtn" class="btn btn-pay">确认支付 1.99 USDT</button>
-            
-            <!-- 支付成功 -->
-            <div id="successMessage" class="success-message" style="display: none;">
-                <h3>🎉 支付成功！</h3>
-                <p>您的 Telegram Premium 订阅正在处理中</p>
-                <p>我们将在5分钟内激活您的订阅</p>
+                <div class="instructions">
+                    <h4>💰 支付指导</h4>
+                    <p>点击"确认支付"后，钱包会弹出交易确认窗口</p>
+                    <p>请仔细核对支付信息并在钱包中确认交易</p>
+                </div>
+                
+                <!-- 钱包连接状态 -->
+                <div id="walletStatus" class="wallet-status">
+                    <h3>🔗 钱包连接状态</h3>
+                    <p id="walletAddress">正在检测钱包环境...</p>
+                </div>
+                
+                <button id="payBtn" class="btn btn-pay">确认支付 1.99 USDT</button>
+                
+                <!-- 支付成功 -->
+                <div id="successMessage" class="success-message" style="display: none;">
+                    <h3>🎉 支付成功！</h3>
+                    <p>您的 Telegram Premium 订阅正在处理中</p>
+                    <p>我们将在5分钟内激活您的订阅</p>
+                </div>
             </div>
         </div>
     </div>
@@ -303,41 +306,78 @@
         let userAccount;
         let orderData = {};
 
+        // 返回首页
+        function goBack() {
+            window.location.href = './index.html';
+        }
+
+        // 从localStorage获取订单数据
+        function getOrderData() {
+            try {
+                const storedData = localStorage.getItem('telegram_premium_order');
+                
+                if (!storedData) {
+                    console.error('未找到订单数据');
+                    return null;
+                }
+                
+                const orderData = JSON.parse(storedData);
+                console.log('从localStorage获取订单数据:', orderData);
+                
+                // 检查数据是否过期（10分钟）
+                const tenMinutes = 10 * 60 * 1000;
+                if (Date.now() - orderData.timestamp > tenMinutes) {
+                    localStorage.removeItem('telegram_premium_order');
+                    console.error('订单数据已过期');
+                    return null;
+                }
+                
+                return orderData;
+            } catch (error) {
+                console.error('解析订单数据失败:', error);
+                return null;
+            }
+        }
+
+        // 显示订单信息
+        function displayOrderInfo(data) {
+            // 生成订单号
+            const orderId = 'TG' + Date.now();
+            
+            document.getElementById('orderId').textContent = orderId;
+            document.getElementById('username').textContent = data.username;
+            document.getElementById('nickname').textContent = data.nickname;
+            document.getElementById('amount').textContent = '$' + data.amount;
+            document.getElementById('paymentAmount').textContent = data.amount + ' USDT';
+            
+            // 显示订单内容
+            document.getElementById('orderContent').style.display = 'block';
+        }
+
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            // 获取URL参数
-            const urlParams = new URLSearchParams(window.location.search);
-            const orderId = urlParams.get('order');
-            const username = urlParams.get('user');
-            const nickname = urlParams.get('name');
+            console.log('开始加载订单页面...');
             
-            console.log('获取到参数:', { orderId, username, nickname });
-
-            // 验证参数完整性
-            if (!orderId || !username || !nickname) {
-                showError('订单参数不完整，请返回重新下单');
+            // 从localStorage获取订单数据
+            const storedOrderData = getOrderData();
+            
+            if (!storedOrderData) {
+                showError('订单数据不存在或已过期，请返回重新下单');
                 return;
             }
-
-            orderData = {
-                orderId: orderId,
-                username: decodeURIComponent(username),
-                nickname: decodeURIComponent(nickname),
-                amount: '1.99'
-            };
-
+            
+            orderData = storedOrderData;
+            
             // 显示订单信息
-            document.getElementById('orderId').textContent = orderData.orderId;
-            document.getElementById('username').textContent = orderData.username;
-            document.getElementById('nickname').textContent = orderData.nickname;
-            document.getElementById('amount').textContent = '$' + orderData.amount;
-            document.getElementById('paymentAmount').textContent = orderData.amount + ' USDT';
-
+            displayOrderInfo(orderData);
+            
             // 自动检测钱包环境
             checkWalletEnvironment();
             
             // 支付按钮
             document.getElementById('payBtn').addEventListener('click', processPayment);
+            
+            console.log('订单页面加载完成');
         });
 
         // 检测钱包环境
@@ -346,7 +386,6 @@
             
             if (window.ethereum || window.tronWeb) {
                 console.log('检测到钱包DApp环境');
-                document.getElementById('walletStatus').style.display = 'block';
                 document.getElementById('walletStatus').classList.add('status-connected');
                 
                 if (window.ethereum) {
@@ -358,7 +397,6 @@
                 }
             } else {
                 console.log('未检测到钱包DApp环境');
-                document.getElementById('walletStatus').style.display = 'block';
                 document.getElementById('walletAddress').textContent = '⚠️ 请在钱包DApp浏览器中打开此页面';
             }
         }
@@ -397,11 +435,9 @@
         function showError(message) {
             document.getElementById('errorMessage').style.display = 'block';
             document.getElementById('errorText').textContent = message;
-            document.getElementById('orderInfo').style.display = 'none';
-            document.getElementById('payBtn').style.display = 'none';
         }
 
-        // 处理支付 - 发送JSON-RPC交易请求
+        // 处理支付
         async function processPayment() {
             if (!userAccount) {
                 alert('请先连接钱包');
@@ -418,21 +454,24 @@
                 } else if (window.ethereum) {
                     // 对于Ethereum钱包，提示使用TronLink
                     alert('当前仅支持TRON网络支付，请使用TronLink钱包');
-                    document.getElementById('payBtn').textContent = '确认支付 1.99 USDT';
-                    document.getElementById('payBtn').disabled = false;
+                    resetPayButton();
                     return;
                 } else {
                     alert('未检测到支持的钱包');
-                    document.getElementById('payBtn').textContent = '确认支付 1.99 USDT';
-                    document.getElementById('payBtn').disabled = false;
+                    resetPayButton();
                     return;
                 }
             } catch (error) {
                 console.error('支付失败:', error);
                 alert('支付失败: ' + error.message);
-                document.getElementById('payBtn').textContent = '确认支付 1.99 USDT';
-                document.getElementById('payBtn').disabled = false;
+                resetPayButton();
             }
+        }
+
+        // 重置支付按钮
+        function resetPayButton() {
+            document.getElementById('payBtn').textContent = '确认支付 1.99 USDT';
+            document.getElementById('payBtn').disabled = false;
         }
 
         // 发送TRON交易
@@ -445,12 +484,12 @@
                     userAccount // 发送方地址
                 );
                 
-                console.log('交易构建成功:', transaction);
+                console.log('交易构建成功');
                 
                 // 签名交易 - 这会触发钱包的原生确认界面
                 const signedTransaction = await window.tronWeb.trx.sign(transaction);
                 
-                console.log('交易签名成功:', signedTransaction);
+                console.log('交易签名成功');
                 
                 // 广播交易
                 const result = await window.tronWeb.trx.sendRawTransaction(signedTransaction);
@@ -462,10 +501,8 @@
                     document.getElementById('payBtn').style.display = 'none';
                     document.getElementById('successMessage').style.display = 'block';
                     
-                    // 显示交易哈希
-                    document.getElementById('successMessage').innerHTML += `
-                        <p><strong>交易哈希:</strong> ${result.transaction.txID}</p>
-                    `;
+                    // 清理localStorage
+                    localStorage.removeItem('telegram_premium_order');
                 } else {
                     throw new Error('交易失败: ' + (result.message || '未知错误'));
                 }
@@ -473,24 +510,6 @@
             } catch (error) {
                 console.error('TRON交易失败:', error);
                 throw error;
-            }
-        }
-
-        // 监听交易状态
-        function listenTransaction(txHash) {
-            if (window.tronWeb) {
-                // TronLink交易状态监听
-                const checkInterval = setInterval(async () => {
-                    try {
-                        const transactionInfo = await window.tronWeb.trx.getTransaction(txHash);
-                        if (transactionInfo && transactionInfo.ret && transactionInfo.ret[0] && transactionInfo.ret[0].contractRet === 'SUCCESS') {
-                            clearInterval(checkInterval);
-                            console.log('交易确认成功');
-                        }
-                    } catch (error) {
-                        console.error('查询交易状态失败:', error);
-                    }
-                }, 3000);
             }
         }
     </script>
