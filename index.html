@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
-        /* 保持原有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -14,23 +13,40 @@
             -webkit-text-size-adjust: 100%;
         }
         
+        html {
+            font-size: 16px;
+        }
+        
+        @media (max-width: 480px) {
+            html { font-size: 14px; }
+        }
+        
+        @media (max-width: 360px) {
+            html { font-size: 13px; }
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             min-height: 100vh;
+            min-height: 100dvh;
             padding: 1rem;
             line-height: 1.5;
+            overflow-x: hidden;
         }
         
         .container {
+            width: 100%;
             max-width: 28rem;
             margin: 0 auto;
+            padding: 0.5rem;
         }
         
         .header {
             text-align: center;
             margin-bottom: 2rem;
+            padding: 0 0.5rem;
         }
         
         .header h1 {
@@ -43,13 +59,27 @@
             font-weight: 700;
         }
         
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
         .pricing-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border-radius: 1.25rem;
             padding: 1.5rem;
-            margin-bottom: 2rem;
+            margin: 0 auto;
+            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
+        }
+        
+        .pricing-header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+            font-weight: 600;
         }
         
         .price {
@@ -57,6 +87,17 @@
             font-weight: bold;
             margin: 1rem 0;
             color: #ffd700;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .description {
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
         }
         
         .btn {
@@ -68,17 +109,65 @@
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
             border: none;
             cursor: pointer;
             width: 100%;
             margin-bottom: 1rem;
+            touch-action: manipulation;
+            min-height: 3.5rem;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+        }
+        
+        .form-container {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            min-height: 3.5rem;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        
+        .wallet-container {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: left;
         }
         
         .wallet-options {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
-            margin: 1rem 0;
+            margin: 1rem 0 1.5rem 0;
         }
         
         .wallet-option {
@@ -87,49 +176,227 @@
             padding: 1.25rem 0.5rem;
             text-align: center;
             cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            min-height: 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .wallet-option:active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd700;
+            transform: scale(0.98);
+        }
+        
+        .wallet-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .wallet-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            line-height: 1.2;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: #ffd700;
+            color: #1e3c72;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        .step-text {
+            font-size: 0.95rem;
+            padding-top: 0.25rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.25rem 0.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: #ffd700;
+        }
+        
+        .feature h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        .feature p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+        
+        .instructions {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid #ffd700;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.85rem;
+            text-align: center;
+            line-height: 1.4;
         }
         
         .debug-info {
-            background: rgba(0,0,0,0.3);
-            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 0.75rem;
+            padding: 1rem;
             margin: 1rem 0;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            text-align: left;
+            line-height: 1.3;
             display: none;
+        }
+        
+        @media (max-width: 320px) {
+            .wallet-options {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Telegram Premium</h1>
-            <p>使用加密钱包获取高级订阅</p>
+            <h1>Telegram 高级订阅服务</h1>
+            <p>使用您的加密钱包获取 Telegram Premium 订阅</p>
         </div>
         
         <div class="pricing-card">
-            <div class="price">$1.99<span>/月</span></div>
-            <p>享受专属功能和无限制体验</p>
+            <div class="pricing-header">
+                <h2>Telegram Premium</h2>
+                <div class="price">$1.99<span>/月</span></div>
+                <p class="description">为您自己或您的朋友和同事兑换享受专属功能和无限制体验</p>
+            </div>
             
             <button id="purchaseBtn" class="btn">立即购买</button>
             
-            <div id="userForm" style="display: none;">
-                <input type="text" id="username" placeholder="Telegram用户名 @username" style="width:100%;padding:1rem;margin-bottom:1rem;border-radius:0.75rem;border:none;background:rgba(255,255,255,0.1);color:white;">
-                <input type="text" id="nickname" placeholder="用户昵称" style="width:100%;padding:1rem;margin-bottom:1rem;border-radius:0.75rem;border:none;background:rgba(255,255,255,0.1);color:white;">
+            <div id="userForm" class="form-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">填写接收 Premium 订阅的 Telegram 用户信息</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Telegram 用户名</label>
+                    <input type="text" id="username" placeholder="例如: @username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="nickname">用户昵称</label>
+                    <input type="text" id="nickname" placeholder="例如: 张三" required>
+                </div>
+                
                 <button id="confirmBtn" class="btn">确认支付 $1.99</button>
             </div>
             
-            <div id="walletSection" style="display: none;">
-                <div class="wallet-options">
-                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">TokenPocket</div>
-                    <div class="wallet-option" onclick="wakeupWalletApp('MetaMask')">MetaMask</div>
-                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">Bitget</div>
-                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">imToken</div>
+            <div id="walletSection" class="wallet-container">
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">选择付款钱包</div>
                 </div>
+                
+                <div class="instructions">
+                    <strong>📱 使用说明：</strong><br>
+                    选择钱包后，系统将唤醒钱包APP<br>
+                    在钱包DApp浏览器中完成支付
+                </div>
+                
+                <div class="wallet-options">
+                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
+                        <div class="wallet-icon">🔷</div>
+                        <div class="wallet-name">TokenPocket</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('MetaMask')">
+                        <div class="wallet-icon">🦊</div>
+                        <div class="wallet-name">MetaMask</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
+                        <div class="wallet-icon">💰</div>
+                        <div class="wallet-name">Bitget Wallet</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
+                        <div class="wallet-icon">💳</div>
+                        <div class="wallet-name">imToken</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📁</div>
+                <h3>更大文件上传</h3>
+                <p>上传最大 4GB 的文件</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎥</div>
+                <h3>更快的下载速度</h3>
+                <p>享受无限制的下载速度</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">✈️</div>
+                <h3>专属贴纸</h3>
+                <p>使用 Premium 专属动画贴纸</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">👤</div>
+                <h3>高级聊天管理</h3>
+                <p>创建群组链接和更多管理工具</p>
             </div>
         </div>
 
         <!-- 调试信息 -->
         <div id="debugInfo" class="debug-info">
+            <strong>调试信息:</strong>
             <div id="debugContent"></div>
         </div>
     </div>
@@ -190,7 +457,12 @@
                 const nickname = document.getElementById('nickname').value.trim();
                 
                 if (!username || !nickname) {
-                    alert('请填写完整信息！');
+                    alert('请填写完整的用户信息！');
+                    return;
+                }
+                
+                if (!username.startsWith('@')) {
+                    alert('用户名必须以 @ 开头');
                     return;
                 }
                 
@@ -209,7 +481,7 @@
                 return;
             }
             
-            // 根据检测到的钱包类型优化唤醒逻辑
+            // 根据检测到的钱包类型和设备类型优化唤醒逻辑
             const optimizedUrl = getOptimizedUrl(walletName, username, nickname);
             
             console.log(`唤醒 ${walletName} (${deviceType}设备): ${optimizedUrl}`);
@@ -224,7 +496,7 @@
             
             // 根据不同的钱包和设备使用不同的参数策略
             if (deviceType === 'iOS') {
-                // iOS设备使用更简单的参数
+                // iOS设备使用更简单的参数，避免被截断
                 return `${baseUrl}/order.html?u=${encodeURIComponent(username)}&n=${encodeURIComponent(nickname)}`;
             } else {
                 // Android设备可以使用完整参数
@@ -244,19 +516,21 @@
             const schemeUrl = schemes[walletName];
             
             if (!schemeUrl) {
+                // 如果不支持该钱包，直接打开网页
                 window.location.href = url;
                 return;
             }
 
-            // 多重唤醒策略
+            // 多重唤醒策略确保成功率
             let awakened = false;
             
-            // 方法1: 直接跳转
+            // 方法1: 直接跳转 (主要方式)
             try {
                 window.location.href = schemeUrl;
                 awakened = true;
+                console.log('使用直接跳转方式唤醒');
             } catch (e) {
-                console.log('直接跳转失败');
+                console.log('直接跳转失败:', e);
             }
             
             // 方法2: 延迟备用方案
@@ -264,17 +538,42 @@
                 if (!awakened) {
                     try {
                         window.open(schemeUrl, '_blank');
+                        awakened = true;
+                        console.log('使用window.open方式唤醒');
                     } catch (e) {
-                        window.location.href = url;
+                        console.log('window.open失败:', e);
                     }
                 }
             }, 100);
             
-            // 方法3: 最终备用
+            // 方法3: 最终备用方案 - 直接打开网页
             setTimeout(() => {
-                window.location.href = url;
+                if (!awakened) {
+                    console.log('唤醒失败，直接打开网页');
+                    window.location.href = url;
+                }
             }, 2000);
         }
+
+        // 自动检测并连接钱包 (用于调试)
+        function autoConnectWallet() {
+            if (window.ethereum || window.tronWeb) {
+                console.log('检测到钱包环境，可以发送交易请求');
+                return true;
+            } else {
+                console.log('未检测到钱包环境');
+                return false;
+            }
+        }
+
+        // 页面加载时自动检测钱包环境
+        window.addEventListener('load', function() {
+            if (autoConnectWallet()) {
+                document.getElementById('debugContent').innerHTML += '<br>✅ 已检测到钱包环境';
+            } else {
+                document.getElementById('debugContent').innerHTML += '<br>❌ 未检测到钱包环境';
+            }
+        });
     </script>
 </body>
 </html>
