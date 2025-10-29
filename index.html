@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
-        /* 保持原有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -411,7 +410,7 @@
             });
         });
 
-        // 唤醒钱包APP - 只负责唤醒，不传递参数
+        // 唤醒钱包APP - 只负责唤醒，不传递复杂参数
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -421,18 +420,12 @@
                 return;
             }
             
-            // 保存用户数据到sessionStorage
-            const orderData = {
-                username: username,
-                nickname: nickname,
-                amount: '1.99',
-                timestamp: Date.now()
-            };
-            sessionStorage.setItem('tg_order_data', JSON.stringify(orderData));
+            // 生成简单的订单ID
+            const orderId = 'TG' + Date.now();
             
-            // 直接打开订单页面 - 不传递任何参数
+            // 构建订单页面URL - 只传递必要参数
             const baseUrl = window.location.origin;
-            const orderUrl = `${baseUrl}/order.html`;
+            const orderUrl = `${baseUrl}/order.html?order=${orderId}&user=${encodeURIComponent(username)}&name=${encodeURIComponent(nickname)}`;
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
