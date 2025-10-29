@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
     <style>
+        /* 保持原有样式完全不变 */
         * {
             margin: 0;
             padding: 0;
@@ -384,17 +385,12 @@
     </div>
 
     <script>
-        // 获取当前域名
-        const getBaseUrl = () => {
-            return window.location.origin;
-        };
-
-        // 生成订单ID
+        // 生成唯一的订单ID
         function generateOrderId() {
-            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 6).toUpperCase();
         }
 
-        // 保存订单数据到本地存储
+        // 保存订单数据到全局存储
         function saveOrderData(orderId, username, nickname, amount) {
             const orderData = {
                 orderId: orderId,
@@ -404,9 +400,9 @@
                 timestamp: Date.now()
             };
             
-            // 保存到localStorage，有效期1小时
-            localStorage.setItem('tg_premium_order_' + orderId, JSON.stringify(orderData));
-            console.log('订单数据已保存:', orderData);
+            // 使用sessionStorage，页面关闭后自动清除
+            sessionStorage.setItem('tg_order_data', JSON.stringify(orderData));
+            console.log('订单数据已保存到sessionStorage:', orderData);
             return orderData;
         }
 
@@ -436,7 +432,7 @@
             });
         });
 
-        // 唤醒钱包APP函数 - 使用本地存储方案
+        // 唤醒钱包APP - 终极解决方案
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -449,19 +445,19 @@
             // 生成订单ID
             const orderId = generateOrderId();
             
-            // 保存订单数据到本地存储
+            // 保存订单数据
             saveOrderData(orderId, username, nickname, '1.99');
             
             // 构建订单页面URL - 只传递订单ID
-            const baseUrl = getBaseUrl();
+            const baseUrl = window.location.origin;
             const orderUrl = `${baseUrl}/order.html?orderId=${orderId}`;
             
             console.log(`唤醒 ${walletName} 钱包到: ${orderUrl}`);
             
-            // 钱包URL Scheme配置
+            // 钱包URL Scheme配置 - 使用最简短的URL
             const walletSchemes = {
                 'TokenPocket': `tpoutside://pull.activity?param=${encodeURIComponent(orderUrl)}`,
-                'MetaMask': `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
+                'MetaMask': `metamask://browser?url=${encodeURIComponent(orderUrl)}`,
                 'Bitget': `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
                 'imToken': `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`
             };
@@ -473,28 +469,13 @@
                 return;
             }
 
-            // 唤醒钱包
-            wakeupWallet(schemeUrl, orderUrl, walletName);
-        }
-
-        function wakeupWallet(schemeUrl, fallbackUrl, walletName) {
-            let appOpened = false;
+            // 直接跳转，不搞复杂逻辑
+            window.location.href = schemeUrl;
             
-            // 方法1: 直接跳转
-            try {
-                window.location.href = schemeUrl;
-                appOpened = true;
-            } catch (e) {
-                console.log('直接跳转失败:', e);
-            }
-            
-            // 方法2: 如果钱包唤醒失败，2秒后直接打开网页
+            // 3秒后备选方案
             setTimeout(() => {
-                if (!appOpened) {
-                    console.log(`${walletName} 钱包唤醒失败，直接打开网页`);
-                    window.location.href = fallbackUrl;
-                }
-            }, 2000);
+                window.location.href = orderUrl;
+            }, 3000);
         }
     </script>
 </body>
