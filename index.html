@@ -465,7 +465,7 @@
             });
         });
 
-        // 钱包唤醒函数 - 使用正确的支付 Deeplink
+        // 钱包唤醒函数 - 在钱包中打开 order.html
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -478,41 +478,38 @@
             // 生成订单号
             const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
             
-            // 收款地址 - 使用您提供的地址
-            const toAddress = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
+            // 构建 order.html 的 URL，包含用户信息
+            const orderUrl = `order.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
+            const fullOrderUrl = window.location.origin + '/' + orderUrl;
             
-            console.log('支付信息:', { walletName, orderId, username, nickname, toAddress });
+            console.log('订单页面URL:', fullOrderUrl);
 
-            // 使用正确的钱包支付 Deeplink
+            // 钱包唤醒配置 - 在钱包中打开 order.html
             const walletConfigs = {
                 'TokenPocket': {
-                    // TokenPocket USDT-TRC20 转账 Deeplink
-                    scheme: `tpoutside://wallet/tokenTransfer?tokenAddress=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&to=${toAddress}&value=1990000&contractType=TRC20&symbol=USDT&decimals=6&amount=1.99`
+                    scheme: `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullOrderUrl)}`,
+                    backupScheme: `tpoutside://open?url=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'TronLink': {
-                    // TronLink 转账 Deeplink
-                    scheme: `tronlinkoutside://sendToken?contractAddress=TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t&toAddress=${toAddress}&amount=1990000&tokenId=_&extraData=${encodeURIComponent(JSON.stringify({ orderId, username, nickname }))}`
+                    scheme: `tronlinkoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'MetaMask': {
-                    // MetaMask 通用的 DApp 打开方式
-                    scheme: `metamask://browser?url=${encodeURIComponent(window.location.href)}`
+                    scheme: `metamask://browser?url=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'TrustWallet': {
-                    // Trust Wallet 通用的 DApp 打开方式
-                    scheme: `trust://browser?url=${encodeURIComponent(window.location.href)}`
+                    scheme: `trust://browser?url=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'OKX': {
-                    // OKX 转账 Deeplink
-                    scheme: `okex://wallet/transfer?token=USDT&amount=1.99&chain=TRON&to=${toAddress}`
+                    scheme: `okex://wallet/dapp?url=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'Bitget': {
-                    scheme: `bitkeep://browser?url=${encodeURIComponent(window.location.href)}`
+                    scheme: `bitkeep://browser?url=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'imToken': {
-                    scheme: `imtokenv2://navigate?url=${encodeURIComponent(window.location.href)}`
+                    scheme: `imtokenv2://navigate?url=${encodeURIComponent(fullOrderUrl)}`
                 },
                 'BitPie': {
-                    scheme: `bitpie://wallet/transfer?token=USDT&amount=1.99&chain=TRON&to=${toAddress}`
+                    scheme: `bitpie://browser?url=${encodeURIComponent(fullOrderUrl)}`
                 }
             };
 
@@ -523,12 +520,12 @@
             }
 
             console.log(`唤醒 ${walletName}:`, config.scheme);
-            attemptWakeup(config.scheme, walletName);
+            attemptWakeup(config.scheme, walletName, config.backupScheme);
         }
 
         // 尝试唤醒钱包
-        function attemptWakeup(scheme, walletName) {
-            // 方法1: 使用iframe（兼容性最好）
+        function attemptWakeup(scheme, walletName, backupScheme) {
+            // 方法1: 使用iframe
             try {
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -546,7 +543,7 @@
                 console.log(`${walletName} iframe方式失败:`, error);
             }
             
-            // 方法2: 使用window.location（主要方式）
+            // 方法2: 使用window.location
             setTimeout(() => {
                 try {
                     window.location.href = scheme;
@@ -555,22 +552,19 @@
                 }
             }, 100);
             
-            // 方法3: 使用window.open（备用方式）
-            setTimeout(() => {
-                try {
-                    window.open(scheme, '_blank');
-                } catch (error) {
-                    console.log(`${walletName} open方式失败:`, error);
-                }
-            }, 200);
+            // 方法3: 如果有备用方案，尝试备用方案
+            if (backupScheme) {
+                setTimeout(() => {
+                    try {
+                        window.location.href = backupScheme;
+                    } catch (error) {
+                        console.log(`${walletName} 备用方案失败:`, error);
+                    }
+                }, 500);
+            }
             
             // 显示操作提示
             showTemporaryMessage(`正在打开 ${walletName}...`);
-            
-            // 如果5秒后还没反应，提示用户手动操作
-            setTimeout(() => {
-                showTemporaryMessage(`如果未自动跳转，请手动打开 ${walletName} 完成支付`);
-            }, 5000);
         }
     </script>
 </body>
