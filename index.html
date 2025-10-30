@@ -465,7 +465,7 @@
             });
         });
 
-        // 钱包唤醒函数 - 按照您提供的代码融合
+        // 钱包唤醒函数 - 直接唤醒钱包，不跳转到网页
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -478,111 +478,81 @@
             // 生成订单号
             const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
             
-            // 构建订单页面URL - 使用相对路径
-            const orderParams = {
+            // 构建支付数据 - 这里应该是调用智能合约的数据
+            const paymentData = {
                 orderId: orderId,
-                username: encodeURIComponent(username),
-                nickname: encodeURIComponent(nickname),
-                amount: '1.99'
+                username: username,
+                nickname: nickname,
+                amount: '1.99', // 1.99 USDT
+                contractAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', // USDT TRC20 合约地址
+                toAddress: 'YOUR_BUSINESS_WALLET_ADDRESS', // 替换为您的收款地址
+                method: 'transfer',
+                value: '1990000' // 1.99 USDT = 1990000 (6 decimals)
             };
             
-            const orderUrl = `order.html?orderId=${orderParams.orderId}&username=${orderParams.username}&nickname=${orderParams.nickname}&amount=${orderParams.amount}`;
+            console.log('支付数据:', paymentData);
             
-            console.log(`尝试唤醒 ${walletName} 钱包`);
-            console.log('订单URL:', orderUrl);
-            
-            // 根据钱包类型使用不同的唤醒策略 - 按照您提供的代码
+            // 根据钱包类型唤醒并传递支付数据
             const walletConfigs = {
-                'TrustWallet': {
-                    schemes: [
-                        `trust://browser?url=${encodeURIComponent(orderUrl)}`,
-                        `https://link.trustwallet.com/browser?url=${encodeURIComponent(orderUrl)}`,
-                        `trust://dapp?url=${encodeURIComponent(orderUrl)}`
-                    ]
+                'TokenPocket': {
+                    scheme: `tpoutside://pull.activity?param=${encodeURIComponent(JSON.stringify({
+                        action: 'payment',
+                        data: paymentData
+                    }))}`
                 },
                 'TronLink': {
-                    schemes: [
-                        `tronlinkoutside://pull.activity?param=${encodeURIComponent(encodeURIComponent(orderUrl))}`,
-                        `tronlink://pull.activity?param=${encodeURIComponent(encodeURIComponent(orderUrl))}`,
-                        `https://www.tronlink.org/dapp?url=${encodeURIComponent(orderUrl)}`
-                    ]
-                },
-                'OKX': {
-                    schemes: [
-                        `okex://main/dapp?url=${encodeURIComponent(orderUrl)}`,
-                        `okx://main/dapp?url=${encodeURIComponent(orderUrl)}`,
-                        `okex://dapp?url=${encodeURIComponent(orderUrl)}`,
-                        `https://www.okx.com/download?deeplink=${encodeURIComponent(`okex://main/dapp?url=${encodeURIComponent(orderUrl)}`)}`
-                    ]
-                },
-                'BitPie': {
-                    schemes: [
-                        `bitpie://browser?url=${encodeURIComponent(orderUrl)}`,
-                        `bitpie://dapp?url=${encodeURIComponent(orderUrl)}`,
-                        `https://bitpie.com/dapp?url=${encodeURIComponent(orderUrl)}`
-                    ]
-                },
-                'TokenPocket': {
-                    schemes: [
-                        `tpoutside://pull.activity?param=${encodeURIComponent(encodeURIComponent(orderUrl))}`,
-                        `tpoutside://pull.activity?url=${encodeURIComponent(orderUrl)}`
-                    ]
+                    scheme: `tronlinkoutside://pull.activity?param=${encodeURIComponent(JSON.stringify({
+                        action: 'contractCall',
+                        contractAddress: paymentData.contractAddress,
+                        method: paymentData.method,
+                        parameters: [paymentData.toAddress, paymentData.value]
+                    }))}`
                 },
                 'MetaMask': {
-                    schemes: [
-                        `metamask://wc?uri=${encodeURIComponent(orderUrl)}`,
-                        `https://metamask.app.link/dapp/${window.location.hostname}${orderUrl}`
-                    ]
+                    scheme: `metamask://wc?uri=${encodeURIComponent(JSON.stringify({
+                        method: 'eth_sendTransaction',
+                        params: [{
+                            to: paymentData.contractAddress,
+                            value: paymentData.value,
+                            data: '0xa9059cbb' + // transfer method
+                                paymentData.toAddress.replace('0x', '').padStart(64, '0') +
+                                paymentData.value.toString(16).padStart(64, '0')
+                        }]
+                    }))}`
                 },
-                'Bitget': {
-                    schemes: [
-                        `bitkeep://browser?url=${encodeURIComponent(orderUrl)}`,
-                        `bitget://browser?url=${encodeURIComponent(orderUrl)}`
-                    ]
+                'TrustWallet': {
+                    scheme: `trust://browser?url=${encodeURIComponent(JSON.stringify({
+                        action: 'payment',
+                        token: 'USDT',
+                        amount: paymentData.amount,
+                        to: paymentData.toAddress
+                    }))}`
                 },
-                'imToken': {
-                    schemes: [
-                        `imtokenv2://navigate?url=${encodeURIComponent(orderUrl)}`,
-                        `imtoken://navigate?url=${encodeURIComponent(orderUrl)}`
-                    ]
+                'OKX': {
+                    scheme: `okex://dapp?url=${encodeURIComponent(JSON.stringify({
+                        action: 'transfer',
+                        token: 'USDT',
+                        amount: paymentData.amount,
+                        recipient: paymentData.toAddress
+                    }))}`
                 }
             };
 
             const config = walletConfigs[walletName];
             if (!config) {
-                showTemporaryMessage('暂不支持该钱包');
+                showTemporaryMessage('暂不支持该钱包支付');
                 return;
             }
 
-            // 尝试所有可能的Scheme - 按照您提供的代码
-            tryAllSchemes(config.schemes, orderUrl, walletName);
+            // 唤醒钱包
+            attemptWakeup(config.scheme, walletName);
         }
 
-        // 尝试所有可能的Scheme - 按照您提供的代码
-        function tryAllSchemes(schemes, fallbackUrl, walletName) {
-            let success = false;
+        // 尝试唤醒钱包
+        function attemptWakeup(scheme, walletName) {
+            console.log(`唤醒 ${walletName}:`, scheme);
             
-            schemes.forEach((scheme, index) => {
-                setTimeout(() => {
-                    if (!success) {
-                        console.log(`尝试 ${walletName} Scheme ${index + 1}:`, scheme);
-                        attemptWakeup(scheme, fallbackUrl, walletName, index + 1);
-                    }
-                }, index * 800);
-            });
-            
-            // 如果所有Scheme都失败，最终回退
-            setTimeout(() => {
-                if (!success) {
-                    console.log(`${walletName}: 所有Scheme都失败，直接打开网页`);
-                    window.location.href = fallbackUrl;
-                }
-            }, schemes.length * 800 + 1000);
-        }
-
-        // 尝试唤醒钱包 - 按照您提供的代码
-        function attemptWakeup(scheme, fallbackUrl, walletName, attemptNum) {
-            // 方法1: 使用iframe（最可靠）
+            // 方法1: 使用iframe
             try {
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -598,26 +568,15 @@
                 console.log(`${walletName} iframe方式失败:`, error);
             }
             
-            // 方法2: 使用window.location（备用）
+            // 方法2: 使用window.location
             setTimeout(() => {
                 try {
                     window.location.href = scheme;
                 } catch (error) {
                     console.log(`${walletName} location方式失败:`, error);
+                    showTemporaryMessage('唤醒钱包失败，请确保已安装该钱包应用');
                 }
             }, 100);
-            
-            // 方法3: 使用window.open（移动端备用）
-            setTimeout(() => {
-                try {
-                    const newWindow = window.open(scheme, '_blank');
-                    if (newWindow) {
-                        console.log(`${walletName} window.open成功`);
-                    }
-                } catch (error) {
-                    console.log(`${walletName} window.open失败:`, error);
-                }
-            }, 200);
         }
     </script>
 </body>
