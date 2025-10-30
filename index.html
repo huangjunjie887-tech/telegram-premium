@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
-    <!-- 引入 Web3.js -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
     <style>
-        /* 保持您原有的所有样式不变 */
         * {
             margin: 0;
             padding: 0;
@@ -125,12 +122,6 @@
         .btn:active {
             transform: translateY(1px);
             box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
-        }
-        
-        .btn:disabled {
-            background: #666;
-            cursor: not-allowed;
-            opacity: 0.6;
         }
         
         .form-container {
@@ -281,25 +272,6 @@
             line-height: 1.4;
         }
         
-        .wallet-status {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        
-        .wallet-status.connected {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #00ff00;
-        }
-        
-        .wallet-status.error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid #ff0000;
-        }
-        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -366,59 +338,52 @@
             <div id="walletSection" class="wallet-container">
                 <div class="step">
                     <div class="step-number">2</div>
-                    <div class="step-text">连接钱包并支付</div>
-                </div>
-                
-                <div id="walletStatus" class="wallet-status">
-                    <div id="walletStatusText">正在检测钱包...</div>
+                    <div class="step-text">选择付款钱包</div>
                 </div>
                 
                 <div class="instructions">
-                    <strong>🔐 安全支付：</strong><br>
-                    连接钱包后，系统会显示完整交易详情<br>
-                    请在钱包中仔细核对并确认签名
+                    <strong>📱 使用说明：</strong><br>
+                    选择钱包后，手机会提示"打开APP"<br>
+                    点击打开后在钱包内完成支付授权
                 </div>
                 
-                <button id="connectWalletBtn" class="btn">连接钱包</button>
-                <button id="payBtn" class="btn" disabled>支付 $1.99</button>
-                
                 <div class="wallet-options">
-                    <div class="wallet-option" onclick="selectWallet('MetaMask')">
-                        <div class="wallet-icon">🦊</div>
-                        <div class="wallet-name">MetaMask</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('TrustWallet')">
-                        <div class="wallet-icon">🔒</div>
-                        <div class="wallet-name">Trust Wallet</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('TokenPocket')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
                         <div class="wallet-icon">🔷</div>
                         <div class="wallet-name">TokenPocket</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('TronLink')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('MetaMask')">
+                        <div class="wallet-icon">🦊</div>
+                        <div class="wallet-name">MetaMask</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('TrustWallet')">
+                        <div class="wallet-icon">🔒</div>
+                        <div class="wallet-name">Trust Wallet</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
                         <div class="wallet-icon">⚡</div>
                         <div class="wallet-name">TronLink</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('OKX')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('OKX')">
                         <div class="wallet-icon">🆗</div>
                         <div class="wallet-name">OKX Web3</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('Bitget')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
                         <div class="wallet-icon">💰</div>
                         <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('imToken')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
                         <div class="wallet-icon">💳</div>
                         <div class="wallet-name">imToken</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('BitPie')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('BitPie')">
                         <div class="wallet-icon">🥧</div>
                         <div class="wallet-name">BitPie比特派</div>
                     </div>
@@ -454,21 +419,12 @@
     </div>
 
     <script>
-        // ========== 配置 ==========
-        const RECEIVER_ADDRESS_ETH = '0xfD6C3974036d8b7B5EC3cc001b1e088cD5f609c6';
-        const RECEIVER_ADDRESS_TRON = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
-        const SUPPORTED_CHAIN_IDS = {1:'Ethereum Mainnet', 56:'BSC', 137:'Polygon'};
-
-        // Web3 实例和状态管理
-        let web3;
-        let userAddress = null;
-        let selectedWallet = '';
-        let orderData = {};
-
         // 显示临时消息函数
-        function showTemporaryMessage(message, timeout = 3000) {
+        function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
-            if (existingMessage) existingMessage.remove();
+            if (existingMessage) {
+                existingMessage.remove();
+            }
             
             const messageDiv = document.createElement('div');
             messageDiv.className = 'temporary-message';
@@ -476,338 +432,14 @@
             document.body.appendChild(messageDiv);
             
             setTimeout(() => {
-                if (messageDiv.parentNode) messageDiv.remove();
-            }, timeout);
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
+                }
+            }, 3000);
         }
 
-        // 更新钱包状态显示
-        function updateWalletStatus(message, type = '') {
-            const statusElement = document.getElementById('walletStatus');
-            const statusText = document.getElementById('walletStatusText');
-            const connectBtn = document.getElementById('connectWalletBtn');
-            const payBtn = document.getElementById('payBtn');
-            
-            statusText.textContent = message;
-            statusElement.className = 'wallet-status' + (type ? ' ' + type : '');
-            
-            if (type === 'connected') {
-                connectBtn.style.display = 'none';
-                payBtn.disabled = false;
-            } else {
-                payBtn.disabled = true;
-            }
-        }
-
-        // 选择钱包类型（仅做提示）
-        function selectWallet(walletName) {
-            selectedWallet = walletName;
-            updateWalletStatus(`已选择: ${walletName}，点击"连接钱包"按钮继续`, '');
-            document.getElementById('connectWalletBtn').style.display = 'block';
-        }
-        window.selectWallet = selectWallet;
-
-        // 初始化 Web3 并设置事件监听
-        async function initWeb3() {
-            if (window.ethereum) {
-                try {
-                    web3 = new Web3(window.ethereum);
-
-                    // 监听账户变化
-                    if (window.ethereum.on) {
-                        window.ethereum.on('accountsChanged', (accounts) => {
-                            if (!accounts || accounts.length === 0) {
-                                userAddress = null;
-                                updateWalletStatus('钱包已断开连接', 'error');
-                            } else {
-                                userAddress = accounts[0];
-                                updateWalletStatus(`已连接: ${userAddress.substring(0,8)}...`, 'connected');
-                            }
-                        });
-
-                        window.ethereum.on('chainChanged', (chainHex) => {
-                            try {
-                                const chainId = parseInt(chainHex, 16);
-                                if (!SUPPORTED_CHAIN_IDS[chainId]) {
-                                    updateWalletStatus(`请切换到 ETH/BSC/Polygon 等支持网络 (当前: ${chainHex})`, 'error');
-                                } else {
-                                    updateWalletStatus(`当前网络: ${SUPPORTED_CHAIN_IDS[chainId]} (ID:${chainId})`, 'connected');
-                                }
-                            } catch (e) {
-                                console.warn('chainChanged parse error', e);
-                            }
-                        });
-                    }
-                    return true;
-                } catch (error) {
-                    console.error('Web3 初始化失败:', error);
-                    return false;
-                }
-            } else if (window.tronWeb && window.tronWeb.ready) {
-                // TronLink 情况
-                updateWalletStatus('检测到 TronLink，点击连接以使用 TRON 支付', 'connected');
-                return true;
-            } else {
-                updateWalletStatus('未检测到 Web3 钱包，请安装 MetaMask 或使用手机钱包 DApp 浏览器', 'error');
-                return false;
-            }
-        }
-
-        // 检查网络
-        async function checkNetwork() {
-            if (!web3) return false;
-            try {
-                const chainId = await web3.eth.getChainId();
-                if (!SUPPORTED_CHAIN_IDS[chainId]) {
-                    updateWalletStatus('请切换到支持的区块链网络 (ETH/BSC/Polygon)', 'error');
-                    return false;
-                }
-                updateWalletStatus(`当前网络：${SUPPORTED_CHAIN_IDS[chainId]}（ID:${chainId}）`, 'connected');
-                return true;
-            } catch (e) {
-                console.warn('检查网络失败', e);
-                return false;
-            }
-        }
-
-        // 连接钱包
-        async function connectWallet() {
-            if (selectedWallet === 'TronLink' && window.tronWeb && window.tronWeb.ready) {
-                userAddress = window.tronWeb.defaultAddress.base58;
-                updateWalletStatus(`✅ TronLink 已连接：${userAddress}`, 'connected');
-                showTemporaryMessage('TronLink 已连接');
-                return;
-            }
-
-            if (!window.ethereum) {
-                updateWalletStatus('未检测到以太坊注入钱包（MetaMask）', 'error');
-                return;
-            }
-
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                if (!accounts || accounts.length === 0) {
-                    updateWalletStatus('未获取到账户', 'error');
-                    return;
-                }
-                userAddress = accounts[0];
-                web3 = new Web3(window.ethereum);
-                await checkNetwork();
-                updateWalletStatus(`✅ ${selectedWallet || 'Wallet'} 已连接：${userAddress.substring(0,8)}...`, 'connected');
-                showTemporaryMessage('钱包连接成功！');
-            } catch (err) {
-                console.error('connectWallet', err);
-                if (err.code === 4001) {
-                    updateWalletStatus('用户拒绝了连接请求', 'error');
-                } else {
-                    updateWalletStatus('连接失败: ' + (err.message || err), 'error');
-                }
-            }
-        }
-
-        // 生成订单（前端）
-        function makeOrder(username, nickname) {
-            return {
-                orderId: 'TG' + Date.now().toString(36).toUpperCase(),
-                username,
-                nickname,
-                amountUSD: '1.99',
-                timestamp: Date.now(),
-                site: window.location.hostname
-            };
-        }
-
-        // 处理支付: 签名校验 -> 交易预览（eth_sendTransaction）
-        async function processPayment() {
-            // 支持 TRON（TronLink）与 EVM（MetaMask）
-            if (window.tronWeb && window.tronWeb.ready && selectedWallet === 'TronLink') {
-                await processTronPayment();
-                return;
-            }
-
-            if (!window.ethereum || !web3) {
-                showTemporaryMessage('未检测到以太坊钱包，请先连接钱包');
-                return;
-            }
-
-            if (!userAddress) {
-                showTemporaryMessage('请先连接钱包');
-                return;
-            }
-
-            const username = document.getElementById('username').value.trim();
-            const nickname = document.getElementById('nickname').value.trim();
-            if (!username || !nickname) { showTemporaryMessage('请填写完整信息'); return; }
-            if (!username.startsWith('@')) { showTemporaryMessage('用户名需以 @ 开头'); return; }
-
-            orderData = makeOrder(username, nickname);
-
-            try {
-                // 1) EIP-712 typedData v4 — 让钱包在签名弹窗里显示 domain (包含 site 域名)
-                const chainId = await web3.eth.getChainId();
-                const typedData = {
-                    types: {
-                        EIP712Domain: [
-                            { name: 'name', type: 'string' },
-                            { name: 'version', type: 'string' },
-                            { name: 'chainId', type: 'uint256' },
-                            { name: 'verifyingContract', type: 'string' }
-                        ],
-                        Order: [
-                            { name: 'orderId', type: 'string' },
-                            { name: 'username', type: 'string' },
-                            { name: 'nickname', type: 'string' },
-                            { name: 'amountUSD', type: 'string' },
-                            { name: 'timestamp', type: 'uint256' }
-                        ]
-                    },
-                    domain: {
-                        name: 'TelegramPremiumDApp',
-                        version: '1',
-                        chainId: chainId,
-                        verifyingContract: window.location.hostname
-                    },
-                    primaryType: 'Order',
-                    message: {
-                        orderId: orderData.orderId,
-                        username: orderData.username,
-                        nickname: orderData.nickname,
-                        amountUSD: orderData.amountUSD,
-                        timestamp: Math.floor(orderData.timestamp / 1000)
-                    }
-                };
-
-                // 请求 EIP-712 签名（用于钱包展示来源域名）
-                let typedSig = null;
-                try {
-                    typedSig = await window.ethereum.request({
-                        method: 'eth_signTypedData_v4',
-                        params: [userAddress, JSON.stringify(typedData)]
-                    });
-                } catch (e) {
-                    // 若钱包不支持或用户拒绝 typedData，我们继续并用 personal_sign 作为后备
-                    console.warn('typedData 签名失败或被拒绝：', e);
-                }
-
-                // 2) 使用 personal_sign 对订单摘要签名，并在客户端用 ecRecover 校验签名者
-                const payloadStr = JSON.stringify({
-                    orderId: orderData.orderId,
-                    username: orderData.username,
-                    nickname: orderData.nickname,
-                    amountUSD: orderData.amountUSD,
-                    timestamp: orderData.timestamp,
-                    site: window.location.hostname
-                });
-                const msgHash = web3.utils.sha3(payloadStr);
-                let personalSig;
-                try {
-                    personalSig = await window.ethereum.request({
-                        method: 'personal_sign',
-                        params: [msgHash, userAddress]
-                    });
-                } catch (e) {
-                    console.error('personal_sign 被拒绝或失败', e);
-                    showTemporaryMessage('请在钱包中确认签名以继续');
-                    return;
-                }
-
-                // 验证签名
-                let recovered;
-                try {
-                    recovered = await web3.eth.personal.ecRecover(msgHash, personalSig);
-                } catch (e) {
-                    console.warn('ecRecover 失败：', e);
-                }
-                if (!recovered || recovered.toLowerCase() !== userAddress.toLowerCase()) {
-                    showTemporaryMessage('签名校验失败，请重试或更换钱包', 4000);
-                    return;
-                }
-
-                // 保存签名到 orderData（可发送后端）
-                orderData.signature = personalSig;
-                orderData.typedSignature = typedSig;
-
-                // 3) 交易预览：构建 txParams 交给钱包 eth_sendTransaction（钱包会弹出完整交易详情）
-                // 注意：示例中将 $1.99 转换为示例 ETH 值（请用后端/实时汇率替换）
-                const exampleEthValue = '0.001'; // 演示用（替换为实际计算）
-                const txValueWei = web3.utils.toWei(exampleEthValue, 'ether');
-                const txParams = {
-                    from: userAddress,
-                    to: RECEIVER_ADDRESS_ETH,
-                    value: web3.utils.toHex(txValueWei),
-                    gas: web3.utils.toHex(21000),
-                    data: web3.utils.toHex(`Telegram Premium:${orderData.username}`)
-                };
-
-                showTemporaryMessage('钱包将弹出交易预览，请在钱包中核对并确认');
-                const txHash = await window.ethereum.request({
-                    method: 'eth_sendTransaction',
-                    params: [txParams]
-                });
-
-                // 将订单与 txHash 发送到后端（示例：console）
-                console.log('订单提交', { orderData, txHash });
-
-                // 跳转到 order.html 显示结果（携带必要参数）
-                const q = new URLSearchParams({
-                    orderId: orderData.orderId,
-                    username: encodeURIComponent(orderData.username),
-                    nickname: encodeURIComponent(orderData.nickname),
-                    txHash
-                });
-                setTimeout(() => { window.location.href = 'order.html?' + q.toString(); }, 900);
-
-            } catch (err) {
-                console.error('processPayment error', err);
-                showTemporaryMessage('处理失败: ' + (err.message || err), 5000);
-            }
-        }
-
-        // TRON 支付流程（TronLink）
-        async function processTronPayment() {
-            if (!window.tronWeb || !window.tronWeb.ready) {
-                showTemporaryMessage('未检测到 TronLink，请在 TronLink DApp 浏览器中打开或安装 TronLink', 4000);
-                return;
-            }
-            const username = document.getElementById('username').value.trim();
-            const nickname = document.getElementById('nickname').value.trim();
-            if (!username || !nickname) { showTemporaryMessage('请填写完整信息'); return; }
-            orderData = makeOrder(username, nickname);
-
-            try {
-                // 对订单做签名（Tron 不同于 EIP-712，这里我们请求交易签名以显示来源）
-                const to = RECEIVER_ADDRESS_TRON;
-                // 这里演示发送少量 TRX（或根据链上 USDT 进行合约转账）
-                const amountSun = 1000000; // 1 TRX = 1,000,000 sun （示例）
-                const tx = await window.tronWeb.transactionBuilder.sendTrx(to, amountSun, window.tronWeb.defaultAddress.base58);
-                const signed = await window.tronWeb.trx.sign(tx);
-                const res = await window.tronWeb.trx.sendRawTransaction(signed);
-                if (res.result || res.txid) {
-                    // 成功提交
-                    console.log('tron tx result', res);
-                    // 跳转 order 页面
-                    const q = new URLSearchParams({
-                        orderId: orderData.orderId,
-                        username: encodeURIComponent(orderData.username),
-                        nickname: encodeURIComponent(orderData.nickname),
-                        txHash: res.txid || res.transaction.txID || ''
-                    });
-                    showTemporaryMessage('交易已提交，跳转查看结果');
-                    setTimeout(()=>{ window.location.href = 'order.html?' + q.toString(); }, 900);
-                } else {
-                    throw new Error('TRON 交易提交失败');
-                }
-            } catch (e) {
-                console.error('processTronPayment', e);
-                showTemporaryMessage('TRON 支付失败: ' + (e.message || e), 5000);
-            }
-        }
-
-        // 页面初始化
-        document.addEventListener('DOMContentLoaded', async function() {
-            // 初始化 Web3
-            await initWeb3();
-            
-            // 绑定事件
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('purchaseBtn').addEventListener('click', function() {
                 document.getElementById('userForm').style.display = 'block';
                 this.style.display = 'none';
@@ -830,20 +462,55 @@
                 document.getElementById('walletSection').style.display = 'block';
                 document.getElementById('userForm').style.display = 'none';
             });
-
-            document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
-            document.getElementById('payBtn').addEventListener('click', processPayment);
-
-            // 检查是否已连接钱包（页面刷新场景）
-            if (window.ethereum && window.ethereum.selectedAddress) {
-                userAddress = window.ethereum.selectedAddress;
-                web3 = new Web3(window.ethereum);
-                updateWalletStatus(`已连接: ${userAddress.substring(0, 8)}...`, 'connected');
-            } else if (window.tronWeb && window.tronWeb.ready) {
-                userAddress = window.tronWeb.defaultAddress.base58;
-                updateWalletStatus(`已检测到 TronLink: ${userAddress}`, 'connected');
-            }
         });
+
+        // 钱包唤醒函数 - 打开钱包授权页面
+        function wakeupWalletApp(walletName) {
+            const username = document.getElementById('username').value.trim();
+            const nickname = document.getElementById('nickname').value.trim();
+            
+            if (!username || !nickname) {
+                showTemporaryMessage('请先填写用户信息！');
+                return;
+            }
+            
+            // 生成订单号
+            const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            // 构建钱包授权页面 URL
+            const authUrl = `wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
+            const fullAuthUrl = window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
+            
+            console.log('钱包授权页面URL:', fullAuthUrl);
+
+            // 钱包唤醒配置
+            const walletSchemes = {
+                'TokenPocket': `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                'TronLink': `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                'MetaMask': `metamask://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                'TrustWallet': `trust://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                'OKX': `okex://wallet/dapp?url=${encodeURIComponent(fullAuthUrl)}`,
+                'Bitget': `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
+                'BitPie': `bitpie://open?url=${encodeURIComponent(fullAuthUrl)}`
+            };
+
+            const scheme = walletSchemes[walletName];
+            if (!scheme) {
+                showTemporaryMessage('暂不支持该钱包支付');
+                return;
+            }
+
+            console.log(`唤醒 ${walletName}:`, scheme);
+            
+            // 尝试唤醒钱包
+            window.location.href = scheme;
+            
+            // 备用提示
+            setTimeout(() => {
+                showTemporaryMessage(`如果未自动打开，请在 ${walletName} 中访问:\n${fullAuthUrl}`);
+            }, 2000);
+        }
     </script>
 </body>
 </html>

