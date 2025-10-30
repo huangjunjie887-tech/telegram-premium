@@ -1,401 +1,172 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
     <title>支付授权 - Telegram Premium</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+
     <style>
-        /* 保持简洁的支付页面样式 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            min-height: 100vh;
-            padding: 1rem;
-            line-height: 1.5;
-        }
-        
-        .container {
-            max-width: 28rem;
-            margin: 0 auto;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            color: #ffd700;
-        }
-        
-        .order-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .order-info {
-            margin-bottom: 1.5rem;
-        }
-        
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-            padding: 0.5rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        .info-label {
-            font-weight: 500;
-            opacity: 0.9;
-        }
-        
-        .info-value {
-            font-weight: 600;
-            color: #ffd700;
-        }
-        
-        .btn {
-            display: block;
-            width: 100%;
-            background: linear-gradient(90deg, #ff8c00, #ffd700);
-            color: #1e3c72;
-            padding: 1rem 1.5rem;
-            border-radius: 3rem;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-            text-align: center;
-            margin-top: 1rem;
-        }
-        
-        .btn:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-        
-        .instructions {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.85rem;
-            text-align: center;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 2rem;
-        }
-        
-        .spinner {
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top: 3px solid #ffd700;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        .wallet-status {
-            text-align: center;
-            margin: 1rem 0;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            background: rgba(255, 255, 255, 0.1);
-        }
-        
-        .success {
-            background: rgba(0, 255, 0, 0.2);
-            border: 1px solid #00ff00;
-        }
-        
-        .error {
-            background: rgba(255, 0, 0, 0.2);
-            border: 1px solid #ff0000;
-        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);color:#fff;min-height:100vh;padding:1rem}
+        .container{max-width:28rem;margin:0 auto}
+        .header{text-align:center;margin-bottom:1.5rem}
+        .header h1{font-size:1.6rem;color:#ffd700;margin-bottom:.25rem}
+        .order-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(8px);border-radius:1.25rem;padding:1.25rem;border:1px solid rgba(255,255,255,0.06)}
+        .info-item{display:flex;justify-content:space-between;padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,0.06)}
+        .info-label{opacity:.9}
+        .info-value{color:#ffd700;font-weight:600}
+        .btn{display:block;width:100%;background:linear-gradient(90deg,#ff8c00,#ffd700);color:#1e3c72;padding:1rem;border-radius:3rem;border:none;font-weight:600;margin-top:1rem;cursor:pointer}
+        .btn:disabled{background:#666;cursor:not-allowed}
+        .wallet-status{margin:1rem 0;padding:1rem;border-radius:.75rem;background:rgba(255,255,255,0.06)}
+        .success{background:rgba(0,255,0,0.06);border:1px solid rgba(0,255,0,0.12)}
+        .error{background:rgba(255,0,0,0.06);border:1px solid rgba(255,0,0,0.12)}
+        .spinner{border:3px solid rgba(255,255,255,0.2);border-top:3px solid #ffd700;border-radius:50%;width:30px;height:30px;animation:spin 1s linear infinite;margin:0 auto}
+        @keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>支付授权</h1>
-            <p>请在钱包中确认支付</p>
+        <div class="header"><h1>支付授权</h1><p>请在钱包中确认支付并查看结果</p></div>
+
+        <div class="order-card" id="orderCard">
+            <div class="info-item"><span class="info-label">订单号</span><span class="info-value" id="orderId">-</span></div>
+            <div class="info-item"><span class="info-label">Telegram 用户名</span><span class="info-value" id="username">-</span></div>
+            <div class="info-item"><span class="info-label">用户昵称</span><span class="info-value" id="nickname">-</span></div>
+            <div class="info-item"><span class="info-label">支付金额</span><span class="info-value" id="amount">$1.99</span></div>
+            <div class="info-item"><span class="info-label">支付状态</span><span class="info-value" id="status">等待授权</span></div>
         </div>
-        
-        <div class="order-card">
-            <div class="order-info">
-                <div class="info-item">
-                    <span class="info-label">订单号</span>
-                    <span class="info-value" id="orderId">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Telegram 用户名</span>
-                    <span class="info-value" id="username">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">用户昵称</span>
-                    <span class="info-value" id="nickname">-</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">支付金额</span>
-                    <span class="info-value">$1.99</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">支付状态</span>
-                    <span class="info-value" id="status">等待授权</span>
-                </div>
-            </div>
-            
-            <div id="walletStatus" class="wallet-status" style="display: none;">
-                <span id="walletStatusText"></span>
-            </div>
-            
-            <div class="instructions">
-                <strong>🔐 授权说明：</strong><br>
-                点击下方按钮发起支付授权<br>
-                您的钱包将弹出支付请求<br>
-                请仔细核对信息并确认授权
-            </div>
-            
-            <button id="authorizeBtn" class="btn" onclick="initiatePaymentAuthorization()">发起支付授权</button>
-            
-            <div id="loadingSection" class="loading" style="display: none;">
-                <div class="spinner"></div>
-                <p>正在处理支付授权，请稍候...</p>
-            </div>
-        </div>
-        
-        <button class="btn" onclick="window.location.href = 'index.html'">返回首页</button>
+
+        <div id="walletStatus" class="wallet-status" style="display:none;"><span id="walletStatusText"></span></div>
+
+        <button id="authorizeBtn" class="btn">发起支付授权 / 查询交易</button>
+        <button id="backBtn" class="btn" style="margin-top:.5rem;background:rgba(255,255,255,0.06);color:#fff;border:1px solid rgba(255,255,255,0.06)">返回首页</button>
+
     </div>
 
     <script>
-        // 订单数据
-        let orderData = {};
-        let isWalletConnected = false;
-        
-        // 初始化页面
-        function initPage() {
-            const urlParams = new URLSearchParams(window.location.search);
-            
-            orderData = {
-                orderId: urlParams.get('orderId') || generateOrderId(),
-                username: decodeURIComponent(urlParams.get('username') || ''),
-                nickname: decodeURIComponent(urlParams.get('nickname') || ''),
-                amount: urlParams.get('amount') || '1.99'
-            };
-            
-            // 显示订单信息
-            document.getElementById('orderId').textContent = orderData.orderId;
-            document.getElementById('username').textContent = orderData.username;
-            document.getElementById('nickname').textContent = orderData.nickname;
-            
-            // 自动检测钱包环境
-            checkWalletConnection();
+    // === 配置（与 index.html 保持一致） ===
+    const RECEIVER_ADDRESS_ETH = '0x742EfB6A78A0b5c0e5c5F8c5B8c5c5F8c5B8c5c5F'; // 替换
+    const POLL_TX_INTERVAL = 3000;
+
+    let web3 = null;
+    let txHash = null;
+    let orderData = {};
+
+    function showStatus(message, type) {
+        const el = document.getElementById('walletStatus');
+        const txt = document.getElementById('walletStatusText');
+        txt.textContent = message;
+        el.style.display = 'block';
+        el.className = 'wallet-status' + (type ? ' ' + type : '');
+    }
+
+    function readQuery() {
+        const params = new URLSearchParams(window.location.search);
+        orderData.orderId = params.get('orderId') || ('TG'+Date.now());
+        orderData.username = decodeURIComponent(params.get('username') || '');
+        orderData.nickname = decodeURIComponent(params.get('nickname') || '');
+        txHash = params.get('txHash') || null;
+
+        document.getElementById('orderId').textContent = orderData.orderId;
+        document.getElementById('username').textContent = orderData.username;
+        document.getElementById('nickname').textContent = orderData.nickname;
+        if (txHash) {
+            document.getElementById('status').textContent = '交易已提交，等待上链确认';
+            showStatus('检测到 txHash：' + txHash + '，开始查询上链状态...', '');
+        } else {
+            showStatus('未检测到交易哈希，请点击「发起支付授权 / 查询交易」以进行签名或查询', 'error');
         }
-        
-        // 生成订单号
-        function generateOrderId() {
-            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
-        }
-        
-        // 检测钱包连接状态
-        async function checkWalletConnection() {
-            const statusElement = document.getElementById('status');
-            const walletStatus = document.getElementById('walletStatus');
-            const walletStatusText = document.getElementById('walletStatusText');
-            const authorizeBtn = document.getElementById('authorizeBtn');
-            
-            // 检测 TronLink
-            if (window.tronWeb && window.tronWeb.defaultAddress) {
-                isWalletConnected = true;
-                statusElement.textContent = '钱包已连接';
-                walletStatus.style.display = 'block';
-                walletStatus.className = 'wallet-status success';
-                walletStatusText.textContent = `已连接: ${window.tronWeb.defaultAddress.base58}`;
-                authorizeBtn.disabled = false;
-                return;
-            }
-            
-            // 检测 MetaMask/以太坊钱包
-            if (window.ethereum) {
-                try {
-                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-                    if (accounts.length > 0) {
-                        isWalletConnected = true;
-                        statusElement.textContent = '钱包已连接';
-                        walletStatus.style.display = 'block';
-                        walletStatus.className = 'wallet-status success';
-                        walletStatusText.textContent = `已连接: ${accounts[0].substring(0, 8)}...`;
-                        authorizeBtn.disabled = false;
-                        return;
-                    }
-                } catch (error) {
-                    console.log('MetaMask 连接检查失败:', error);
-                }
-            }
-            
-            // 没有检测到钱包
-            statusElement.textContent = '未检测到钱包';
-            walletStatus.style.display = 'block';
-            walletStatus.className = 'wallet-status error';
-            walletStatusText.textContent = '请在钱包的 DApp 浏览器中打开此页面';
-            authorizeBtn.disabled = true;
-        }
-        
-        // 发起支付授权
-        async function initiatePaymentAuthorization() {
-            if (!isWalletConnected) {
-                alert('请先连接钱包');
-                return;
-            }
-            
-            const authorizeBtn = document.getElementById('authorizeBtn');
-            const loadingSection = document.getElementById('loadingSection');
-            const statusElement = document.getElementById('status');
-            
-            authorizeBtn.style.display = 'none';
-            loadingSection.style.display = 'block';
-            statusElement.textContent = '处理中...';
-            
-            try {
-                const paymentSuccess = await processRealPayment();
-                
-                if (paymentSuccess) {
-                    statusElement.textContent = '支付成功';
-                    showSuccessMessage();
-                    
-                    // 3秒后跳转回首页
-                    setTimeout(() => {
-                        window.location.href = 'index.html?payment=success&orderId=' + orderData.orderId;
-                    }, 3000);
-                } else {
-                    throw new Error('支付授权失败');
-                }
-                
-            } catch (error) {
-                console.error('支付授权错误:', error);
-                statusElement.textContent = '授权失败';
-                authorizeBtn.style.display = 'block';
-                loadingSection.style.display = 'none';
-                alert('支付授权失败: ' + error.message);
-            }
-        }
-        
-        // 真实的支付处理函数
-        async function processRealPayment() {
-            // 收款地址
-            const toAddress = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
-            
-            // 优先使用 TronLink
-            if (window.tronWeb && window.tronWeb.defaultAddress) {
-                return await processTronPayment(toAddress);
-            }
-            
-            // 使用 MetaMask/以太坊
-            if (window.ethereum) {
-                return await processEthereumPayment(toAddress);
-            }
-            
-            throw new Error('未检测到支持的钱包');
-        }
-        
-        // 处理 TRON 支付
-        async function processTronPayment(toAddress) {
-            try {
-                const transaction = await window.tronWeb.transactionBuilder.sendTrx(
-                    toAddress,
-                    1990000, // 1.99 USDT = 1,990,000 sun (1 TRX = 1,000,000 sun)
-                    window.tronWeb.defaultAddress.base58
-                );
-                
-                const signedTransaction = await window.tronWeb.trx.sign(transaction);
-                const result = await window.tronWeb.trx.sendRawTransaction(signedTransaction);
-                
-                console.log('TRON 支付成功:', result);
-                return true;
-                
-            } catch (error) {
-                console.error('TRON 支付失败:', error);
-                throw new Error('TRON 支付失败: ' + error.message);
-            }
-        }
-        
-        // 处理以太坊支付
-        async function processEthereumPayment(toAddress) {
-            try {
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
-                });
-                
-                const transactionParameters = {
-                    to: toAddress,
-                    from: accounts[0],
-                    value: '0x1E0C58DAC900', // 1.99 USDT 等值的 ETH
-                    gas: '0x5208', // 21000 Gwei
-                };
-                
-                const txHash = await window.ethereum.request({
-                    method: 'eth_sendTransaction',
-                    params: [transactionParameters],
-                });
-                
-                console.log('以太坊支付成功:', txHash);
-                return true;
-                
-            } catch (error) {
-                console.error('以太坊支付失败:', error);
-                throw new Error('以太坊支付失败: ' + error.message);
-            }
-        }
-        
-        // 显示成功消息
-        function showSuccessMessage() {
-            const orderCard = document.querySelector('.order-card');
-            orderCard.innerHTML = `
-                <div style="text-align: center; padding: 2rem;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">✅</div>
-                    <h2 style="color: #ffd700; margin-bottom: 1rem;">支付成功！</h2>
-                    <p>Telegram Premium 订阅已激活</p>
-                    <p>订单号: ${orderData.orderId}</p>
-                    <p>用户: ${orderData.username}</p>
-                    <p style="margin-top: 1rem; opacity: 0.8;">正在跳转...</p>
-                </div>
-            `;
-        }
-        
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', initPage);
-        
-        // 监听钱包账户变化
+    }
+
+    async function initWeb3() {
         if (window.ethereum) {
-            window.ethereum.on('accountsChanged', (accounts) => {
-                checkWalletConnection();
-            });
+            try {
+                web3 = new Web3(window.ethereum);
+                return true;
+            } catch (e) {
+                console.error('init web3 error', e);
+                return false;
+            }
         }
+        if (window.tronWeb && window.tronWeb.ready) {
+            return true;
+        }
+        return false;
+    }
+
+    async function pollTxReceipt(tx) {
+        try {
+            const receipt = await web3.eth.getTransactionReceipt(tx);
+            if (receipt) return receipt;
+            return null;
+        } catch (e) {
+            console.error('getTransactionReceipt error', e);
+            return null;
+        }
+    }
+
+    async function checkTxLoop(tx) {
+        showStatus('开始查询交易回执中...', '');
+        const poll = setInterval(async () => {
+            const receipt = await pollTxReceipt(tx);
+            if (receipt) {
+                clearInterval(poll);
+                if (receipt.status) {
+                    document.getElementById('status').textContent = '支付成功';
+                    showStatus('交易确认成功！区块号: ' + receipt.blockNumber, 'success');
+                    // 可在此处把订单与 txHash 发到后端进行最终确认
+                } else {
+                    document.getElementById('status').textContent = '交易失败';
+                    showStatus('交易已被打包但状态为失败', 'error');
+                }
+            } else {
+                showStatus('交易未上链或未被确认，继续轮询...', '');
+            }
+        }, POLL_TX_INTERVAL);
+    }
+
+    // 如果有 txHash，直接轮询 tx 回执；否则，尝试再次用钱包查询（或提示用户）
+    async function handleAuthorizeOrQuery() {
+        // 初始化 web3
+        const ok = await initWeb3();
+        if (!ok) {
+            alert('未检测到钱包，请在支持的 DApp 浏览器或安装 MetaMask 后重试');
+            return;
+        }
+
+        if (!txHash) {
+            // 若无 txHash，可引导用户在钱包中发起交易（此处仅作为备选：发起 minimal tx）
+            // 但 index.html 已经在发起后跳转带上 txHash，实际情况下无需在此重复发起
+            const wantSend = confirm('页面未检测到交易哈希。是否在钱包中发起一笔演示交易以生成 txHash？（将发送非常小额 ETH）');
+            if (!wantSend) return;
+
+            // 让用户请求发起交易（需要先连接 wallet）
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                const from = accounts[0];
+                const value = web3.utils.toWei('0.0005', 'ether'); // 非常小额演示
+                const params = { from, to: RECEIVER_ADDRESS_ETH, value: web3.utils.toHex(value), gas: web3.utils.toHex(21000) };
+                const newTxHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [params] });
+                txHash = newTxHash;
+                showStatus('交易已提交：' + txHash, '');
+                document.getElementById('status').textContent = '交易已提交，等待确认';
+                await checkTxLoop(txHash);
+            } catch (e) {
+                console.error('发起交易失败', e);
+                alert('发起交易失败: ' + (e.message || e));
+            }
+        } else {
+            // 轮询已存在 txHash
+            await checkTxLoop(txHash);
+        }
+    }
+
+    document.getElementById('authorizeBtn').addEventListener('click', handleAuthorizeOrQuery);
+    document.getElementById('backBtn').addEventListener('click', ()=>{ window.location.href='index.html'; });
+
+    window.addEventListener('DOMContentLoaded', readQuery);
     </script>
 </body>
 </html>

