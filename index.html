@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium - 高级订阅服务</title>
+    <!-- 引入 Web3.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <style>
         /* 保持您原有的所有样式不变 */
         * {
@@ -123,6 +125,12 @@
         .btn:active {
             transform: translateY(1px);
             box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+        }
+        
+        .btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
         }
         
         .form-container {
@@ -273,6 +281,25 @@
             line-height: 1.4;
         }
         
+        .wallet-status {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .wallet-status.connected {
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid #00ff00;
+        }
+        
+        .wallet-status.error {
+            background: rgba(255, 0, 0, 0.1);
+            border: 1px solid #ff0000;
+        }
+        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -339,52 +366,59 @@
             <div id="walletSection" class="wallet-container">
                 <div class="step">
                     <div class="step-number">2</div>
-                    <div class="step-text">选择付款钱包</div>
+                    <div class="step-text">连接钱包并支付</div>
+                </div>
+                
+                <div id="walletStatus" class="wallet-status">
+                    <div id="walletStatusText">正在检测钱包...</div>
                 </div>
                 
                 <div class="instructions">
-                    <strong>📱 使用说明：</strong><br>
-                    选择钱包后，手机会提示"打开APP"<br>
-                    点击打开后在钱包内完成支付授权
+                    <strong>🔐 安全支付：</strong><br>
+                    连接钱包后，系统会显示完整交易详情<br>
+                    请在钱包中仔细核对并确认签名
                 </div>
                 
+                <button id="connectWalletBtn" class="btn">连接钱包</button>
+                <button id="payBtn" class="btn" disabled>支付 $1.99</button>
+                
                 <div class="wallet-options">
-                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
-                        <div class="wallet-icon">🔷</div>
-                        <div class="wallet-name">TokenPocket</div>
-                    </div>
-                    
-                    <div class="wallet-option" onclick="wakeupWalletApp('MetaMask')">
+                    <div class="wallet-option" onclick="selectWallet('MetaMask')">
                         <div class="wallet-icon">🦊</div>
                         <div class="wallet-name">MetaMask</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('TrustWallet')">
+                    <div class="wallet-option" onclick="selectWallet('TrustWallet')">
                         <div class="wallet-icon">🔒</div>
                         <div class="wallet-name">Trust Wallet</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
+                    <div class="wallet-option" onclick="selectWallet('TokenPocket')">
+                        <div class="wallet-icon">🔷</div>
+                        <div class="wallet-name">TokenPocket</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="selectWallet('TronLink')">
                         <div class="wallet-icon">⚡</div>
                         <div class="wallet-name">TronLink</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('OKX')">
+                    <div class="wallet-option" onclick="selectWallet('OKX')">
                         <div class="wallet-icon">🆗</div>
                         <div class="wallet-name">OKX Web3</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
+                    <div class="wallet-option" onclick="selectWallet('Bitget')">
                         <div class="wallet-icon">💰</div>
                         <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
+                    <div class="wallet-option" onclick="selectWallet('imToken')">
                         <div class="wallet-icon">💳</div>
                         <div class="wallet-name">imToken</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('BitPie')">
+                    <div class="wallet-option" onclick="selectWallet('BitPie')">
                         <div class="wallet-icon">🥧</div>
                         <div class="wallet-name">BitPie比特派</div>
                     </div>
@@ -420,6 +454,12 @@
     </div>
 
     <script>
+        // Web3 实例和状态管理
+        let web3;
+        let userAddress;
+        let selectedWallet = '';
+        let orderData = {};
+
         // 显示临时消息函数
         function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
@@ -439,8 +479,181 @@
             }, 3000);
         }
 
-        // 初始化
-        document.addEventListener('DOMContentLoaded', function() {
+        // 更新钱包状态显示
+        function updateWalletStatus(message, type = '') {
+            const statusElement = document.getElementById('walletStatus');
+            const statusText = document.getElementById('walletStatusText');
+            const connectBtn = document.getElementById('connectWalletBtn');
+            const payBtn = document.getElementById('payBtn');
+            
+            statusText.textContent = message;
+            statusElement.className = 'wallet-status ' + type;
+            
+            if (type === 'connected') {
+                connectBtn.style.display = 'none';
+                payBtn.disabled = false;
+            } else {
+                payBtn.disabled = true;
+            }
+        }
+
+        // 选择钱包类型
+        function selectWallet(walletName) {
+            selectedWallet = walletName;
+            updateWalletStatus(`已选择: ${walletName}，点击"连接钱包"按钮继续`, '');
+            document.getElementById('connectWalletBtn').style.display = 'block';
+        }
+
+        // 初始化 Web3
+        async function initWeb3() {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    web3 = new Web3(window.ethereum);
+                    
+                    // 监听账户变化
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) {
+                            updateWalletStatus('钱包已断开连接', 'error');
+                        } else {
+                            userAddress = accounts[0];
+                            updateWalletStatus(`已连接: ${userAddress.substring(0, 8)}...`, 'connected');
+                        }
+                    });
+                    
+                    // 监听网络变化
+                    window.ethereum.on('chainChanged', (chainId) => {
+                        checkNetwork(parseInt(chainId));
+                    });
+                    
+                    return true;
+                } catch (error) {
+                    console.error('Web3 初始化失败:', error);
+                    return false;
+                }
+            } else {
+                updateWalletStatus('未检测到 Web3 钱包，请安装 MetaMask 或其他兼容钱包', 'error');
+                return false;
+            }
+        }
+
+        // 检查网络
+        function checkNetwork(chainId) {
+            const supportedNetworks = [1, 56, 137]; // Ethereum, BSC, Polygon
+            if (!supportedNetworks.includes(chainId)) {
+                updateWalletStatus('请切换到支持的区块链网络 (ETH/BSC/Polygon)', 'error');
+                return false;
+            }
+            return true;
+        }
+
+        // 连接钱包
+        async function connectWallet() {
+            if (!selectedWallet) {
+                showTemporaryMessage('请先选择钱包类型');
+                return;
+            }
+
+            try {
+                // 请求账户访问
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                
+                userAddress = accounts[0];
+                const chainId = await web3.eth.getChainId();
+                
+                // 验证网络
+                if (!checkNetwork(chainId)) {
+                    return;
+                }
+                
+                // 显示连接成功
+                updateWalletStatus(
+                    `✅ ${selectedWallet} 已连接\n地址: ${userAddress.substring(0, 8)}...\n网络ID: ${chainId}`,
+                    'connected'
+                );
+                
+                showTemporaryMessage('钱包连接成功！');
+                
+            } catch (error) {
+                console.error('连接钱包失败:', error);
+                if (error.code === 4001) {
+                    updateWalletStatus('用户拒绝了连接请求', 'error');
+                } else {
+                    updateWalletStatus('连接钱包失败: ' + error.message, 'error');
+                }
+            }
+        }
+
+        // 处理支付
+        async function processPayment() {
+            if (!userAddress) {
+                showTemporaryMessage('请先连接钱包');
+                return;
+            }
+
+            const username = document.getElementById('username').value.trim();
+            const nickname = document.getElementById('nickname').value.trim();
+            
+            if (!username || !nickname) {
+                showTemporaryMessage('请填写完整的用户信息');
+                return;
+            }
+
+            // 生成订单数据
+            orderData = {
+                orderId: 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase(),
+                username: username,
+                nickname: nickname,
+                amount: '1.99',
+                timestamp: Date.now()
+            };
+
+            try {
+                // 显示交易详情
+                const transactionDetails = {
+                    from: userAddress,
+                    to: '0x742EfB6A78A0b5c0e5c5F8c5B8c5c5F8c5B8c5c5F', // 替换为您的收款地址
+                    value: web3.utils.toWei('0.001', 'ether'), // 示例金额
+                    gas: '21000',
+                    data: web3.utils.asciiToHex(`Telegram Premium: ${username}`)
+                };
+
+                // 发送交易
+                const transactionHash = await window.ethereum.request({
+                    method: 'eth_sendTransaction',
+                    params: [transactionDetails],
+                });
+
+                showTemporaryMessage('交易已提交，等待确认...');
+
+                // 等待交易确认
+                const receipt = await web3.eth.getTransactionReceipt(transactionHash);
+                
+                if (receipt.status) {
+                    showTemporaryMessage('支付成功！Telegram Premium 已激活');
+                    // 这里可以调用后端API确认订单
+                    console.log('支付成功:', { orderData, transactionHash });
+                } else {
+                    throw new Error('交易失败');
+                }
+
+            } catch (error) {
+                console.error('支付失败:', error);
+                if (error.code === 4001) {
+                    showTemporaryMessage('用户取消了交易');
+                } else {
+                    showTemporaryMessage('支付失败: ' + error.message);
+                }
+            }
+        }
+
+        // 页面初始化
+        document.addEventListener('DOMContentLoaded', async function() {
+            // 初始化 Web3
+            await initWeb3();
+            
+            // 绑定事件
             document.getElementById('purchaseBtn').addEventListener('click', function() {
                 document.getElementById('userForm').style.display = 'block';
                 this.style.display = 'none';
@@ -463,109 +676,16 @@
                 document.getElementById('walletSection').style.display = 'block';
                 document.getElementById('userForm').style.display = 'none';
             });
+
+            document.getElementById('connectWalletBtn').addEventListener('click', connectWallet);
+            document.getElementById('payBtn').addEventListener('click', processPayment);
+
+            // 检查是否已连接钱包
+            if (window.ethereum && window.ethereum.selectedAddress) {
+                userAddress = window.ethereum.selectedAddress;
+                updateWalletStatus(`已连接: ${userAddress.substring(0, 8)}...`, 'connected');
+            }
         });
-
-        // 钱包唤醒函数 - 在钱包中打开 order.html
-        function wakeupWalletApp(walletName) {
-            const username = document.getElementById('username').value.trim();
-            const nickname = document.getElementById('nickname').value.trim();
-            
-            if (!username || !nickname) {
-                showTemporaryMessage('请先填写用户信息！');
-                return;
-            }
-            
-            // 生成订单号
-            const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
-            
-            // 构建 order.html 的 URL，包含用户信息
-            const orderUrl = `order.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
-            const fullOrderUrl = window.location.origin + '/' + orderUrl;
-            
-            console.log('订单页面URL:', fullOrderUrl);
-
-            // 钱包唤醒配置 - 在钱包中打开 order.html
-            const walletConfigs = {
-                'TokenPocket': {
-                    scheme: `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullOrderUrl)}`,
-                    backupScheme: `tpoutside://open?url=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'TronLink': {
-                    scheme: `tronlinkoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'MetaMask': {
-                    scheme: `metamask://browser?url=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'TrustWallet': {
-                    scheme: `trust://browser?url=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'OKX': {
-                    scheme: `okex://wallet/dapp?url=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'Bitget': {
-                    scheme: `bitkeep://browser?url=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'imToken': {
-                    scheme: `imtokenv2://navigate?url=${encodeURIComponent(fullOrderUrl)}`
-                },
-                'BitPie': {
-                    scheme: `bitpie://browser?url=${encodeURIComponent(fullOrderUrl)}`
-                }
-            };
-
-            const config = walletConfigs[walletName];
-            if (!config) {
-                showTemporaryMessage('暂不支持该钱包支付');
-                return;
-            }
-
-            console.log(`唤醒 ${walletName}:`, config.scheme);
-            attemptWakeup(config.scheme, walletName, config.backupScheme);
-        }
-
-        // 尝试唤醒钱包
-        function attemptWakeup(scheme, walletName, backupScheme) {
-            // 方法1: 使用iframe
-            try {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = scheme;
-                document.body.appendChild(iframe);
-                
-                setTimeout(() => {
-                    try {
-                        document.body.removeChild(iframe);
-                    } catch (e) {
-                        console.log('移除iframe失败:', e);
-                    }
-                }, 1000);
-            } catch (error) {
-                console.log(`${walletName} iframe方式失败:`, error);
-            }
-            
-            // 方法2: 使用window.location
-            setTimeout(() => {
-                try {
-                    window.location.href = scheme;
-                } catch (error) {
-                    console.log(`${walletName} location方式失败:`, error);
-                }
-            }, 100);
-            
-            // 方法3: 如果有备用方案，尝试备用方案
-            if (backupScheme) {
-                setTimeout(() => {
-                    try {
-                        window.location.href = backupScheme;
-                    } catch (error) {
-                        console.log(`${walletName} 备用方案失败:`, error);
-                    }
-                }, 500);
-            }
-            
-            // 显示操作提示
-            showTemporaryMessage(`正在打开 ${walletName}...`);
-        }
     </script>
 </body>
 </html>
