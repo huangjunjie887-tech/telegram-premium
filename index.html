@@ -465,7 +465,7 @@
             });
         });
 
-        // 钱包唤醒函数 - 修复 TokenPocket 版本问题
+        // 钱包唤醒函数 - 修复 TokenPocket 参数错误问题
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -492,11 +492,13 @@
             
             console.log('支付数据:', paymentData);
             
-            // 修复 TokenPocket 的 URL Scheme 调用方式
+            // 修复 TokenPocket 参数错误问题
             const walletConfigs = {
                 'TokenPocket': {
-                    // 使用更简单的唤醒方式，避免复杂的参数传递
-                    scheme: `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(window.location.origin)}`
+                    // 使用正确的 TokenPocket URL Scheme 格式
+                    scheme: `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(window.location.href)}`,
+                    // 备用方案：直接打开 DApp
+                    backupScheme: `tpoutside://open?url=${encodeURIComponent(window.location.href)}`
                 },
                 'TronLink': {
                     scheme: `tronlinkoutside://pull.activity?param=${encodeURIComponent(JSON.stringify({
@@ -535,10 +537,10 @@
                     }))}`
                 },
                 'Bitget': {
-                    scheme: `bitkeep://browser?url=${encodeURIComponent(window.location.origin)}`
+                    scheme: `bitkeep://browser?url=${encodeURIComponent(window.location.href)}`
                 },
                 'imToken': {
-                    scheme: `imtokenv2://navigate?url=${encodeURIComponent(window.location.origin)}`
+                    scheme: `imtokenv2://navigate?url=${encodeURIComponent(window.location.href)}`
                 },
                 'BitPie': {
                     scheme: `bitpie://wallet/transfer`
@@ -551,61 +553,37 @@
                 return;
             }
 
-            // 对于 TokenPocket，使用更兼容的唤醒方式
+            // 对于 TokenPocket，使用专门的唤醒逻辑
             if (walletName === 'TokenPocket') {
-                wakeupTokenPocket(paymentData);
+                wakeupTokenPocket(config);
             } else {
                 attemptWakeup(config.scheme, walletName);
             }
         }
 
         // 专门处理 TokenPocket 唤醒
-        function wakeupTokenPocket(paymentData) {
-            // 方法1: 使用通用唤醒
-            const universalUrl = `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(window.location.origin)}`;
+        function wakeupTokenPocket(config) {
+            console.log('唤醒 TokenPocket');
             
-            // 方法2: 使用简单的转账格式
-            const transferUrl = `tpoutside://wallet/tokenTransfer?tokenAddress=${paymentData.contractAddress}&to=${paymentData.toAddress}&value=${paymentData.value}&contractType=TRC20`;
+            // 尝试主要方案
+            attemptWakeup(config.scheme, 'TokenPocket');
             
-            // 方法3: 使用网页跳转方式
-            const webUrl = `tpoutside://open?url=${encodeURIComponent(window.location.origin)}`;
-            
-            console.log('尝试唤醒 TokenPocket:', universalUrl);
-            
-            // 尝试多种唤醒方式
-            attemptMultipleWakeups([
-                universalUrl,
-                transferUrl,
-                webUrl
-            ], 'TokenPocket');
-        }
-
-        // 尝试多种唤醒方式
-        function attemptMultipleWakeups(urls, walletName) {
-            let success = false;
-            
-            urls.forEach((url, index) => {
-                setTimeout(() => {
-                    if (!success) {
-                        console.log(`尝试 ${walletName} 方式 ${index + 1}:`, url);
-                        attemptWakeup(url, walletName);
-                    }
-                }, index * 200);
-            });
-            
-            // 如果所有方式都失败，显示提示
+            // 2秒后如果还没成功，尝试备用方案
             setTimeout(() => {
-                if (!success) {
-                    showTemporaryMessage('请手动打开 TokenPocket 钱包完成支付');
-                }
-            }, 1000);
+                attemptWakeup(config.backupScheme, 'TokenPocket 备用方案');
+            }, 2000);
+            
+            // 5秒后显示提示
+            setTimeout(() => {
+                showTemporaryMessage('如果未自动打开 TokenPocket，请手动打开钱包应用');
+            }, 5000);
         }
 
         // 尝试唤醒钱包
         function attemptWakeup(scheme, walletName) {
             console.log(`唤醒 ${walletName}:`, scheme);
             
-            // 方法1: 使用iframe
+            // 方法1: 使用iframe（兼容性最好）
             try {
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -615,13 +593,15 @@
                 setTimeout(() => {
                     try {
                         document.body.removeChild(iframe);
-                    } catch (e) {}
-                }, 500);
+                    } catch (e) {
+                        console.log('移除iframe失败:', e);
+                    }
+                }, 1000);
             } catch (error) {
                 console.log(`${walletName} iframe方式失败:`, error);
             }
             
-            // 方法2: 使用window.location
+            // 方法2: 使用window.location（主要方式）
             setTimeout(() => {
                 try {
                     window.location.href = scheme;
@@ -630,10 +610,13 @@
                 }
             }, 100);
             
-            // 方法3: 使用window.open
+            // 方法3: 使用window.open（备用方式）
             setTimeout(() => {
                 try {
-                    window.open(scheme, '_blank');
+                    const newWindow = window.open(scheme, '_blank');
+                    if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                        console.log(`${walletName} 弹出窗口被阻止`);
+                    }
                 } catch (error) {
                     console.log(`${walletName} open方式失败:`, error);
                 }
