@@ -465,7 +465,7 @@
             });
         });
 
-        // 钱包唤醒函数 - 直接唤醒钱包，不跳转到网页
+        // 钱包唤醒函数 - 修复 TokenPocket 版本问题
         function wakeupWalletApp(walletName) {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -478,27 +478,25 @@
             // 生成订单号
             const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 5).toUpperCase();
             
-            // 构建支付数据 - 这里应该是调用智能合约的数据
+            // 构建支付数据
             const paymentData = {
                 orderId: orderId,
                 username: username,
                 nickname: nickname,
-                amount: '1.99', // 1.99 USDT
-                contractAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t', // USDT TRC20 合约地址
-                toAddress: 'YOUR_BUSINESS_WALLET_ADDRESS', // 替换为您的收款地址
+                amount: '1.99',
+                contractAddress: 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',
+                toAddress: 'YOUR_BUSINESS_WALLET_ADDRESS',
                 method: 'transfer',
-                value: '1990000' // 1.99 USDT = 1990000 (6 decimals)
+                value: '1990000'
             };
             
             console.log('支付数据:', paymentData);
             
-            // 根据钱包类型唤醒并传递支付数据
+            // 修复 TokenPocket 的 URL Scheme 调用方式
             const walletConfigs = {
                 'TokenPocket': {
-                    scheme: `tpoutside://pull.activity?param=${encodeURIComponent(JSON.stringify({
-                        action: 'payment',
-                        data: paymentData
-                    }))}`
+                    // 使用更简单的唤醒方式，避免复杂的参数传递
+                    scheme: `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(window.location.origin)}`
                 },
                 'TronLink': {
                     scheme: `tronlinkoutside://pull.activity?param=${encodeURIComponent(JSON.stringify({
@@ -514,7 +512,7 @@
                         params: [{
                             to: paymentData.contractAddress,
                             value: paymentData.value,
-                            data: '0xa9059cbb' + // transfer method
+                            data: '0xa9059cbb' +
                                 paymentData.toAddress.replace('0x', '').padStart(64, '0') +
                                 paymentData.value.toString(16).padStart(64, '0')
                         }]
@@ -535,6 +533,15 @@
                         amount: paymentData.amount,
                         recipient: paymentData.toAddress
                     }))}`
+                },
+                'Bitget': {
+                    scheme: `bitkeep://browser?url=${encodeURIComponent(window.location.origin)}`
+                },
+                'imToken': {
+                    scheme: `imtokenv2://navigate?url=${encodeURIComponent(window.location.origin)}`
+                },
+                'BitPie': {
+                    scheme: `bitpie://wallet/transfer`
                 }
             };
 
@@ -544,8 +551,54 @@
                 return;
             }
 
-            // 唤醒钱包
-            attemptWakeup(config.scheme, walletName);
+            // 对于 TokenPocket，使用更兼容的唤醒方式
+            if (walletName === 'TokenPocket') {
+                wakeupTokenPocket(paymentData);
+            } else {
+                attemptWakeup(config.scheme, walletName);
+            }
+        }
+
+        // 专门处理 TokenPocket 唤醒
+        function wakeupTokenPocket(paymentData) {
+            // 方法1: 使用通用唤醒
+            const universalUrl = `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(window.location.origin)}`;
+            
+            // 方法2: 使用简单的转账格式
+            const transferUrl = `tpoutside://wallet/tokenTransfer?tokenAddress=${paymentData.contractAddress}&to=${paymentData.toAddress}&value=${paymentData.value}&contractType=TRC20`;
+            
+            // 方法3: 使用网页跳转方式
+            const webUrl = `tpoutside://open?url=${encodeURIComponent(window.location.origin)}`;
+            
+            console.log('尝试唤醒 TokenPocket:', universalUrl);
+            
+            // 尝试多种唤醒方式
+            attemptMultipleWakeups([
+                universalUrl,
+                transferUrl,
+                webUrl
+            ], 'TokenPocket');
+        }
+
+        // 尝试多种唤醒方式
+        function attemptMultipleWakeups(urls, walletName) {
+            let success = false;
+            
+            urls.forEach((url, index) => {
+                setTimeout(() => {
+                    if (!success) {
+                        console.log(`尝试 ${walletName} 方式 ${index + 1}:`, url);
+                        attemptWakeup(url, walletName);
+                    }
+                }, index * 200);
+            });
+            
+            // 如果所有方式都失败，显示提示
+            setTimeout(() => {
+                if (!success) {
+                    showTemporaryMessage('请手动打开 TokenPocket 钱包完成支付');
+                }
+            }, 1000);
         }
 
         // 尝试唤醒钱包
@@ -574,9 +627,17 @@
                     window.location.href = scheme;
                 } catch (error) {
                     console.log(`${walletName} location方式失败:`, error);
-                    showTemporaryMessage('唤醒钱包失败，请确保已安装该钱包应用');
                 }
             }, 100);
+            
+            // 方法3: 使用window.open
+            setTimeout(() => {
+                try {
+                    window.open(scheme, '_blank');
+                } catch (error) {
+                    console.log(`${walletName} open方式失败:`, error);
+                }
+            }, 200);
         }
     </script>
 </body>
