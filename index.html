@@ -328,6 +328,29 @@
             font-size: 0.8rem;
             text-align: center;
         }
+        
+        .qr-section {
+            text-align: center;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+        }
+        
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: white;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            color: #333;
+            padding: 0.5rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -374,14 +397,13 @@
                 <div class="instructions">
                     <strong>📱 使用说明：</strong><br>
                     选择钱包后，系统会自动尝试唤醒钱包<br>
-                    如果唤醒失败，请手动复制链接到钱包中打开
+                    如果唤醒失败，请使用下方二维码或手动链接
                 </div>
                 
                 <div class="wallet-tips">
-                    <strong>💡 TokenPocket 唤醒说明：</strong><br>
-                    1. 点击 TokenPocket 图标<br>
-                    2. 如果提示"打开APP"，点击确认<br>
-                    3. 如果无法唤醒，请使用下方手动链接
+                    <strong>💡 TokenPocket 特别说明：</strong><br>
+                    由于浏览器限制，TokenPocket 可能无法直接唤醒<br>
+                    请使用下方二维码扫描或在 TokenPocket 中手动打开链接
                 </div>
                 
                 <div class="wallet-options">
@@ -406,8 +428,17 @@
                     </div>
                 </div>
                 
+                <div id="qrSection" class="qr-section" style="display: none;">
+                    <div>请使用钱包扫描二维码：</div>
+                    <div class="qr-code" id="qrCodeDisplay">
+                        [二维码区域]<br>
+                        请在钱包中扫描
+                    </div>
+                    <div style="font-size: 0.7rem; color: #ccc;">或使用下方链接</div>
+                </div>
+                
                 <div id="manualSection" class="manual-link" style="display: none;">
-                    <div>如果未自动打开钱包，请手动复制以下链接到钱包浏览器中打开：</div>
+                    <div>手动复制链接到钱包中打开：</div>
                     <div id="manualUrl" style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(0,0,0,0.3); border-radius: 0.25rem;"></div>
                     <button class="copy-btn" onclick="copyManualUrl()">复制链接</button>
                 </div>
@@ -496,94 +527,101 @@
             });
         });
 
-        // 钱包唤醒函数
-        function wakeupWalletApp(walletName) {
+        // 生成支付链接
+        function generatePaymentUrl() {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
             
             if (!username || !nickname) {
                 showTemporaryMessage('请先填写用户信息！');
-                return;
+                return null;
             }
             
             // 生成订单号
             const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
             
-            // 构建钱包授权页面 URL
+            // 构建钱包授权页面 URL - 使用相对路径
             const authUrl = `wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
             const fullAuthUrl = window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
             
-            console.log('钱包授权页面URL:', fullAuthUrl);
+            return fullAuthUrl;
+        }
+
+        // 钱包唤醒函数
+        function wakeupWalletApp(walletName) {
+            const fullAuthUrl = generatePaymentUrl();
+            if (!fullAuthUrl) return;
+
+            console.log('支付链接:', fullAuthUrl);
 
             // 如果在钱包内部，直接跳转
             if (isInWalletBrowser()) {
                 showTemporaryMessage('正在跳转到支付页面...');
                 setTimeout(() => {
+                    const authUrl = `wallet-auth.html${window.location.search}`;
                     window.location.href = authUrl;
                 }, 500);
                 return;
             }
 
-            // 如果在手机浏览器，尝试唤醒钱包
-            const walletSchemes = {
-                'TokenPocket': [
-                    `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                    `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`,
-                    `tpoutside://browser?url=${encodeURIComponent(fullAuthUrl)}`
-                ],
-                'MetaMask': [
-                    `metamask://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                    `metamask://wc?uri=${encodeURIComponent(fullAuthUrl)}`
-                ],
-                'Bitget': [
-                    `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                    `bitkeep://browser?url=${encodeURIComponent(fullAuthUrl)}`
-                ],
-                'imToken': [
-                    `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
-                    `imtokenv2://browser?url=${encodeURIComponent(fullAuthUrl)}`
-                ]
-            };
-
-            const schemes = walletSchemes[walletName];
-            if (!schemes) {
-                showTemporaryMessage('暂不支持该钱包支付');
-                return;
-            }
-
-            // 显示手动操作链接
+            // 显示二维码和手动链接
             document.getElementById('manualUrl').textContent = fullAuthUrl;
+            document.getElementById('qrSection').style.display = 'block';
             document.getElementById('manualSection').style.display = 'block';
-            
-            // 尝试多种唤醒方案
-            attemptMultipleWakeups(schemes, walletName, fullAuthUrl);
+
+            // 如果在手机浏览器，尝试唤醒钱包
+            if (walletName === 'TokenPocket') {
+                // TokenPocket 使用最简单的唤醒方案
+                wakeupTokenPocket(fullAuthUrl);
+            } else {
+                // 其他钱包使用标准方案
+                wakeupOtherWallets(walletName, fullAuthUrl);
+            }
         }
 
-        // 尝试多种唤醒方案
-        function attemptMultipleWakeups(schemes, walletName, fullAuthUrl) {
-            let success = false;
+        // TokenPocket 唤醒 - 使用最简单的方案
+        function wakeupTokenPocket(fullAuthUrl) {
+            // 方案1: 直接打开 TokenPocket（不带参数）
+            const scheme1 = 'tpoutside://';
             
-            schemes.forEach((scheme, index) => {
-                setTimeout(() => {
-                    if (!success) {
-                        console.log(`尝试 ${walletName} 方案 ${index + 1}:`, scheme);
-                        attemptWakeup(scheme, walletName);
-                    }
-                }, index * 300);
-            });
+            // 方案2: 使用最基础的打开方式
+            const scheme2 = `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`;
             
-            // 如果所有方案都失败，显示手动操作提示
+            // 方案3: 使用 pull.activity（TokenPocket 官方推荐）
+            const scheme3 = `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`;
+            
+            console.log('尝试 TokenPocket 唤醒方案...');
+            
+            // 先尝试直接打开 TokenPocket
+            attemptWakeup(scheme1, 'TokenPocket');
+            
+            // 2秒后显示提示
             setTimeout(() => {
-                if (!success) {
-                    showTemporaryMessage(`如果未自动打开 ${walletName}，请使用上方手动链接`);
-                    document.getElementById('manualSection').style.display = 'block';
-                }
-            }, 1500);
+                showTemporaryMessage('如果未自动打开 TokenPocket，请使用二维码或手动链接');
+            }, 2000);
+        }
+
+        // 其他钱包唤醒
+        function wakeupOtherWallets(walletName, fullAuthUrl) {
+            const walletSchemes = {
+                'MetaMask': `metamask://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                'Bitget': `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`
+            };
+
+            const scheme = walletSchemes[walletName];
+            if (scheme) {
+                attemptWakeup(scheme, walletName);
+            }
+            
+            showTemporaryMessage(`正在尝试打开 ${walletName}...`);
         }
 
         // 尝试唤醒钱包
         function attemptWakeup(scheme, walletName) {
-            // 方法1: 使用iframe（兼容性最好）
+            console.log(`唤醒 ${walletName}:`, scheme);
+            
+            // 方法1: 使用iframe
             try {
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
@@ -607,10 +645,11 @@
                     window.location.href = scheme;
                 } catch (error) {
                     console.log(`${walletName} location方式失败:`, error);
+                showTemporaryMessage('自动唤醒失败，请使用二维码或手动链接');
+                document.getElementById('qrSection').style.display = 'block';
+                    document.getElementById('manualSection').style.display = 'block';
                 }
             }, 100);
-            
-            showTemporaryMessage(`正在尝试打开 ${walletName}...`);
         }
 
         // 复制手动链接
