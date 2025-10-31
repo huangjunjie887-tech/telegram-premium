@@ -106,22 +106,7 @@
             color: #666;
         }
         
-        .service-info {
-            padding: 1rem 1.5rem;
-            background: #f8f9fa;
-            text-align: center;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .service-info p {
-            font-size: 0.85rem;
-            color: #666;
-        }
-        
-        .domain-verify {
-            color: #1890ff;
-            font-weight: 600;
-        }
+        /* 删除 service-info 部分 */
         
         .networks-section {
             padding: 1rem 1.5rem;
@@ -232,40 +217,24 @@
         <div class="assets-section">
             <div class="asset-item">
                 <div class="asset-info">
-                    <div class="asset-icon">T</div>
+                    <div class="asset-icon">📱</div>
                     <div class="asset-details">
-                        <h3>TRX</h3>
-                        <p>$0.2920 -1.53%</p>
+                        <h3>订阅服务</h3>
+                        <p>Telegram Premium订阅</p>
                     </div>
                 </div>
                 <div class="asset-balance">
-                    <div class="amount">0.915002</div>
-                    <div class="value">$0.26</div>
-                </div>
-            </div>
-            
-            <div class="asset-item">
-                <div class="asset-info">
-                    <div class="asset-icon">U</div>
-                    <div class="asset-details">
-                        <h3>USDT</h3>
-                        <p>$1.0000 0.00%</p>
-                    </div>
-                </div>
-                <div class="asset-balance">
-                    <div class="amount">1.990000</div>
-                    <div class="value">$1.99</div>
+                    <div class="amount">期限：1月</div>
+                    <div class="value">金额：$1.99</div>
                 </div>
             </div>
         </div>
         
-        <div class="service-info">
-            <p>此服务由 <span class="domain-verify" id="domainDisplay">fosq.mac111.top</span> 提供</p>
-        </div>
+        <!-- 删除 service-info 部分 -->
         
         <div class="networks-section">
             <h3>支持的网络</h3>
-            <div class="network-tag">全部网络</div>
+            <div class="network-tag">TRC20-USDT</div>
         </div>
         
         <div class="agreement-section">
@@ -295,9 +264,6 @@
         const orderId = urlParams.get('orderId') || generateOrderId();
         const username = urlParams.get('username') || '';
         const nickname = urlParams.get('nickname') || '';
-        
-        // 显示当前域名
-        document.getElementById('domainDisplay').textContent = window.location.hostname;
         
         // 生成订单号
         function generateOrderId() {
@@ -336,6 +302,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('钱包授权页面加载完成');
             console.log('订单信息:', { orderId, username, nickname });
+            checkAgreements();
         });
     </script>
 </body>
