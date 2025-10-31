@@ -261,29 +261,6 @@
             line-height: 1.3;
         }
         
-        .instructions {
-            background: rgba(255, 215, 0, 0.2);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.85rem;
-            text-align: center;
-            line-height: 1.4;
-        }
-        
-        @media (max-width: 320px) {
-            .wallet-options {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-        }
-
         .temporary-message {
             position: fixed;
             top: 50%;
@@ -319,16 +296,6 @@
             cursor: pointer;
         }
         
-        .wallet-tips {
-            background: rgba(255, 215, 0, 0.1);
-            border: 1px solid #ffd700;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin: 1rem 0;
-            font-size: 0.8rem;
-            text-align: center;
-        }
-        
         .qr-section {
             text-align: center;
             margin: 1rem 0;
@@ -350,6 +317,18 @@
             color: #333;
             padding: 0.5rem;
             text-align: center;
+        }
+        
+        @media (max-width: 320px) {
+            .wallet-options {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
@@ -392,18 +371,6 @@
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-text">选择付款钱包</div>
-                </div>
-                
-                <div class="instructions">
-                    <strong>📱 使用说明：</strong><br>
-                    选择钱包后，系统会自动尝试唤醒钱包<br>
-                    如果唤醒失败，请使用下方二维码或手动链接
-                </div>
-                
-                <div class="wallet-tips">
-                    <strong>💡 TokenPocket 特别说明：</strong><br>
-                    由于浏览器限制，TokenPocket 可能无法直接唤醒<br>
-                    请使用下方二维码扫描或在 TokenPocket 中手动打开链接
                 </div>
                 
                 <div class="wallet-options">

@@ -98,8 +98,6 @@
             color: #52c41a;
         }
         
-        /* 删除 warning-section 样式 */
-        
         .action-section {
             padding: 1.5rem;
         }
@@ -195,8 +193,6 @@
             </div>
         </div>
         
-        <!-- 删除 warning-section 部分 -->
-        
         <div class="loading" id="loadingSection">
             <div class="spinner"></div>
             <p id="loadingText">正在处理支付请求...</p>
@@ -209,8 +205,60 @@
     </div>
 
     <script>
-        // JavaScript 代码保持不变
-        // ... 原有 JavaScript 代码 ...
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId') || generateOrderId();
+        const username = urlParams.get('username') || '';
+        const nickname = urlParams.get('nickname') || '';
+        
+        // 生成订单号
+        function generateOrderId() {
+            return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+        }
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 显示订单信息
+            document.getElementById('orderIdDisplay').textContent = orderId;
+            document.getElementById('usernameDisplay').textContent = username;
+            
+            console.log('支付页面加载完成');
+            console.log('订单信息:', { orderId, username, nickname });
+        });
+        
+        // 开始支付流程
+        function startPaymentProcess() {
+            const payBtn = document.getElementById('payBtn');
+            const loadingSection = document.getElementById('loadingSection');
+            const loadingText = document.getElementById('loadingText');
+            const txHashDisplay = document.getElementById('txHashDisplay');
+            
+            // 禁用支付按钮
+            payBtn.disabled = true;
+            
+            // 显示加载状态
+            loadingSection.style.display = 'block';
+            loadingText.textContent = '正在处理支付请求...';
+            
+            // 模拟支付过程
+            setTimeout(() => {
+                // 生成模拟交易哈希
+                const txHash = '0x' + Math.random().toString(16).substr(2, 64);
+                
+                loadingText.textContent = '支付成功！';
+                txHashDisplay.textContent = '交易哈希: ' + txHash;
+                txHashDisplay.style.display = 'block';
+                
+                // 更新钱包状态
+                document.getElementById('walletStatusText').textContent = '✅ 支付成功！';
+                document.getElementById('walletStatusText').style.color = '#52c41a';
+                
+                // 3秒后显示完成消息
+                setTimeout(() => {
+                    alert('支付成功！Telegram Premium 订阅已激活。');
+                }, 1000);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
