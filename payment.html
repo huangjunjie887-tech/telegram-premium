@@ -19,6 +19,20 @@
             min-height: 100vh;
             padding: 1rem;
             line-height: 1.5;
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        @media (max-width: 480px) {
+            body {
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            body {
+                font-size: 14px;
+            }
         }
         
         .payment-container {
@@ -96,20 +110,6 @@
             text-align: center;
             font-size: 0.9rem;
             color: #52c41a;
-        }
-        
-        .warning-section {
-            background: #fff7e6;
-            border: 1px solid #ffd591;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 1.5rem;
-            text-align: center;
-        }
-        
-        .warning-text {
-            font-size: 0.85rem;
-            color: #d46b08;
         }
         
         .action-section {
@@ -264,24 +264,12 @@
                 <span class="info-value">Telegram Premium 月费订阅</span>
             </div>
             <div class="info-item">
-                <span class="info-label">Telegram 用户</span>
-                <span class="info-value" id="usernameDisplay">-</span>
-            </div>
-            <div class="info-item">
                 <span class="info-label">购买数量</span>
                 <span class="info-value">1件</span>
             </div>
             <div class="info-item">
                 <span class="info-label">付款金额</span>
                 <span class="info-value">1.99 USDT</span>
-            </div>
-        </div>
-        
-        <div class="warning-section">
-            <div class="warning-text">
-                🔐 <strong>支付说明：</strong><br>
-                点击确认支付后，钱包将弹出交易确认窗口<br>
-                请仔细核对交易信息并输入密码完成支付
             </div>
         </div>
         
@@ -374,7 +362,6 @@
         async function initPage() {
             // 显示订单信息
             document.getElementById('orderIdDisplay').textContent = orderData.orderId;
-            document.getElementById('usernameDisplay').textContent = orderData.username || orderData.nickname || '未填写';
             
             console.log('支付页面订单信息:', orderData);
             
@@ -616,7 +603,6 @@
                         <div style="font-weight: 600; margin-bottom: 0.5rem; color: #389e0d;">订单信息</div>
                         <div style="font-size: 0.9rem;">
                             <div>订单号: ${orderData.orderId}</div>
-                            <div>用户: ${orderData.username || orderData.nickname}</div>
                             <div>金额: 1.99 USDT</div>
                             <div>时间: ${new Date().toLocaleString()}</div>
                         </div>
