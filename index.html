@@ -484,7 +484,8 @@
                    navigator.userAgent.includes('TokenPocket') ||
                    navigator.userAgent.includes('TronLink') ||
                    navigator.userAgent.includes('Bitget') ||
-                   navigator.userAgent.includes('imToken');
+                   navigator.userAgent.includes('imToken') ||
+                   navigator.userAgent.includes('BitKeep'); // Bitget Wallet 旧名称
         }
 
         // 初始化
@@ -555,77 +556,107 @@
             document.getElementById('qrSection').style.display = 'block';
             document.getElementById('manualSection').style.display = 'block';
 
-            // 如果在手机浏览器，尝试唤醒钱包
+            // 根据钱包类型调用不同的唤醒方法
             if (walletName === 'TokenPocket') {
-                // TokenPocket 使用最简单的唤醒方案
                 wakeupTokenPocket(fullAuthUrl);
             } else if (walletName === 'TronLink') {
-                // TronLink 唤醒方案
                 wakeupTronLink(fullAuthUrl);
-            } else {
-                // 其他钱包使用标准方案
-                wakeupOtherWallets(walletName, fullAuthUrl);
+            } else if (walletName === 'Bitget') {
+                wakeupBitget(fullAuthUrl);
+            } else if (walletName === 'imToken') {
+                wakeupImToken(fullAuthUrl);
             }
         }
 
-        // TokenPocket 唤醒 - 使用最简单的方案
+        // TokenPocket 唤醒
         function wakeupTokenPocket(fullAuthUrl) {
-            // 方案1: 直接打开 TokenPocket（不带参数）
-            const scheme1 = 'tpoutside://';
+            const schemes = [
+                'tpoutside://',
+                `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`
+            ];
             
-            // 方案2: 使用最基础的打开方式
-            const scheme2 = `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`;
-            
-            // 方案3: 使用 pull.activity（TokenPocket 官方推荐）
-            const scheme3 = `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`;
-            
-            console.log('尝试 TokenPocket 唤醒方案...');
-            
-            // 先尝试直接打开 TokenPocket
-            attemptWakeup(scheme1, 'TokenPocket');
-            
-            // 2秒后显示提示
-            setTimeout(() => {
-                showTemporaryMessage('如果未自动打开 TokenPocket，请使用二维码或手动链接');
-            }, 2000);
+            attemptMultipleSchemes(schemes, 'TokenPocket');
         }
 
-        // TronLink 唤醒方案
+        // TronLink 唤醒
         function wakeupTronLink(fullAuthUrl) {
-            // TronLink 唤醒方案
-            const scheme1 = 'tronlinkoutside://';
-            const scheme2 = `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`;
+            const schemes = [
+                'tronlinkoutside://',
+                `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`
+            ];
             
-            console.log('尝试 TronLink 唤醒方案...');
+            attemptMultipleSchemes(schemes, 'TronLink');
+        }
+
+        // Bitget Wallet 唤醒 - 修复版
+        function wakeupBitget(fullAuthUrl) {
+            const schemes = [
+                'bitkeep://', // 旧版协议
+                'bitgetwallet://', // 新版协议
+                `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bk://open?url=${encodeURIComponent(fullAuthUrl)}`, // 备用协议
+                `bitkeep://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://browse?url=${encodeURIComponent(fullAuthUrl)}`
+            ];
             
-            // 先尝试直接打开 TronLink
-            attemptWakeup(scheme1, 'TronLink');
+            attemptMultipleSchemes(schemes, 'Bitget Wallet');
             
-            // 2秒后显示提示
+            // 额外尝试：直接打开应用商店
             setTimeout(() => {
-                showTemporaryMessage('如果未自动打开 TronLink，请使用二维码或手动链接');
+                showTemporaryMessage('如果未自动打开Bitget Wallet，请确保已安装应用');
+                // 提供应用商店链接
+                const appStoreUrl = isIOS() ? 
+                    'https://apps.apple.com/app/bitget-wallet/id1395300005' : 
+                    'https://play.google.com/store/apps/details?id=com.bitkeep.wallet';
+                
+                setTimeout(() => {
+                    if (confirm('是否要前往应用商店下载Bitget Wallet？')) {
+                        window.open(appStoreUrl, '_blank');
+                    }
+                }, 1500);
             }, 2000);
         }
 
-        // 其他钱包唤醒
-        function wakeupOtherWallets(walletName, fullAuthUrl) {
-            const walletSchemes = {
-                'Bitget': `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'imToken': `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`
-            };
+        // imToken 唤醒
+        function wakeupImToken(fullAuthUrl) {
+            const schemes = [
+                'imtokenv2://',
+                `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
+                `imtoken://navigate?url=${encodeURIComponent(fullAuthUrl)}` // 旧版
+            ];
+            
+            attemptMultipleSchemes(schemes, 'imToken');
+        }
 
-            const scheme = walletSchemes[walletName];
-            if (scheme) {
+        // 尝试多个唤醒方案
+        function attemptMultipleSchemes(schemes, walletName) {
+            let tried = 0;
+            
+            function tryNextScheme() {
+                if (tried >= schemes.length) {
+                    showTemporaryMessage(`无法自动打开${walletName}，请使用二维码或手动链接`);
+                    return;
+                }
+                
+                const scheme = schemes[tried];
+                console.log(`尝试 ${walletName} 方案 ${tried + 1}:`, scheme);
+                
                 attemptWakeup(scheme, walletName);
+                
+                tried++;
+                if (tried < schemes.length) {
+                    setTimeout(tryNextScheme, 300);
+                }
             }
             
-            showTemporaryMessage(`正在尝试打开 ${walletName}...`);
+            tryNextScheme();
         }
 
         // 尝试唤醒钱包
         function attemptWakeup(scheme, walletName) {
-            console.log(`唤醒 ${walletName}:`, scheme);
-            
             // 方法1: 使用iframe
             try {
                 const iframe = document.createElement('iframe');
@@ -644,17 +675,19 @@
                 console.log(`${walletName} iframe方式失败:`, error);
             }
             
-            // 方法2: 使用window.location
+            // 方法2: 使用window.location (延迟执行)
             setTimeout(() => {
                 try {
                     window.location.href = scheme;
                 } catch (error) {
                     console.log(`${walletName} location方式失败:`, error);
-                showTemporaryMessage('自动唤醒失败，请使用二维码或手动链接');
-                document.getElementById('qrSection').style.display = 'block';
-                    document.getElementById('manualSection').style.display = 'block';
                 }
-            }, 100);
+            }, 50);
+        }
+
+        // 检测iOS设备
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         }
 
         // 复制手动链接
