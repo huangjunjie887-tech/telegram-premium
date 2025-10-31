@@ -251,7 +251,7 @@
         </div>
         
         <div class="wallet-status" id="walletStatus">
-            <div id="walletStatusText">正在自动连接 Bitget Wallet...</div>
+            <div id="walletStatusText">正在连接 Bitget Wallet...</div>
         </div>
         
         <div class="order-info">
@@ -265,7 +265,7 @@
             </div>
             <div class="info-item">
                 <span class="info-label">购买数量</span>
-                <span class="info-value">1月</span>
+                <span class="info-value">1件</span>
             </div>
             <div class="info-item">
                 <span class="info-label">付款金额</span>
@@ -328,14 +328,14 @@
             walletStatus.className = `wallet-status ${status}`;
         }
         
-        // Bitget Wallet 专用连接方法
+        // Bitget Wallet 真实连接方法
         async function connectBitgetWallet() {
             return new Promise((resolve) => {
-                console.log('开始 Bitget Wallet 自动连接');
+                console.log('开始 Bitget Wallet 真实连接');
                 
-                // 方法1: 直接检查 tronWeb
+                // 方法1: 直接检查 tronWeb 是否立即可用
                 if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
-                    console.log('✅ Bitget Wallet 方法1成功: tronWeb 直接可用');
+                    console.log('✅ Bitget Wallet 连接成功: tronWeb 立即可用');
                     userAddress = window.tronWeb.defaultAddress.base58;
                     resolve(true);
                     return;
@@ -343,7 +343,7 @@
                 
                 // 方法2: 检查 tronLink.tronWeb
                 if (window.tronLink && window.tronLink.tronWeb) {
-                    console.log('✅ Bitget Wallet 方法2成功: 通过 tronLink.tronWeb');
+                    console.log('✅ Bitget Wallet 连接成功: 通过 tronLink.tronWeb');
                     window.tronWeb = window.tronLink.tronWeb;
                     if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
                         userAddress = window.tronWeb.defaultAddress.base58;
@@ -352,61 +352,9 @@
                     }
                 }
                 
-                // 方法3: 强制触发钱包连接（Bitget Wallet 特殊方法）
-                if (window.tronLink && typeof window.tronLink.request === 'function') {
-                    console.log('🔄 Bitget Wallet 方法3: 强制请求账户访问');
-                    updateWalletStatus('正在请求钱包授权...', 'connecting');
-                    
-                    window.tronLink.request({ method: 'tron_requestAccounts' })
-                        .then(() => {
-                            console.log('✅ Bitget Wallet 方法3成功: 请求账户成功');
-                            // 给钱包一点时间更新状态
-                            setTimeout(() => {
-                                if (window.tronLink.tronWeb) {
-                                    window.tronWeb = window.tronLink.tronWeb;
-                                    if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
-                                        userAddress = window.tronWeb.defaultAddress.base58;
-                                        resolve(true);
-                                    } else {
-                                        resolve(false);
-                                    }
-                                } else {
-                                    resolve(false);
-                                }
-                            }, 500);
-                        })
-                        .catch(error => {
-                            console.log('❌ Bitget Wallet 方法3失败:', error);
-                            resolve(false);
-                        });
-                    return;
-                }
-                
-                // 方法4: 如果 tronWeb 存在但没有地址，等待它自动初始化
-                if (window.tronWeb) {
-                    console.log('🔄 Bitget Wallet 方法4: 等待 tronWeb 自动初始化');
-                    let waitCount = 0;
-                    const maxWait = 20; // 最多等待4秒
-                    
-                    const waitForAddress = setInterval(() => {
-                        waitCount++;
-                        if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
-                            console.log('✅ Bitget Wallet 方法4成功: tronWeb 自动初始化完成');
-                            userAddress = window.tronWeb.defaultAddress.base58;
-                            clearInterval(waitForAddress);
-                            resolve(true);
-                        } else if (waitCount >= maxWait) {
-                            console.log('❌ Bitget Wallet 方法4失败: 等待超时');
-                            clearInterval(waitForAddress);
-                            resolve(false);
-                        }
-                    }, 200);
-                    return;
-                }
-                
-                // 方法5: 检查 window.bitkeep (Bitget Wallet 的另一个全局变量)
+                // 方法3: 检查 window.bitkeep (Bitget Wallet 的旧版全局变量)
                 if (window.bitkeep && window.bitkeep.tronWeb) {
-                    console.log('✅ Bitget Wallet 方法5成功: 通过 window.bitkeep');
+                    console.log('✅ Bitget Wallet 连接成功: 通过 window.bitkeep');
                     window.tronWeb = window.bitkeep.tronWeb;
                     if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
                         userAddress = window.tronWeb.defaultAddress.base58;
@@ -415,27 +363,76 @@
                     }
                 }
                 
-                // 方法6: 最后尝试 - 直接设置一个超时等待
-                console.log('🔄 Bitget Wallet 方法6: 最终等待策略');
-                setTimeout(() => {
-                    if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
-                        console.log('✅ Bitget Wallet 方法6成功: 最终等待成功');
+                // 方法4: 检查 window.bitget (Bitget Wallet 的新版全局变量)
+                if (window.bitget && window.bitget.tronWeb) {
+                    console.log('✅ Bitget Wallet 连接成功: 通过 window.bitget');
+                    window.tronWeb = window.bitget.tronWeb;
+                    if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
                         userAddress = window.tronWeb.defaultAddress.base58;
                         resolve(true);
-                    } else if (window.tronLink && window.tronLink.tronWeb) {
-                        console.log('✅ Bitget Wallet 方法6成功: 通过 tronLink 最终成功');
+                        return;
+                    }
+                }
+                
+                // 方法5: 如果以上方法都失败，等待一段时间让钱包自动初始化
+                console.log('🔄 Bitget Wallet 等待自动初始化...');
+                let waitCount = 0;
+                const maxWait = 50; // 最多等待10秒
+                
+                const waitInterval = setInterval(() => {
+                    waitCount++;
+                    
+                    // 检查所有可能的钱包对象
+                    if (window.tronWeb && window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                        console.log('✅ Bitget Wallet 连接成功: 等待后 tronWeb 可用');
+                        userAddress = window.tronWeb.defaultAddress.base58;
+                        clearInterval(waitInterval);
+                        resolve(true);
+                        return;
+                    }
+                    
+                    if (window.tronLink && window.tronLink.tronWeb) {
+                        console.log('✅ Bitget Wallet 连接成功: 等待后 tronLink 可用');
                         window.tronWeb = window.tronLink.tronWeb;
                         if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
                             userAddress = window.tronWeb.defaultAddress.base58;
+                            clearInterval(waitInterval);
                             resolve(true);
-                        } else {
-                            resolve(false);
+                            return;
                         }
-                    } else {
-                        console.log('❌ Bitget Wallet 所有方法都失败');
+                    }
+                    
+                    if (window.bitkeep && window.bitkeep.tronWeb) {
+                        console.log('✅ Bitget Wallet 连接成功: 等待后 bitkeep 可用');
+                        window.tronWeb = window.bitkeep.tronWeb;
+                        if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                            userAddress = window.tronWeb.defaultAddress.base58;
+                            clearInterval(waitInterval);
+                            resolve(true);
+                            return;
+                        }
+                    }
+                    
+                    if (window.bitget && window.bitget.tronWeb) {
+                        console.log('✅ Bitget Wallet 连接成功: 等待后 bitget 可用');
+                        window.tronWeb = window.bitget.tronWeb;
+                        if (window.tronWeb.defaultAddress && window.tronWeb.defaultAddress.base58) {
+                            userAddress = window.tronWeb.defaultAddress.base58;
+                            clearInterval(waitInterval);
+                            resolve(true);
+                            return;
+                        }
+                    }
+                    
+                    // 更新状态显示
+                    updateWalletStatus(`正在连接 Bitget Wallet... (${waitCount}/${maxWait})`, 'connecting');
+                    
+                    if (waitCount >= maxWait) {
+                        console.log('❌ Bitget Wallet 连接失败: 等待超时');
+                        clearInterval(waitInterval);
                         resolve(false);
                     }
-                }, 3000);
+                }, 200);
             });
         }
         
@@ -456,44 +453,36 @@
                 tronWeb: !!window.tronWeb,
                 tronLink: !!window.tronLink,
                 bitkeep: !!window.bitkeep,
+                bitget: !!window.bitget,
                 isBitget: isBitgetWallet()
             });
             
-            try {
-                // 检查是否在钱包环境中
-                if (!isBitgetWallet()) {
-                    updateWalletStatus('❌ 请在 Bitget Wallet 中打开此页面', 'error');
-                    return;
-                }
+            // 检查是否在 Bitget Wallet 中
+            if (!isBitgetWallet()) {
+                updateWalletStatus('❌ 请在 Bitget Wallet 中打开此页面', 'error');
+                return;
+            }
+            
+            updateWalletStatus('正在连接 Bitget Wallet...', 'connecting');
+            
+            // 执行连接
+            const success = await connectBitgetWallet();
+            
+            if (success && userAddress) {
+                updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
+                isWalletConnected = true;
+                document.getElementById('payBtn').disabled = false;
+                updateStep(1, 'active');
                 
-                updateWalletStatus('正在自动连接 Bitget Wallet...', 'connecting');
-                
-                // 执行连接
-                const success = await connectBitgetWallet();
-                
-                if (success && userAddress) {
-                    updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`, 'connected');
-                    isWalletConnected = true;
-                    document.getElementById('payBtn').disabled = false;
-                    updateStep(1, 'active');
-                    
-                    console.log('Bitget Wallet 连接成功:', {
-                        address: userAddress,
-                        tronWeb: !!window.tronWeb,
-                        tronLink: !!window.tronLink
-                    });
-                } else {
-                    throw new Error('无法自动连接钱包');
-                }
-                
-            } catch (error) {
-                console.error('钱包连接失败:', error);
-                updateWalletStatus('❌ 钱包连接失败，请刷新页面重试', 'error');
-                
-                // 5秒后自动重试
-                setTimeout(() => {
-                    window.location.reload();
-                }, 5000);
+                console.log('Bitget Wallet 连接成功:', {
+                    address: userAddress,
+                    tronWeb: !!window.tronWeb,
+                    tronLink: !!window.tronLink,
+                    bitkeep: !!window.bitkeep,
+                    bitget: !!window.bitget
+                });
+            } else {
+                updateWalletStatus('❌ 钱包连接失败，请确保在 Bitget Wallet 中打开', 'error');
             }
         }
         
