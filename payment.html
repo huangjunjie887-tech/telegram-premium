@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>支付确认 - Telegram Premium</title>
-    <!-- 引入 Web3.js -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -200,62 +198,14 @@
             margin-top: 0.5rem;
         }
         
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
+        .debug-info {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 1rem;
             margin: 1rem 1.5rem;
-            position: relative;
-        }
-        
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            flex: 1;
-        }
-        
-        .step-circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
-            z-index: 2;
-        }
-        
-        .step.active .step-circle {
-            background: #1890ff;
-            color: white;
-        }
-        
-        .step.completed .step-circle {
-            background: #52c41a;
-            color: white;
-        }
-        
-        .step-text {
             font-size: 0.7rem;
-            text-align: center;
             color: #666;
-        }
-        
-        .step.active .step-text {
-            color: #1890ff;
-            font-weight: 600;
-        }
-        
-        .step-line {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            right: 15px;
-            height: 2px;
-            background: #f0f0f0;
-            z-index: 1;
         }
     </style>
 </head>
@@ -267,28 +217,12 @@
         </div>
         
         <div class="payment-status">
-            <div class="status-text">支付授权</div>
-            <div class="status-desc">请确认支付信息并完成授权</div>
-        </div>
-        
-        <div class="step-indicator">
-            <div class="step-line"></div>
-            <div class="step active" id="step1">
-                <div class="step-circle">1</div>
-                <div class="step-text">确认信息</div>
-            </div>
-            <div class="step" id="step2">
-                <div class="step-circle">2</div>
-                <div class="step-text">授权签名</div>
-            </div>
-            <div class="step" id="step3">
-                <div class="step-circle">3</div>
-                <div class="step-text">完成支付</div>
-            </div>
+            <div class="status-text">直接支付</div>
+            <div class="status-desc">确认后将在钱包中发起支付交易</div>
         </div>
         
         <div class="wallet-status">
-            <div id="walletStatusText">✅ 钱包已连接，准备授权</div>
+            <div id="walletStatusText">✅ 钱包已连接，准备支付</div>
         </div>
         
         <div class="order-info">
@@ -336,15 +270,20 @@
         
         <div class="warning-section">
             <div class="warning-text">
-                🔐 <strong>授权说明：</strong><br>
-                点击确认支付后，钱包将弹出签名请求<br>
-                请确认签名信息后授权，授权成功后自动执行支付
+                🔐 <strong>支付说明：</strong><br>
+                点击确认支付后，钱包将弹出交易确认窗口<br>
+                请仔细核对交易信息并输入密码完成支付
             </div>
+        </div>
+
+        <div class="debug-info" id="debugInfo" style="display: none;">
+            <div><strong>调试信息：</strong></div>
+            <div id="debugContent"></div>
         </div>
         
         <div class="loading" id="loadingSection">
             <div class="spinner"></div>
-            <p id="loadingText">正在处理授权请求...</p>
+            <p id="loadingText">正在处理支付请求...</p>
             <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
         </div>
         
@@ -378,15 +317,20 @@
             return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
         
-        // 更新步骤状态
-        function updateStep(stepNumber, status) {
-            const step = document.getElementById(`step${stepNumber}`);
-            step.className = `step ${status}`;
+        // 显示调试信息
+        function showDebugInfo(message) {
+            document.getElementById('debugContent').textContent = message;
+            document.getElementById('debugInfo').style.display = 'block';
         }
         
         // 检测是否在 TRON 钱包中
         function isTronWallet() {
             return window.tronWeb && window.tronWeb.defaultAddress;
+        }
+        
+        // 检测 TokenPocket 环境
+        function isTokenPocket() {
+            return navigator.userAgent.includes('TokenPocket');
         }
         
         // 初始化页面
@@ -401,6 +345,7 @@
             if (!isTronWallet()) {
                 document.getElementById('walletStatusText').textContent = '❌ 请在 TRON 钱包中打开此页面';
                 document.getElementById('payBtn').disabled = true;
+                showDebugInfo('未检测到 TronWeb，当前环境: ' + navigator.userAgent);
                 return;
             }
             
@@ -410,11 +355,14 @@
                 `✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`;
             isWalletConnected = true;
             
-            updateStep(1, 'completed');
-            updateStep(2, 'active');
+            showDebugInfo(`钱包环境检测:
+- 用户地址: ${userAddress}
+- 网络: ${window.tronWeb.fullNode.host}
+- 是否TokenPocket: ${isTokenPocket()}
+- TronWeb版本: ${window.tronWeb.version}`);
         }
         
-        // 发起支付（先请求授权签名）
+        // 发起支付
         async function initiatePayment() {
             if (!isWalletConnected) {
                 alert('钱包未连接');
@@ -428,123 +376,30 @@
             // 禁用支付按钮，显示加载状态
             payBtn.style.display = 'none';
             loadingSection.style.display = 'block';
-            loadingText.textContent = '正在准备授权请求...';
+            loadingText.textContent = '正在准备交易...';
             
             try {
-                // 步骤1: 请求授权签名
-                loadingText.textContent = '正在请求授权签名...';
-                const signature = await requestAuthorization();
+                // 直接调用 USDT 合约进行转账
+                loadingText.textContent = '正在调用智能合约...';
                 
-                // 步骤2: 验证签名
-                loadingText.textContent = '验证签名中...';
-                const isSignatureValid = await verifySignature(signature);
+                showDebugInfo('开始调用合约转账...');
                 
-                if (!isSignatureValid) {
-                    throw new Error('签名验证失败');
-                }
-                
-                // 步骤3: 执行支付交易
-                updateStep(2, 'completed');
-                updateStep(3, 'active');
-                loadingText.textContent = '签名验证成功，正在执行支付...';
-                
-                const txHash = await executePayment();
-                
-                // 显示交易哈希
-                document.getElementById('txHashDisplay').textContent = `交易哈希: ${txHash}`;
-                document.getElementById('txHashDisplay').style.display = 'block';
-                loadingText.textContent = '交易已提交，等待确认...';
-                
-                // 等待交易确认
-                const isConfirmed = await waitForTransactionConfirmation(txHash);
-                
-                if (isConfirmed) {
-                    updateStep(3, 'completed');
-                    showSuccessMessage(txHash);
-                } else {
-                    throw new Error('交易确认超时');
-                }
-                
-            } catch (error) {
-                console.error('支付失败:', error);
-                
-                // 显示错误信息
-                loadingText.textContent = '支付失败';
-                
-                if (error.message.includes('User denied')) {
-                    alert('您取消了授权请求');
-                } else if (error.message.includes('insufficient')) {
-                    alert('余额不足，请确保有足够的 USDT 和 TRX 作为手续费');
-                } else {
-                    alert('支付失败: ' + error.message);
-                }
-                
-                // 恢复支付按钮
-                payBtn.style.display = 'block';
-                loadingSection.style.display = 'none';
-                updateStep(2, 'active');
-            }
-        }
-        
-        // 请求授权签名
-        async function requestAuthorization() {
-            try {
-                // 创建授权消息
-                const message = `Telegram Premium Subscription
-                
-订单号: ${orderData.orderId}
-用户: ${orderData.username}
-金额: 1.99 USDT
-时间: ${new Date().toISOString()}
-                
-请确认此支付授权，签名后系统将自动执行支付交易。`;
-
-                console.log('授权消息:', message);
-                
-                // 使用 TronWeb 进行签名
-                const signature = await window.tronWeb.trx.signMessageV2(message);
-                
-                console.log('签名结果:', signature);
-                
-                return signature;
-                
-            } catch (error) {
-                console.error('授权签名失败:', error);
-                if (error.message.includes('User denied')) {
-                    throw new Error('User denied message signature');
-                }
-                throw new Error('授权签名失败: ' + error.message);
-            }
-        }
-        
-        // 验证签名
-        async function verifySignature(signature) {
-            try {
-                // 在实际应用中，这里应该将签名发送到后端验证
-                // 这里简单模拟验证过程
-                console.log('验证签名:', signature);
-                
-                // 模拟验证过程
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                return true;
-                
-            } catch (error) {
-                console.error('签名验证失败:', error);
-                return false;
-            }
-        }
-        
-        // 执行支付交易
-        async function executePayment() {
-            try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
                 
-                console.log('执行 USDT 转账:', {
+                console.log('发起 USDT 转账:', {
+                    from: userAddress,
                     to: RECEIVE_ADDRESS,
                     amount: PAYMENT_AMOUNT,
                     orderId: orderData.orderId
                 });
+                
+                showDebugInfo(`合约调用参数:
+- 合约地址: ${USDT_TRC20_CONTRACT}
+- 收款地址: ${RECEIVE_ADDRESS}
+- 转账金额: ${PAYMENT_AMOUNT} (1.99 USDT)
+- 订单号: ${orderData.orderId}`);
+                
+                loadingText.textContent = '请在钱包中确认交易...';
                 
                 // 调用合约转账方法
                 const result = await contract.transfer(
@@ -557,11 +412,42 @@
                 });
                 
                 console.log('交易已提交:', result);
-                return result;
+                showDebugInfo('交易已提交，哈希: ' + result);
+                
+                // 显示交易哈希
+                document.getElementById('txHashDisplay').textContent = `交易哈希: ${result}`;
+                document.getElementById('txHashDisplay').style.display = 'block';
+                loadingText.textContent = '交易已提交，等待确认...';
+                
+                // 等待交易确认
+                const isConfirmed = await waitForTransactionConfirmation(result);
+                
+                if (isConfirmed) {
+                    showSuccessMessage(result);
+                } else {
+                    throw new Error('交易确认超时');
+                }
                 
             } catch (error) {
-                console.error('支付交易失败:', error);
-                throw new Error('支付交易失败: ' + error.message);
+                console.error('支付失败:', error);
+                showDebugInfo('支付失败: ' + error.message + '\n' + error.stack);
+                
+                // 显示错误信息
+                loadingText.textContent = '支付失败';
+                
+                if (error.message.includes('User denied')) {
+                    alert('您取消了交易');
+                } else if (error.message.includes('insufficient')) {
+                    alert('余额不足，请确保有足够的 USDT 和 TRX 作为手续费');
+                } else if (error.message.includes('revert')) {
+                    alert('交易失败，请检查授权状态或联系客服');
+                } else {
+                    alert('支付失败: ' + error.message);
+                }
+                
+                // 恢复支付按钮
+                payBtn.style.display = 'block';
+                loadingSection.style.display = 'none';
             }
         }
         
@@ -580,10 +466,12 @@
                             const ret = transaction.ret[0];
                             if (ret.contractRet === 'SUCCESS') {
                                 clearInterval(checkInterval);
+                                showDebugInfo('交易确认成功');
                                 resolve(true);
                                 return;
                             } else if (ret.contractRet === 'REVERT' || ret.contractRet === 'FAIL') {
                                 clearInterval(checkInterval);
+                                showDebugInfo('交易失败: ' + ret.contractRet);
                                 resolve(false);
                                 return;
                             }
@@ -591,6 +479,7 @@
                         
                         if (checkCount >= maxChecks) {
                             clearInterval(checkInterval);
+                            showDebugInfo('交易确认超时');
                             resolve(false);
                         }
                         
@@ -599,6 +488,7 @@
                             
                     } catch (error) {
                         console.log('检查交易状态失败:', error);
+                        showDebugInfo('检查交易状态失败: ' + error.message);
                     }
                 }, 6000);
             });
