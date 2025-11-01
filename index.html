@@ -117,11 +117,30 @@
             margin-bottom: 1rem;
             touch-action: manipulation;
             min-height: 3.5rem;
+            animation: breathe 2s ease-in-out infinite;
         }
         
         .btn:active {
             transform: translateY(1px);
             box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+            animation: none;
+        }
+        
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            animation: none;
+        }
+        
+        @keyframes breathe {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0.5rem 1.5rem rgba(255, 140, 0, 0.6);
+            }
         }
         
         .form-container {
@@ -376,7 +395,7 @@
         <div class="features">
             <div class="feature">
                 <div class="feature-icon">
-                    <img src="https://i.ibb.co/4nWVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" style="width: 40px; height: 40px;">
+                    <img src="https://i.ibb.co/4n WVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" style="width: 40px; height: 40px;">
                 </div>
                 <h3>更大文件上传</h3>
                 <p>上传最大 4GB 的文件</p>
