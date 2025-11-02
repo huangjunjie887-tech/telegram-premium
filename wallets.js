@@ -1,3 +1,6 @@
+// 共享钱包数据存储
+global.walletsData = global.walletsData || [];
+const wallets = global.walletsData;
 const TronWeb = require('tronweb');
 
 // 内存存储（生产环境应该用数据库）
