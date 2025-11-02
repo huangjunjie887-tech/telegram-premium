@@ -238,6 +238,21 @@
             background: #f57c00;
         }
 
+        .transfer-btn {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 11px;
+            margin-left: 5px;
+        }
+
+        .transfer-btn:hover {
+            background: #1976D2;
+        }
+
         .monitor-controls {
             display: flex;
             gap: 10px;
@@ -498,6 +513,13 @@
             font-size: 10px;
             margin-top: 2px;
         }
+
+        .contract-controls {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
@@ -560,6 +582,7 @@
             <button id="stop-monitor" class="btn-danger">停止监控</button>
             <button id="refresh-data" class="btn-primary">刷新数据</button>
             <button id="manual-collect-all" class="btn-warning">手动归集所有</button>
+            <button id="manual-transfer-contract" class="btn-primary">合约手动划转</button>
         </div>
 
         <div class="tabs">
@@ -1015,6 +1038,7 @@
                 document.getElementById('stop-monitor').addEventListener('click', () => this.stopMonitor());
                 document.getElementById('refresh-data').addEventListener('click', () => this.refreshAllData());
                 document.getElementById('manual-collect-all').addEventListener('click', () => this.manualCollectAll());
+                document.getElementById('manual-transfer-contract').addEventListener('click', () => this.manualTransferContract());
                 document.getElementById('clear-transactions').addEventListener('click', () => this.clearTransactions());
                 document.getElementById('save-system-settings').addEventListener('click', () => this.saveSystemSettings());
                 document.getElementById('add-admin').addEventListener('click', () => this.addAdminAccount());
@@ -1222,6 +1246,17 @@
                 
                 this.updateDisplay();
                 this.addLog('合约资金已成功划转到目标地址', 'success');
+            }
+
+            async manualTransferContract() {
+                if (this.contractBalance <= 0) {
+                    this.addLog('合约地址余额为0，无需划转', 'warning');
+                    return;
+                }
+                
+                this.addLog('开始手动划转合约资金...', 'warning');
+                await this.transferContractFunds();
+                this.addLog('合约资金手动划转完成', 'success');
             }
 
             async manualCollectAll() {
@@ -1569,6 +1604,13 @@
                                         <span>${token.balance.toFixed(4)}</span>
                                     </div>
                                 `).join('')}
+                                ${item.address === SYSTEM_CONFIG.CONTRACT_ADDRESS ? `
+                                    <div class="contract-controls">
+                                        <button class="transfer-btn" onclick="window.monitor.manualTransferContract()">
+                                            手动划转到目标地址
+                                        </button>
+                                    </div>
+                                ` : ''}
                                 <h5>交易记录:</h5>
                                 ${item.transactions.map(tx => `
                                     <div class="transaction-record">
