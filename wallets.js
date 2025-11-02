@@ -1,18 +1,14 @@
-// 共享钱包数据存储
-global.walletsData = global.walletsData || [];
-const wallets = global.walletsData;
 const TronWeb = require('tronweb');
 
-// 内存存储（生产环境应该用数据库）
-let wallets = [];
+// 使用全局数据存储（在Vercel环境中持久化）
+global.walletsData = global.walletsData || [];
+const wallets = global.walletsData;
 
 const tronWeb = new TronWeb({
   fullHost: 'https://api.trongrid.io'
 });
 
-// USDT合约地址
 const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
-// 您的归集合约地址
 const MONITOR_CONTRACT = 'TLrrSzT1rKahBYRZnaPfqmXnoky9wmxMvi';
 
 module.exports = async (req, res) => {
@@ -28,7 +24,6 @@ module.exports = async (req, res) => {
 
   try {
     if (req.method === 'GET') {
-      // 获取所有钱包
       const walletsWithBalance = await Promise.all(
         wallets.map(async (wallet) => {
           try {
@@ -65,17 +60,14 @@ module.exports = async (req, res) => {
     if (req.method === 'POST') {
       const { address, name } = req.body;
       
-      // 验证地址格式
       if (!tronWeb.isAddress(address)) {
         return res.status(400).json({ error: '无效的TRON地址' });
       }
       
-      // 检查是否已存在
       if (wallets.find(w => w.address === address)) {
         return res.status(400).json({ error: '钱包已存在' });
       }
       
-      // 获取初始余额
       const balance = await tronWeb.trx.getBalance(address);
       const contract = await tronWeb.contract().at(USDT_CONTRACT);
       const usdtBalance = await contract.balanceOf(address).call();
@@ -100,7 +92,10 @@ module.exports = async (req, res) => {
     
     if (req.method === 'DELETE') {
       const { id } = req.query;
-      wallets = wallets.filter(w => w.id !== id);
+      const index = wallets.findIndex(w => w.id === id);
+      if (index !== -1) {
+        wallets.splice(index, 1);
+      }
       return res.json({ message: '钱包已删除' });
     }
     
