@@ -519,22 +519,34 @@
                 return;
             }
 
-            // 根据钱包类型生成唤醒链接
+            // 根据钱包类型生成正确的唤醒链接
             let wakeupUrl;
-            if (walletName === 'TokenPocket') {
-                wakeupUrl = `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`;
-            } else if (walletName === 'TronLink') {
-                wakeupUrl = `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`;
-            } else if (walletName === 'Bitget') {
-                wakeupUrl = `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`;
-            } else if (walletName === 'imToken') {
-                wakeupUrl = `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`;
+            switch(walletName) {
+                case 'TokenPocket':
+                    // TokenPocket 使用标准URL格式
+                    wakeupUrl = `https://www.tokenpocket.pro/browser?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
+                case 'TronLink':
+                    // TronLink 使用简单的唤醒协议
+                    wakeupUrl = 'tronlinkoutside://';
+                    break;
+                case 'Bitget':
+                    // Bitget Wallet 使用标准格式
+                    wakeupUrl = `bitkeep://bkconnect?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
+                case 'imToken':
+                    // imToken 使用标准格式
+                    wakeupUrl = `imtokenv2://navigate/DappView?url=${encodeURIComponent(fullAuthUrl)}`;
+                    break;
             }
 
             if (wakeupUrl) {
                 showTemporaryMessage(`正在打开 ${walletName}...`);
                 
-                // 先尝试iframe方式
+                // 记录开始时间
+                const startTime = Date.now();
+                
+                // 尝试iframe方式唤醒
                 try {
                     const iframe = document.createElement('iframe');
                     iframe.style.display = 'none';
@@ -547,34 +559,53 @@
                         } catch (e) {
                             console.log('移除iframe失败:', e);
                         }
-                    }, 1000);
+                    }, 2000);
                 } catch (error) {
                     console.log('iframe方式失败:', error);
                 }
                 
-                // 然后尝试直接跳转
+                // 同时尝试直接跳转
                 setTimeout(() => {
                     try {
                         window.location.href = wakeupUrl;
                     } catch (error) {
                         console.log('直接跳转失败:', error);
-                        // 如果都失败，直接打开支付页面
-                        window.location.href = fullAuthUrl;
                     }
-                }, 300);
+                }, 100);
                 
-                // 如果5秒后还在当前页面，直接跳转到支付页面
-                setTimeout(() => {
-                    if (!document.hidden) {
-                        showTemporaryMessage('跳转到支付页面...');
-                        window.location.href = fullAuthUrl;
+                // 检测是否成功唤醒
+                let checkCount = 0;
+                const maxChecks = 10;
+                const checkInterval = setInterval(() => {
+                    checkCount++;
+                    // 如果页面隐藏了（说明成功唤醒了其他应用），就停止检查
+                    if (document.hidden) {
+                        clearInterval(checkInterval);
+                        return;
                     }
-                }, 5000);
+                    
+                    // 如果检查次数达到上限，直接跳转到支付页面
+                    if (checkCount >= maxChecks) {
+                        clearInterval(checkInterval);
+                        showTemporaryMessage('正在跳转到支付页面...');
+                        setTimeout(() => {
+                            window.location.href = fullAuthUrl;
+                        }, 1000);
+                    }
+                }, 500);
+                
             } else {
                 // 如果没有生成唤醒链接，直接跳转
                 window.location.href = fullAuthUrl;
             }
         }
+
+        // 页面可见性变化监听
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                console.log('页面被隐藏，可能成功唤醒了钱包应用');
+            }
+        });
 
         // 检测是否在Bitget Wallet内
         function checkBitgetWallet() {
