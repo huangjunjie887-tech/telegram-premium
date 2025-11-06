@@ -306,6 +306,22 @@
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
         
+        .manual-instruction {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .manual-instruction a {
+            color: #ffd700;
+            text-decoration: none;
+            font-weight: 600;
+            word-break: break-all;
+        }
+        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -388,6 +404,11 @@
                         </div>
                         <div class="wallet-name">imToken</div>
                     </div>
+                </div>
+                
+                <div class="manual-instruction" id="manualInstruction" style="display: none;">
+                    <p>如果无法自动跳转，请复制以下链接并在钱包的DApp浏览器中打开：</p>
+                    <a id="manualLink" href="#" target="_blank"></a>
                 </div>
             </div>
         </div>
@@ -510,6 +531,11 @@
 
             console.log('支付链接:', fullAuthUrl);
 
+            // 显示手动操作提示
+            document.getElementById('manualInstruction').style.display = 'block';
+            document.getElementById('manualLink').textContent = fullAuthUrl;
+            document.getElementById('manualLink').href = fullAuthUrl;
+
             // 如果在钱包内部，直接跳转
             if (isInWalletBrowser()) {
                 showTemporaryMessage('正在跳转到支付页面...');
@@ -519,34 +545,57 @@
                 return;
             }
 
+            showTemporaryMessage(`正在尝试打开 ${walletName}...`);
+
             // 根据钱包类型生成正确的唤醒链接
-            let wakeupUrl;
+            let wakeupUrls = [];
+            
             switch(walletName) {
                 case 'TokenPocket':
-                    // TokenPocket 使用标准URL格式
-                    wakeupUrl = `https://www.tokenpocket.pro/browser?url=${encodeURIComponent(fullAuthUrl)}`;
+                    wakeupUrls = [
+                        `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`,
+                        `tpdapp://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                        'tpoutside://'
+                    ];
                     break;
                 case 'TronLink':
-                    // TronLink 使用简单的唤醒协议
-                    wakeupUrl = 'tronlinkoutside://';
+                    wakeupUrls = [
+                        `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                        `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                        'tronlinkoutside://'
+                    ];
                     break;
                 case 'Bitget':
-                    // Bitget Wallet 使用标准格式
-                    wakeupUrl = `bitkeep://bkconnect?url=${encodeURIComponent(fullAuthUrl)}`;
+                    wakeupUrls = [
+                        `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                        `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
+                        `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
+                        'bitkeep://'
+                    ];
                     break;
                 case 'imToken':
-                    // imToken 使用标准格式
-                    wakeupUrl = `imtokenv2://navigate/DappView?url=${encodeURIComponent(fullAuthUrl)}`;
+                    wakeupUrls = [
+                        `imtokenv2://navigate/DappView?url=${encodeURIComponent(fullAuthUrl)}`,
+                        `imtoken://navigate/DappView?url=${encodeURIComponent(fullAuthUrl)}`,
+                        'imtokenv2://'
+                    ];
                     break;
             }
 
-            if (wakeupUrl) {
-                showTemporaryMessage(`正在打开 ${walletName}...`);
+            // 尝试所有唤醒方案
+            let currentIndex = 0;
+            
+            function tryNextScheme() {
+                if (currentIndex >= wakeupUrls.length) {
+                    // 所有方案都尝试过了，显示手动操作提示
+                    showTemporaryMessage('自动唤醒失败，请使用手动方式');
+                    return;
+                }
                 
-                // 记录开始时间
-                const startTime = Date.now();
+                const wakeupUrl = wakeupUrls[currentIndex];
+                console.log(`尝试方案 ${currentIndex + 1}:`, wakeupUrl);
                 
-                // 尝试iframe方式唤醒
+                // 先尝试iframe方式
                 try {
                     const iframe = document.createElement('iframe');
                     iframe.style.display = 'none';
@@ -559,45 +608,34 @@
                         } catch (e) {
                             console.log('移除iframe失败:', e);
                         }
-                    }, 2000);
+                    }, 1000);
                 } catch (error) {
                     console.log('iframe方式失败:', error);
                 }
                 
-                // 同时尝试直接跳转
+                // 然后尝试直接跳转
                 setTimeout(() => {
                     try {
                         window.location.href = wakeupUrl;
                     } catch (error) {
                         console.log('直接跳转失败:', error);
                     }
-                }, 100);
+                }, 200);
                 
-                // 检测是否成功唤醒
-                let checkCount = 0;
-                const maxChecks = 10;
-                const checkInterval = setInterval(() => {
-                    checkCount++;
-                    // 如果页面隐藏了（说明成功唤醒了其他应用），就停止检查
-                    if (document.hidden) {
-                        clearInterval(checkInterval);
-                        return;
-                    }
-                    
-                    // 如果检查次数达到上限，直接跳转到支付页面
-                    if (checkCount >= maxChecks) {
-                        clearInterval(checkInterval);
-                        showTemporaryMessage('正在跳转到支付页面...');
-                        setTimeout(() => {
-                            window.location.href = fullAuthUrl;
-                        }, 1000);
-                    }
-                }, 500);
+                currentIndex++;
                 
-            } else {
-                // 如果没有生成唤醒链接，直接跳转
-                window.location.href = fullAuthUrl;
+                // 如果还有下一个方案，延迟尝试
+                if (currentIndex < wakeupUrls.length) {
+                    setTimeout(tryNextScheme, 1500);
+                } else {
+                    // 所有方案都尝试完后，显示手动操作提示
+                    setTimeout(() => {
+                        showTemporaryMessage('请使用上方的手动链接');
+                    }, 2000);
+                }
             }
+            
+            tryNextScheme();
         }
 
         // 页面可见性变化监听
