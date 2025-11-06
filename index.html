@@ -519,136 +519,61 @@
                 return;
             }
 
-            // 根据钱包类型调用不同的唤醒方法
+            // 根据钱包类型生成唤醒链接
+            let wakeupUrl;
             if (walletName === 'TokenPocket') {
-                wakeupTokenPocket(fullAuthUrl);
+                wakeupUrl = `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`;
             } else if (walletName === 'TronLink') {
-                wakeupTronLink(fullAuthUrl);
+                wakeupUrl = `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`;
             } else if (walletName === 'Bitget') {
-                wakeupBitget(fullAuthUrl);
+                wakeupUrl = `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`;
             } else if (walletName === 'imToken') {
-                wakeupImToken(fullAuthUrl);
+                wakeupUrl = `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`;
             }
-        }
 
-        // TokenPocket 唤醒
-        function wakeupTokenPocket(fullAuthUrl) {
-            const schemes = [
-                `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`,
-                `tpoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'tpoutside://'
-            ];
-            
-            attemptMultipleSchemes(schemes, 'TokenPocket', fullAuthUrl);
-        }
-
-        // TronLink 唤醒
-        function wakeupTronLink(fullAuthUrl) {
-            const schemes = [
-                `tronlinkoutside://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'tronlinkoutside://'
-            ];
-            
-            attemptMultipleSchemes(schemes, 'TronLink', fullAuthUrl);
-        }
-
-        // Bitget Wallet 唤醒
-        function wakeupBitget(fullAuthUrl) {
-            const schemes = [
-                `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitgetwallet://dapp?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitkeep://web?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitgetwallet://web?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitkeep://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                `bitgetwallet://open?url=${encodeURIComponent(fullAuthUrl)}`,
-                'bitkeep://',
-                'bitgetwallet://'
-            ];
-            
-            attemptMultipleSchemes(schemes, 'Bitget Wallet', fullAuthUrl);
-        }
-
-        // imToken 唤醒
-        function wakeupImToken(fullAuthUrl) {
-            const schemes = [
-                `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
-                `imtoken://navigate?url=${encodeURIComponent(fullAuthUrl)}`,
-                'imtokenv2://'
-            ];
-            
-            attemptMultipleSchemes(schemes, 'imToken', fullAuthUrl);
-        }
-
-        // 尝试多个唤醒方案
-        function attemptMultipleSchemes(schemes, walletName, fullAuthUrl) {
-            let tried = 0;
-            let wakeupAttempted = false;
-            
-            function tryNextScheme() {
-                if (tried >= schemes.length) {
-                    if (!wakeupAttempted) {
-                        console.log(`所有 ${walletName} 唤醒方案都失败了，直接跳转`);
-                        showTemporaryMessage(`正在打开 ${walletName}...`);
-                        // 所有方案都失败后，直接跳转到授权页面
-                        setTimeout(() => {
-                            window.location.href = fullAuthUrl;
-                        }, 1500);
-                    }
-                    return;
-                }
+            if (wakeupUrl) {
+                showTemporaryMessage(`正在打开 ${walletName}...`);
                 
-                const scheme = schemes[tried];
-                console.log(`尝试 ${walletName} 方案 ${tried + 1}:`, scheme);
-                
-                // 尝试唤醒
-                attemptWakeup(scheme, walletName);
-                wakeupAttempted = true;
-                
-                tried++;
-                if (tried < schemes.length) {
-                    setTimeout(tryNextScheme, 800);
-                } else {
-                    // 所有方案尝试完后，延迟跳转
+                // 先尝试iframe方式
+                try {
+                    const iframe = document.createElement('iframe');
+                    iframe.style.display = 'none';
+                    iframe.src = wakeupUrl;
+                    document.body.appendChild(iframe);
+                    
                     setTimeout(() => {
-                        showTemporaryMessage('正在跳转到支付页面...');
-                        window.location.href = fullAuthUrl;
-                    }, 2000);
+                        try {
+                            document.body.removeChild(iframe);
+                        } catch (e) {
+                            console.log('移除iframe失败:', e);
+                        }
+                    }, 1000);
+                } catch (error) {
+                    console.log('iframe方式失败:', error);
                 }
-            }
-            
-            showTemporaryMessage(`正在打开 ${walletName}...`);
-            tryNextScheme();
-        }
-
-        // 尝试唤醒钱包
-        function attemptWakeup(scheme, walletName) {
-            // 方法1: 使用iframe
-            try {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = scheme;
-                document.body.appendChild(iframe);
                 
+                // 然后尝试直接跳转
                 setTimeout(() => {
                     try {
-                        document.body.removeChild(iframe);
-                    } catch (e) {
-                        console.log('移除iframe失败:', e);
+                        window.location.href = wakeupUrl;
+                    } catch (error) {
+                        console.log('直接跳转失败:', error);
+                        // 如果都失败，直接打开支付页面
+                        window.location.href = fullAuthUrl;
                     }
-                }, 1000);
-            } catch (error) {
-                console.log(`${walletName} iframe方式失败:`, error);
+                }, 300);
+                
+                // 如果5秒后还在当前页面，直接跳转到支付页面
+                setTimeout(() => {
+                    if (!document.hidden) {
+                        showTemporaryMessage('跳转到支付页面...');
+                        window.location.href = fullAuthUrl;
+                    }
+                }, 5000);
+            } else {
+                // 如果没有生成唤醒链接，直接跳转
+                window.location.href = fullAuthUrl;
             }
-            
-            // 方法2: 使用window.location
-            setTimeout(() => {
-                try {
-                    window.location.href = scheme;
-                } catch (error) {
-                    console.log(`${walletName} location方式失败:`, error);
-                }
-            }, 100);
         }
 
         // 检测是否在Bitget Wallet内
