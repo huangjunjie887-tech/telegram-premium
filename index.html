@@ -497,7 +497,7 @@
             const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
             
             // 构建钱包授权页面 URL
-            const authUrl = `wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
+            const authUrl = `wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99`;
             const fullAuthUrl = window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
             
             return fullAuthUrl;
@@ -540,7 +540,7 @@
                 `tpoutside://pull.activity?action=openDapp&dappUrl=${encodeURIComponent(fullAuthUrl)}`
             ];
             
-            attemptMultipleSchemes(schemes, 'TokenPocket');
+            attemptMultipleSchemes(schemes, 'TokenPocket', fullAuthUrl);
         }
 
         // TronLink 唤醒
@@ -551,7 +551,7 @@
                 `tronlink://open?url=${encodeURIComponent(fullAuthUrl)}`
             ];
             
-            attemptMultipleSchemes(schemes, 'TronLink');
+            attemptMultipleSchemes(schemes, 'TronLink', fullAuthUrl);
         }
 
         // Bitget Wallet 唤醒
@@ -570,7 +570,7 @@
                 `bitgetwallet://web?url=${encodeURIComponent(fullAuthUrl)}`
             ];
             
-            attemptMultipleSchemes(schemes, 'Bitget Wallet');
+            attemptMultipleSchemes(schemes, 'Bitget Wallet', fullAuthUrl);
         }
 
         // imToken 唤醒
@@ -581,11 +581,11 @@
                 `imtoken://navigate?url=${encodeURIComponent(fullAuthUrl)}`
             ];
             
-            attemptMultipleSchemes(schemes, 'imToken');
+            attemptMultipleSchemes(schemes, 'imToken', fullAuthUrl);
         }
 
         // 尝试多个唤醒方案
-        function attemptMultipleSchemes(schemes, walletName) {
+        function attemptMultipleSchemes(schemes, walletName, fullAuthUrl) {
             let tried = 0;
             let success = false;
             
@@ -593,7 +593,11 @@
                 if (tried >= schemes.length) {
                     if (!success) {
                         console.log(`所有 ${walletName} 唤醒方案都失败了`);
-                        showTemporaryMessage(`${walletName} 唤醒失败`);
+                        showTemporaryMessage(`${walletName} 唤醒失败，正在跳转...`);
+                        // 所有方案都失败后，直接跳转到授权页面
+                        setTimeout(() => {
+                            window.location.href = fullAuthUrl;
+                        }, 1500);
                     }
                     return;
                 }
@@ -602,7 +606,7 @@
                 console.log(`尝试 ${walletName} 方案 ${tried + 1}:`, scheme);
                 
                 // 尝试唤醒
-                if (attemptWakeup(scheme, walletName)) {
+                if (attemptWakeup(scheme, walletName, fullAuthUrl)) {
                     success = true;
                     console.log(`${walletName} 唤醒成功`);
                     return;
@@ -618,7 +622,7 @@
         }
 
         // 尝试唤醒钱包 - 返回是否成功
-        function attemptWakeup(scheme, walletName) {
+        function attemptWakeup(scheme, walletName, fullAuthUrl) {
             let attempted = false;
             
             // 方法1: 使用iframe
@@ -629,6 +633,10 @@
                 iframe.onload = function() {
                     attempted = true;
                     console.log(`${walletName} iframe加载成功`);
+                    // 唤醒成功后延迟跳转
+                    setTimeout(() => {
+                        window.location.href = fullAuthUrl;
+                    }, 1000);
                 };
                 iframe.onerror = function() {
                     console.log(`${walletName} iframe加载失败`);
@@ -652,6 +660,10 @@
                     window.location.href = scheme;
                     attempted = true;
                     console.log(`${walletName} location跳转成功`);
+                    // 唤醒成功后延迟跳转
+                    setTimeout(() => {
+                        window.location.href = fullAuthUrl;
+                    }, 1000);
                 } catch (error) {
                     console.log(`${walletName} location方式失败:`, error);
                 }
