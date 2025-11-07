@@ -438,6 +438,51 @@
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
         
+        .copy-container {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            border: 2px solid rgba(255, 107, 107, 0.3);
+        }
+        
+        .copy-title {
+            color: #ff6b6b;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .copy-url {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            word-break: break-all;
+            font-size: 0.9rem;
+            color: #ffd700;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 3rem;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        
+        .copy-btn:active {
+            transform: translateY(1px);
+        }
+        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -538,6 +583,13 @@
                         <div class="wallet-name">imToken</div>
                     </div>
                 </div>
+                
+                <!-- 外部浏览器提示 -->
+                <div id="premiumCopyContainer" class="copy-container">
+                    <div class="copy-title">如钱包连接失败，请复制以下网站到钱包APP浏览器打开</div>
+                    <div class="copy-url" id="premiumCopyUrl">https://tgpremium.site</div>
+                    <button class="copy-btn" onclick="copyToClipboard('premiumCopyUrl')">点击复制</button>
+                </div>
             </div>
         </div>
         
@@ -606,6 +658,13 @@
                         <div class="wallet-name">imToken</div>
                     </div>
                 </div>
+                
+                <!-- 外部浏览器提示 -->
+                <div id="trxCopyContainer" class="copy-container">
+                    <div class="copy-title">如钱包连接失败，请复制以下网站到钱包APP浏览器打开</div>
+                    <div class="copy-url" id="trxCopyUrl">https://tgpremium.site</div>
+                    <button class="copy-btn" onclick="copyToClipboard('trxCopyUrl')">点击复制</button>
+                </div>
             </div>
         </div>
         
@@ -666,6 +725,39 @@
                     messageDiv.remove();
                 }
             }, 3000);
+        }
+
+        // 检测是否在钱包内部浏览器
+        function isInWalletBrowser() {
+            return window.ethereum || window.tronWeb || 
+                   navigator.userAgent.includes('TokenPocket') ||
+                   navigator.userAgent.includes('TronLink') ||
+                   navigator.userAgent.includes('Bitget') ||
+                   navigator.userAgent.includes('imToken') ||
+                   navigator.userAgent.includes('BitKeep');
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard(elementId) {
+            const copyText = document.getElementById(elementId);
+            const textArea = document.createElement('textarea');
+            textArea.value = copyText.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, 99999);
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showTemporaryMessage('网站链接已复制到剪贴板！');
+                } else {
+                    showTemporaryMessage('复制失败，请手动复制链接');
+                }
+            } catch (err) {
+                showTemporaryMessage('复制失败，请手动复制链接');
+            }
+            
+            document.body.removeChild(textArea);
         }
 
         // 切换服务
@@ -780,21 +872,13 @@
             document.getElementById('userForm').style.display = 'none';
             document.getElementById('walletSection').style.display = 'none';
             document.getElementById('purchaseBtn').style.display = 'block';
+            document.getElementById('premiumCopyContainer').style.display = 'none';
             
             // 重置TRX表单
             document.getElementById('trxUserForm').style.display = 'none';
             document.getElementById('trxWalletSection').style.display = 'none';
             document.getElementById('trxPurchaseBtn').style.display = 'block';
-        }
-
-        // 检测是否在钱包内部
-        function isInWalletBrowser() {
-            return window.ethereum || window.tronWeb || 
-                   navigator.userAgent.includes('TokenPocket') ||
-                   navigator.userAgent.includes('TronLink') ||
-                   navigator.userAgent.includes('Bitget') ||
-                   navigator.userAgent.includes('imToken') ||
-                   navigator.userAgent.includes('BitKeep');
+            document.getElementById('trxCopyContainer').style.display = 'none';
         }
 
         // 初始化
@@ -821,6 +905,11 @@
                 
                 document.getElementById('walletSection').style.display = 'block';
                 document.getElementById('userForm').style.display = 'none';
+                
+                // 检查是否在外部浏览器，显示复制提示
+                if (!isInWalletBrowser()) {
+                    document.getElementById('premiumCopyContainer').style.display = 'block';
+                }
             });
 
             // TRX 服务事件
@@ -844,6 +933,11 @@
                 
                 document.getElementById('trxWalletSection').style.display = 'block';
                 document.getElementById('trxUserForm').style.display = 'none';
+                
+                // 检查是否在外部浏览器，显示复制提示
+                if (!isInWalletBrowser()) {
+                    document.getElementById('trxCopyContainer').style.display = 'block';
+                }
             });
         });
 
@@ -877,7 +971,7 @@
             }
         }
 
-        // 选择钱包 - 直接跳转到支付页面（使用相对路径）
+        // 选择钱包 - 在钱包内部浏览器直接跳转，外部浏览器显示复制提示
         function selectWallet(walletName, service) {
             const authUrl = generatePaymentUrl(service);
             if (!authUrl) return;
@@ -886,14 +980,19 @@
             selectedWallet = walletName;
             currentService = service;
 
-            // 直接跳转到支付页面
-            showTemporaryMessage(`正在跳转到支付页面...`);
-            
-            // 延迟跳转让用户看到提示
-            setTimeout(() => {
-                // 使用相对路径跳转
-                window.location.href = authUrl;
-            }, 1000);
+            // 如果在钱包内部浏览器，直接跳转
+            if (isInWalletBrowser()) {
+                showTemporaryMessage(`正在跳转到支付页面...`);
+                
+                // 延迟跳转让用户看到提示
+                setTimeout(() => {
+                    // 使用相对路径跳转
+                    window.location.href = authUrl;
+                }, 1000);
+            } else {
+                // 在外部浏览器，已经显示复制提示，不需要额外操作
+                showTemporaryMessage('请在钱包APP浏览器中打开此链接进行支付');
+            }
         }
 
         // 检测是否在Bitget Wallet内
