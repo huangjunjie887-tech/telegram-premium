@@ -803,7 +803,7 @@
             });
         });
 
-        // 生成支付链接
+        // 生成支付链接 - 修改为返回相对路径
         function generatePaymentUrl(service) {
             if (service === 'premium') {
                 const username = document.getElementById('username').value.trim();
@@ -815,8 +815,9 @@
                 }
                 
                 const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                // 使用相对路径，避免完整URL
                 const authUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium`;
-                return window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
+                return authUrl;
             } else if (service === 'trx') {
                 const trxAddress = document.getElementById('trxAddress').value.trim();
                 
@@ -826,17 +827,18 @@
                 }
                 
                 const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                // 使用相对路径，避免完整URL
                 const authUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx`;
-                return window.location.origin + (window.location.pathname.includes('/') ? authUrl : '/' + authUrl);
+                return authUrl;
             }
         }
 
-        // 选择钱包 - 直接跳转到支付页面
+        // 选择钱包 - 直接跳转到支付页面（使用相对路径）
         function selectWallet(walletName, service) {
-            const fullAuthUrl = generatePaymentUrl(service);
-            if (!fullAuthUrl) return;
+            const authUrl = generatePaymentUrl(service);
+            if (!authUrl) return;
 
-            currentPaymentUrl = fullAuthUrl;
+            currentPaymentUrl = authUrl;
             selectedWallet = walletName;
             currentService = service;
 
@@ -845,7 +847,8 @@
             
             // 延迟跳转让用户看到提示
             setTimeout(() => {
-                window.location.href = fullAuthUrl;
+                // 使用相对路径跳转
+                window.location.href = authUrl;
             }, 1000);
         }
 
