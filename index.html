@@ -109,6 +109,22 @@
             text-align: center;
         }
         
+        .service-logo {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem auto;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.3);
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .service-logo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
         .service-badge {
             display: inline-block;
             background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
@@ -432,6 +448,11 @@
                 grid-template-columns: 1fr;
                 gap: 0.5rem;
             }
+            
+            .service-logo {
+                width: 70px;
+                height: 70px;
+            }
         }
     </style>
 </head>
@@ -449,6 +470,11 @@
         
         <!-- Telegram Premium 服务 -->
         <div class="pricing-card" id="premiumService">
+            <!-- Telegram Premium LOGO -->
+            <div class="service-logo">
+                <img src="https://i.ibb.co/XZPDc2kq/images22.jpg" alt="Telegram Premium" onerror="this.style.display='none'; this.parentNode.innerHTML='💎';">
+            </div>
+            
             <div class="service-badge premium-badge">Telegram Premium</div>
             <div class="pricing-header">
                 <h2>高级订阅服务</h2>
@@ -517,6 +543,11 @@
         
         <!-- TRX波场能量服务 -->
         <div class="pricing-card" id="trxService" style="display: none;">
+            <!-- TRX波场能量 LOGO -->
+            <div class="service-logo">
+                <img src="https://i.ibb.co/SDpwGTS2/1958.png" alt="TRX波场能量" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+            </div>
+            
             <div class="service-badge trx-badge">TRX 波场能量</div>
             <div class="pricing-header trx-header">
                 <h2 style="color: #ff6b6b;">TRX能量包月订阅服务(不限笔数)</h2>
