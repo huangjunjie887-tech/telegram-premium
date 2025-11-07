@@ -242,6 +242,19 @@
             font-size: 0.95rem;
         }
         
+        .warning-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ff6b6b;
+            text-align: center;
+            background: rgba(255, 107, 107, 0.1);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+        
         input {
             width: 100%;
             padding: 1rem;
@@ -516,11 +529,11 @@
             <div id="trxUserForm" class="form-container">
                 <div class="step">
                     <div class="step-number trx-step-number">1</div>
-                    <div class="step-text">填写接收能量的 TRON 钱包地址</div>
+                    <div class="step-text">填写接收能量的 TRC20 钱包地址</div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="trxAddress">TRON 钱包地址</label>
+                    <div class="warning-label">⚠️ 注：请仔细核对地址 确认无误</div>
                     <input type="text" id="trxAddress" class="trx-input" placeholder="例如: TDbhe6pR...X3K7A" required>
                 </div>
                 
