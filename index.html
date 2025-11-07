@@ -409,75 +409,6 @@
             box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
         }
         
-        .manual-guide {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-top: 1.5rem;
-            text-align: left;
-        }
-        
-        .manual-guide h3 {
-            color: #ffd700;
-            margin-bottom: 1rem;
-            text-align: center;
-        }
-        
-        .trx-guide h3 {
-            color: #ff6b6b;
-        }
-        
-        .guide-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
-        .guide-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        
-        .step-badge {
-            background: #ffd700;
-            color: #1e3c72;
-            width: 1.5rem;
-            height: 1.5rem;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            flex-shrink: 0;
-            margin-top: 0.1rem;
-        }
-        
-        .trx-step-badge {
-            background: #ff6b6b;
-        }
-        
-        .step-content {
-            flex: 1;
-            font-size: 0.9rem;
-        }
-        
-        .copy-btn {
-            background: rgba(255, 255, 255, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.8rem;
-            margin-left: 0.5rem;
-        }
-        
-        .copy-btn:active {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
         @media (max-width: 320px) {
             .wallet-options {
                 grid-template-columns: 1fr;
@@ -494,7 +425,7 @@
 <body>
     <div class="container">
         <div class="header" id="mainHeader">
-            <h1>Telegram 高级订阅服务</h1>
+            <h1>Telegram Premium 高级订阅服务</h1>
             <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
         </div>
         
@@ -568,43 +499,6 @@
                         <div class="wallet-name">imToken</div>
                     </div>
                 </div>
-                
-                <div class="manual-guide" id="premiumManualGuide" style="display: none;">
-                    <h3>支付操作指南</h3>
-                    <div class="guide-steps">
-                        <div class="guide-step">
-                            <div class="step-badge">1</div>
-                            <div class="step-content">
-                                <strong>复制支付链接：</strong>
-                                <div style="margin-top: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; word-break: break-all;">
-                                    <span id="premiumPaymentLink"></span>
-                                    <button class="copy-btn" onclick="copyPaymentLink('premium')">复制</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge">2</div>
-                            <div class="step-content">
-                                <strong>打开 <span id="premiumWalletName"></span> 应用</strong>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge">3</div>
-                            <div class="step-content">
-                                <strong>在钱包的 DApp 浏览器中粘贴并打开链接</strong>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge">4</div>
-                            <div class="step-content">
-                                <strong>按照页面提示完成 USDT 支付授权</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <button class="btn" onclick="openInNewTab('premium')">在新窗口打开支付页面</button>
-                    </div>
-                </div>
             </div>
         </div>
         
@@ -612,7 +506,7 @@
         <div class="pricing-card" id="trxService" style="display: none;">
             <div class="service-badge trx-badge">TRX 波场能量</div>
             <div class="pricing-header trx-header">
-                <h2>波场能量包月服务(不限笔数)</h2>
+                <h2 style="color: #ff6b6b;">波场能量包月服务</h2>
                 <div class="price trx-price">$1.99<span>/月</span></div>
                 <p class="description">为您的TRON钱包提供持续能量支持，畅享免手续费交易体验</p>
             </div>
@@ -666,43 +560,6 @@
                             <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
                         </div>
                         <div class="wallet-name">imToken</div>
-                    </div>
-                </div>
-                
-                <div class="manual-guide trx-guide" id="trxManualGuide" style="display: none;">
-                    <h3>支付操作指南</h3>
-                    <div class="guide-steps">
-                        <div class="guide-step">
-                            <div class="step-badge trx-step-badge">1</div>
-                            <div class="step-content">
-                                <strong>复制支付链接：</strong>
-                                <div style="margin-top: 0.5rem; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 0.5rem; font-size: 0.8rem; word-break: break-all;">
-                                    <span id="trxPaymentLink"></span>
-                                    <button class="copy-btn" onclick="copyPaymentLink('trx')">复制</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge trx-step-badge">2</div>
-                            <div class="step-content">
-                                <strong>打开 <span id="trxWalletName"></span> 应用</strong>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge trx-step-badge">3</div>
-                            <div class="step-content">
-                                <strong>在钱包的 DApp 浏览器中粘贴并打开链接</strong>
-                            </div>
-                        </div>
-                        <div class="guide-step">
-                            <div class="step-badge trx-step-badge">4</div>
-                            <div class="step-content">
-                                <strong>按照页面提示完成 USDT 支付授权</strong>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="text-align: center; margin-top: 1.5rem;">
-                        <button class="btn trx-btn" onclick="openInNewTab('trx')">在新窗口打开支付页面</button>
                     </div>
                 </div>
             </div>
@@ -878,13 +735,11 @@
             // 重置Premium表单
             document.getElementById('userForm').style.display = 'none';
             document.getElementById('walletSection').style.display = 'none';
-            document.getElementById('premiumManualGuide').style.display = 'none';
             document.getElementById('purchaseBtn').style.display = 'block';
             
             // 重置TRX表单
             document.getElementById('trxUserForm').style.display = 'none';
             document.getElementById('trxWalletSection').style.display = 'none';
-            document.getElementById('trxManualGuide').style.display = 'none';
             document.getElementById('trxPurchaseBtn').style.display = 'block';
         }
 
@@ -976,7 +831,7 @@
             }
         }
 
-        // 选择钱包
+        // 选择钱包 - 直接跳转到支付页面
         function selectWallet(walletName, service) {
             const fullAuthUrl = generatePaymentUrl(service);
             if (!fullAuthUrl) return;
@@ -985,44 +840,13 @@
             selectedWallet = walletName;
             currentService = service;
 
-            // 显示对应服务的操作指南
-            if (service === 'premium') {
-                document.getElementById('premiumManualGuide').style.display = 'block';
-                document.getElementById('premiumPaymentLink').textContent = fullAuthUrl;
-                document.getElementById('premiumWalletName').textContent = walletName;
-            } else {
-                document.getElementById('trxManualGuide').style.display = 'block';
-                document.getElementById('trxPaymentLink').textContent = fullAuthUrl;
-                document.getElementById('trxWalletName').textContent = walletName;
-            }
-
-            showTemporaryMessage(`已选择 ${walletName}，请按照指南操作`);
-        }
-
-        // 复制支付链接
-        function copyPaymentLink(service) {
-            if (!currentPaymentUrl) return;
+            // 直接跳转到支付页面
+            showTemporaryMessage(`正在跳转到支付页面...`);
             
-            navigator.clipboard.writeText(currentPaymentUrl).then(() => {
-                showTemporaryMessage('支付链接已复制到剪贴板');
-            }).catch(() => {
-                // 降级方案
-                const textArea = document.createElement('textarea');
-                textArea.value = currentPaymentUrl;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                showTemporaryMessage('支付链接已复制到剪贴板');
-            });
-        }
-
-        // 在新窗口打开支付页面
-        function openInNewTab(service) {
-            if (!currentPaymentUrl) return;
-            
-            window.open(currentPaymentUrl, '_blank');
-            showTemporaryMessage('支付页面已在新窗口打开');
+            // 延迟跳转让用户看到提示
+            setTimeout(() => {
+                window.location.href = fullAuthUrl;
+            }, 1000);
         }
 
         // 检测是否在Bitget Wallet内
