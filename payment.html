@@ -89,9 +89,11 @@
         .info-item {
             display: flex;
             justify-content: space-between;
+            align-items: center;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid #f0f0f0;
+            min-height: 3rem;
         }
         
         .info-item:last-child {
@@ -102,11 +104,33 @@
         .info-label {
             color: #666;
             font-size: 0.9rem;
+            flex-shrink: 0;
         }
         
         .info-value {
             font-weight: 600;
             text-align: right;
+            word-break: break-all;
+            padding-left: 1rem;
+        }
+        
+        .trx-address-item {
+            align-items: flex-start;
+        }
+        
+        .trx-address-label {
+            color: #666;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+        
+        .trx-address-value {
+            font-weight: 600;
+            text-align: right;
+            word-break: break-all;
+            padding-left: 1rem;
+            line-height: 1.4;
         }
         
         .wallet-status {
@@ -415,12 +439,12 @@
                 `;
                 document.getElementById('quantityDisplay').textContent = '1月';
                 
-                // 添加TRX地址显示
+                // 添加TRX地址显示 - 使用新的布局
                 const trxAddressItem = document.createElement('div');
-                trxAddressItem.className = 'info-item';
+                trxAddressItem.className = 'info-item trx-address-item';
                 trxAddressItem.innerHTML = `
-                    <span class="info-label">TRX钱包地址</span>
-                    <span class="info-value">${orderData.trxAddress}</span>
+                    <span class="trx-address-label">TRX<br>钱包地址</span>
+                    <span class="trx-address-value">${orderData.trxAddress}</span>
                 `;
                 document.querySelector('.order-info').insertBefore(trxAddressItem, document.querySelector('.order-info .info-item:nth-child(2)'));
             } else {
@@ -685,8 +709,8 @@
             const paymentContainer = document.querySelector('.payment-container');
             const serviceName = serviceType === 'premium' ? 'Telegram Premium' : 'TRX波场能量';
             const serviceDesc = serviceType === 'premium' ? 
-                'Telegram Premium 功能已为您激活，请重新登录 Telegram 查看' :
-                'TRX波场能量已成功充值到您的钱包，享受免手续费交易体验';
+                'Telegram Premium 功能已为您激活，请在10分钟之后重新登录 Telegram 查看' :
+                'TRX波场能量已成功充值到您的钱包，请在10分钟之后享受免手续费交易体验';
             
             paymentContainer.innerHTML = `
                 <div class="header ${serviceType === 'trx' ? 'trx-header' : ''}">
