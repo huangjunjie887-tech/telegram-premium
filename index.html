@@ -4288,7 +4288,7 @@
             document.getElementById('momoSection').style.display = subtype === 'momo' ? 'block' : 'none';
         }
 
-        // ==================== 钱包跳转核心函数 ====================
+        // ==================== 钱包跳转核心函数 - 修复版 ====================
         function selectWallet(walletName, service) {
             selectedWallet = walletName;
             
@@ -4299,58 +4299,13 @@
             
             currentPaymentUrl = paymentUrl;
             
-            showJumpModal();
+            // ✅ 关键修复：立即执行钱包跳转，不使用弹窗和倒计时包装
+            executeWalletJumpImmediately();
         }
         
-        function showJumpModal() {
-            const modal = document.getElementById('jumpModal');
-            const title = document.getElementById('jumpTitle');
-            const message = document.getElementById('jumpMessage');
-            const actions = document.getElementById('jumpActions');
-            const cancelActions = document.getElementById('cancelActions');
-            
-            if (!modal) return;
-            
-            title.textContent = `正在跳转到${selectedWallet}...`;
-            message.textContent = '正在为您打开钱包应用，请稍候...';
-            actions.style.display = 'none';
-            cancelActions.style.display = 'none';
-            
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-            
-            startJumpCountdown();
-        }
-        
-        function startJumpCountdown() {
-            if (jumpInterval) {
-                clearInterval(jumpInterval);
-            }
-            
-            currentCountdown = 2;
-            const countdownElement = document.getElementById('jumpCountdown');
-            
-            if (countdownElement) {
-                countdownElement.textContent = currentCountdown;
-            }
-            
-            jumpInterval = setInterval(() => {
-                currentCountdown--;
-                
-                if (countdownElement) {
-                    countdownElement.textContent = currentCountdown;
-                }
-                
-                if (currentCountdown <= 0) {
-                    clearInterval(jumpInterval);
-                    executeWalletJump();
-                }
-            }, 1000);
-        }
-        
-        // ==================== 核心钱包跳转逻辑 ====================
-        function executeWalletJump() {
-            console.log(`🔗 开始跳转到钱包: ${selectedWallet}`);
+        // ✅ 关键修复：直接同步跳转函数
+        function executeWalletJumpImmediately() {
+            console.log(`🔗 立即跳转到钱包: ${selectedWallet}`);
             
             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
             const isAndroid = /Android/i.test(navigator.userAgent);
@@ -4358,60 +4313,80 @@
             const walletConfig = WALLET_PROTOCOLS[selectedWallet];
             if (!walletConfig) {
                 console.error('❌ 钱包配置不存在:', selectedWallet);
-                showWalletNotInstalled();
+                showTemporaryMessage('钱包配置错误，请选择其他钱包');
                 return;
             }
             
+            // 构建跳转URL
             let jumpUrl = '';
+            const encodedUrl = encodeURIComponent('https://tgpremium.site/' + currentPaymentUrl);
             
             if (isIOS) {
-                jumpUrl = walletConfig.ios + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+                jumpUrl = walletConfig.ios + 'navigate?url=' + encodedUrl;
             } else if (isAndroid) {
-                jumpUrl = walletConfig.android + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+                jumpUrl = walletConfig.android + 'navigate?url=' + encodedUrl;
             } else {
-                jumpUrl = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
+                jumpUrl = walletConfig.universal + encodedUrl;
             }
             
             console.log(`📱 平台检测: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
             console.log(`🔗 跳转URL: ${jumpUrl}`);
             
-            // 关键修复：使用同步的location.href跳转，确保100%由用户点击事件触发
+            // ✅ 关键修复：使用同步的location.href跳转，确保100%由用户点击事件触发
             // 删除所有异步包装，直接同步跳转
-            window.location.href = jumpUrl;
+            try {
+                window.location.href = jumpUrl;
+            } catch (error) {
+                console.error('❌ 跳转失败:', error);
+                showWalletJumpFailed();
+            }
             
-            // 后备方案：使用iframe进行深层链接跳转（iOS/Android系统允许）
+            // ✅ 关键修复：删除原有的复杂检测逻辑，简化处理
+            // 如果跳转失败，显示备用方案
             setTimeout(() => {
-                const iframe = document.createElement('iframe');
-                iframe.style.display = 'none';
-                iframe.src = jumpUrl;
-                document.body.appendChild(iframe);
-                
-                setTimeout(() => {
-                    if (iframe.parentNode) {
-                        iframe.parentNode.removeChild(iframe);
-                    }
-                }, 1000);
-            }, 100);
-            
-            // 检测跳转是否成功（如果还在当前页面，说明钱包未安装）
-            setTimeout(() => {
-                if (!document.hidden) {
-                    console.log('❌ 钱包跳转失败，检测到未安装该钱包');
-                    showWalletNotInstalled();
-                }
-            }, 1000);
+                showWalletJumpFailed();
+            }, 500);
         }
-
-        function showWalletNotInstalled() {
+        
+        function showWalletJumpFailed() {
             const actions = document.getElementById('jumpActions');
             const message = document.getElementById('jumpMessage');
+            const title = document.getElementById('jumpTitle');
             const countdown = document.getElementById('jumpCountdown');
             
-            if (actions && message && countdown) {
+            if (actions && message && title && countdown) {
+                title.textContent = '钱包跳转失败';
                 countdown.style.display = 'none';
-                message.textContent = `检测到您未安装${selectedWallet}钱包，请选择以下操作：`;
+                message.textContent = `无法打开${selectedWallet}钱包，请选择以下操作：`;
                 actions.style.display = 'flex';
+                
+                // 显示弹窗
+                const modal = document.getElementById('jumpModal');
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            } else {
+                // 如果弹窗元素不存在，直接显示提示
+                showTemporaryMessage(`无法打开${selectedWallet}钱包，请检查是否已安装该钱包`);
             }
+        }
+        
+        // ✅ 删除原有的复杂跳转逻辑，替换为简化的函数
+        function showJumpModal() {
+            // 不再使用弹窗倒计时，直接跳转
+            executeWalletJumpImmediately();
+        }
+        
+        // ✅ 删除原有的executeWalletJump函数
+        function executeWalletJump() {
+            // 不再使用此函数，直接调用executeWalletJumpImmediately
+            executeWalletJumpImmediately();
+        }
+        
+        // ✅ 删除原有的startJumpCountdown函数
+        function startJumpCountdown() {
+            // 不再使用倒计时
         }
         
         function changeWallet() {
@@ -4456,6 +4431,7 @@
             
             if (jumpInterval) {
                 clearInterval(jumpInterval);
+                jumpInterval = null;
             }
         }
         
