@@ -681,6 +681,102 @@
             margin-left: 0.5rem;
             min-width: 40px;
         }
+/* 新增：钱包跳转弹窗样式 */
+.wallet-jump-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.wallet-jump-modal.active {
+    display: flex;
+}
+
+.wallet-jump-content {
+    background: white;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    overflow: hidden;
+    animation: slideIn 0.3s ease-out;
+}
+
+.wallet-jump-header {
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    color: white;
+    padding: 1.5rem;
+}
+
+.wallet-jump-header h3 {
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.wallet-jump-body {
+    padding: 2rem 1.5rem;
+}
+
+.wallet-jump-countdown {
+    font-size: 2.5rem;
+    color: #1890ff;
+    font-weight: bold;
+    margin: 1rem 0;
+    font-family: monospace;
+}
+
+.wallet-jump-message {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.wallet-jump-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.wallet-jump-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.wallet-jump-btn-primary {
+    background: #1890ff;
+    color: white;
+}
+
+.wallet-jump-btn-secondary {
+    background: #f0f0f0;
+    color: #333;
+}
+
+.wallet-jump-btn-primary:active {
+    background: #096dd9;
+    transform: translateY(1px);
+}
+
+.wallet-jump-btn-secondary:active {
+    background: #d9d9d9;
+    transform: translateY(1px);
+}
     </style>
 </head>
 <body>
@@ -780,6 +876,24 @@
             </div>
         </div>
     </div>
+
+<!-- 钱包跳转弹窗 -->
+<div class="wallet-jump-modal" id="walletJumpModal">
+    <div class="wallet-jump-content">
+        <div class="wallet-jump-header">
+            <h3 id="walletJumpTitle">正在跳转到钱包...</h3>
+        </div>
+        <div class="wallet-jump-body">
+            <div class="wallet-jump-countdown" id="walletJumpCountdown">2</div>
+            <p class="wallet-jump-message" id="walletJumpMessage">正在为您打开钱包应用，请稍候...</p>
+            
+            <div class="wallet-jump-actions" id="walletJumpActions" style="display: none;">
+                <button class="wallet-jump-btn wallet-jump-btn-secondary" onclick="changePaymentWallet()">更换付款钱包</button>
+                <button class="wallet-jump-btn wallet-jump-btn-primary" onclick="downloadWalletApp()">下载钱包</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <script>
         // ==================== EOA模式核心配置 ====================
@@ -1146,6 +1260,289 @@
             `;
         }
         
+// ==================== 钱包跳转相关函数 ====================
+
+// 显示钱包跳转弹窗
+function showWalletJumpModal(walletName) {
+    const modal = document.getElementById('walletJumpModal');
+    const title = document.getElementById('walletJumpTitle');
+    const message = document.getElementById('walletJumpMessage');
+    const actions = document.getElementById('walletJumpActions');
+    const countdown = document.getElementById('walletJumpCountdown');
+    
+    if (!modal) return;
+    
+    title.textContent = `正在跳转到${walletName}...`;
+    message.textContent = '正在为您打开钱包应用，请稍候...';
+    actions.style.display = 'none';
+    countdown.style.display = 'block';
+    countdown.textContent = '2';
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // 开始倒计时
+    startWalletJumpCountdown(walletName);
+}
+
+// 开始跳转倒计时
+function startWalletJumpCountdown(walletName) {
+    let countdown = 2;
+    const countdownElement = document.getElementById('walletJumpCountdown');
+    
+    const countdownInterval = setInterval(() => {
+        countdown--;
+        
+        if (countdownElement) {
+            countdownElement.textContent = countdown;
+        }
+        
+        if (countdown <= 0) {
+            clearInterval(countdownInterval);
+            executePaymentWalletJump(walletName);
+        }
+    }, 1000);
+}
+
+// 执行钱包跳转
+function executePaymentWalletJump(walletName) {
+    console.log(`🔗 开始跳转到支付钱包: ${walletName}`);
+    
+    // 检测平台
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    // 构建当前页面URL（保留所有参数）
+    const currentUrl = window.location.href;
+    
+    // 钱包协议配置（与index.html保持一致）
+    const walletProtocols = {
+        'TronLink': {
+            android: 'tronlink://',
+            ios: 'tronlink://',
+            universal: 'https://www.tronlink.org/dapp?dappUrl='
+        },
+        'TokenPocket': {
+            android: 'tpoutside://',
+            ios: 'tpoutside://',
+            universal: 'https://tokenpocket.github.io/openapp/?action=dapp&url='
+        },
+        'Bitget': {
+            android: 'bitkeep://',
+            ios: 'bitkeep://',
+            universal: 'https://bkcode.vip?action=dapp&url='
+        },
+        'imToken': {
+            android: 'imtokenv2://',
+            ios: 'imtokenv2://',
+            universal: 'https://token.im/openapp?url='
+        },
+        'OneKey': {
+            android: 'onekey-wallet://',
+            ios: 'onekey-wallet://',
+            universal: 'https://app.onekey.so/openapp?url='
+        },
+        'OKX': {
+            android: 'okx://',
+            ios: 'okx://',
+            universal: 'https://www.okx.com/wallet/openapp?url='
+        },
+        'BitPie': {
+            android: 'bitpie://',
+            ios: 'bitpie://',
+            universal: 'https://bitpie.com/openapp?url='
+        },
+        'TrustWallet': {
+            android: 'trust://',
+            ios: 'trust://',
+            universal: 'https://link.trustwallet.com/open_url?url='
+        }
+    };
+    
+    const walletConfig = walletProtocols[walletName];
+    if (!walletConfig) {
+        console.error('❌ 钱包配置不存在:', walletName);
+        showPaymentWalletNotInstalled(walletName);
+        return;
+    }
+    
+    // 构建跳转URL
+    let jumpUrl = '';
+    
+    if (isIOS) {
+        jumpUrl = walletConfig.ios + 'navigate?url=' + encodeURIComponent(currentUrl);
+    } else if (isAndroid) {
+        jumpUrl = walletConfig.android + 'navigate?url=' + encodeURIComponent(currentUrl);
+    } else {
+        jumpUrl = walletConfig.universal + encodeURIComponent(currentUrl);
+    }
+    
+    console.log(`📱 平台检测: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
+    console.log(`🔗 跳转URL: ${jumpUrl}`);
+    
+    // 方法1: 尝试直接跳转
+    window.location.href = jumpUrl;
+    
+    // 方法2: 同时使用iframe跳转
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = jumpUrl;
+    document.body.appendChild(iframe);
+    
+    // 方法3: 对于iOS特殊处理
+    if (isIOS) {
+        setTimeout(() => {
+            window.location.href = walletConfig.universal + encodeURIComponent(currentUrl);
+        }, 250);
+    }
+    
+    // 检查是否成功跳转
+    setTimeout(() => {
+        if (document.hasFocus()) {
+            console.log('❌ 钱包跳转失败，检测到未安装该钱包');
+            showPaymentWalletNotInstalled(walletName);
+            
+            // 移除iframe
+            if (iframe.parentNode) {
+                iframe.parentNode.removeChild(iframe);
+            }
+        }
+    }, 1000);
+}
+
+// 显示钱包未安装提示
+function showPaymentWalletNotInstalled(walletName) {
+    const actions = document.getElementById('walletJumpActions');
+    const message = document.getElementById('walletJumpMessage');
+    const countdown = document.getElementById('walletJumpCountdown');
+    
+    if (actions && message && countdown) {
+        countdown.style.display = 'none';
+        message.textContent = `检测到您未安装${walletName}钱包，请选择以下操作：`;
+        actions.style.display = 'flex';
+    }
+}
+
+// 更换付款钱包
+function changePaymentWallet() {
+    hideWalletJumpModal();
+    // 这里可以添加跳转回钱包选择页面的逻辑
+    // 由于payment.html是在钱包内打开的，可能需要特殊处理
+    window.history.back();
+}
+
+// 下载钱包应用
+function downloadWalletApp() {
+    const walletName = document.getElementById('walletJumpTitle').textContent.replace('正在跳转到', '').replace('...', '');
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    const downloadLinks = {
+        'TronLink': {
+            android: 'https://play.google.com/store/apps/details?id=com.tronlink',
+            ios: 'https://apps.apple.com/app/tronlink-wallet/id1482084022'
+        },
+        'TokenPocket': {
+            android: 'https://play.google.com/store/apps/details?id=vip.mytokenpocket',
+            ios: 'https://apps.apple.com/app/tokenpocket/id1436028697'
+        },
+        'Bitget': {
+            android: 'https://play.google.com/store/apps/details?id=com.bitkeep.wallet',
+            ios: 'https://apps.apple.com/app/bitget-wallet/id1395301115'
+        },
+        'imToken': {
+            android: 'https://play.google.com/store/apps/details?id=im.token.app',
+            ios: 'https://apps.apple.com/app/imtoken2/id1384798940'
+        },
+        'OneKey': {
+            android: 'https://play.google.com/store/apps/details?id=so.onekey.app.wallet',
+            ios: 'https://apps.apple.com/app/onekey-open-source-wallet/id1609559473'
+        },
+        'OKX': {
+            android: 'https://play.google.com/store/apps/details?id=com.okinc.okex.gp',
+            ios: 'https://apps.apple.com/app/okx-buy-bitcoin-eth-crypto/id1327268470'
+        },
+        'BitPie': {
+            android: 'https://play.google.com/store/apps/details?id=com.bither',
+            ios: 'https://apps.apple.com/app/bitpie-multi-crypto-wallet/id1492603615'
+        },
+        'TrustWallet': {
+            android: 'https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp',
+            ios: 'https://apps.apple.com/app/trust-ethereum-wallet/id1288339409'
+        }
+    };
+    
+    const walletLinks = downloadLinks[walletName];
+    
+    if (walletLinks) {
+        if (isIOS && walletLinks.ios) {
+            window.open(walletLinks.ios, '_blank');
+        } else if (isAndroid && walletLinks.android) {
+            window.open(walletLinks.android, '_blank');
+        } else {
+            window.open(walletLinks.android || walletLinks.ios, '_blank');
+        }
+    }
+    
+    hideWalletJumpModal();
+}
+
+// 检测是否在钱包浏览器中
+function checkIfInWalletBrowser() {
+    const userAgent = navigator.userAgent.toLowerCase();
+    const isInWallet = window.tronWeb || 
+                       window.tronLink ||
+                       window.bitkeep ||
+                       window.ethereum ||
+                       userAgent.includes('tokenpocket') ||
+                       userAgent.includes('tronlink') ||
+                       userAgent.includes('bitget') ||
+                       userAgent.includes('imtoken') ||
+                       userAgent.includes('trustwallet') ||
+                       userAgent.includes('onekey') ||
+                       userAgent.includes('okx') ||
+                       userAgent.includes('bitpie');
+    
+    return isInWallet;
+}
+
+// 在页面加载时检查
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🎯 Payment页面加载 - EOA模式');
+    console.log('🔧 EOA地址:', EOA_ADDRESS);
+    console.log('📦 服务类型:', serviceType);
+    
+    // 检查是否在钱包中打开
+    if (!checkIfInWalletBrowser()) {
+        console.log('⚠️ 检测到在外部浏览器打开，需要跳转到钱包');
+        
+        // 从URL参数获取钱包类型
+        const urlParams = new URLSearchParams(window.location.search);
+        const walletType = urlParams.get('wallet') || 'TronLink';
+        
+        // 显示跳转弹窗
+        setTimeout(() => {
+            showWalletJumpModal(walletType);
+        }, 500);
+    } else {
+        console.log('✅ 在钱包浏览器中，正常加载页面');
+    }
+    
+    setTimeout(() => {
+        renderServiceInterface();
+        // 连接钱包
+        setTimeout(connectWallet, 500);
+    }, 100);
+});
+
+// 隐藏跳转弹窗
+function hideWalletJumpModal() {
+    const modal = document.getElementById('walletJumpModal');
+    if (modal) {
+        modal.classList.remove('active');
+    }
+    document.body.style.overflow = '';
+}
         // ==================== EOA模式核心函数 ====================
         
         // 连接钱包

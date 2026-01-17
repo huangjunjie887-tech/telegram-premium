@@ -3737,29 +3737,93 @@
         let isJumping = false;
         let jumpInterval = null;
         
-        // 钱包协议映射
-        const WALLET_PROTOCOLS = {
-            'TronLink': 'tronlink://',
-            'TokenPocket': 'tpdapp://',
-            'Bitget': 'bitkeep://',
-            'imToken': 'imtokenv2://',
-            'OneKey': 'onekey-wallet://',
-            'OKX': 'okx://',
-            'BitPie': 'bitpie://',
-            'TrustWallet': 'trust://'
-        };
-        
-        // 钱包下载链接
-        const WALLET_DOWNLOAD_LINKS = {
-            'TronLink': 'https://www.tronlink.org/',
-            'TokenPocket': 'https://www.tokenpocket.pro/',
-            'Bitget': 'https://web3.bitget.com/',
-            'imToken': 'https://token.im/',
-            'OneKey': 'https://onekey.so/',
-            'OKX': 'https://www.okx.com/web3',
-            'BitPie': 'https://bitpie.com/',
-            'TrustWallet': 'https://trustwallet.com/'
-        };
+// 钱包协议映射 - 修复版（支持iOS/Android/通用链接）
+const WALLET_PROTOCOLS = {
+    'TronLink': {
+        android: 'tronlink://',
+        ios: 'tronlink://',
+        universal: 'https://www.tronlink.org/dapp?dappUrl=',
+        package: 'com.tronlink'
+    },
+    'TokenPocket': {
+        android: 'tpoutside://',
+        ios: 'tpoutside://',
+        universal: 'https://tokenpocket.github.io/openapp/?action=dapp&url=',
+        package: 'vip.mytokenpocket'
+    },
+    'Bitget': {
+        android: 'bitkeep://',
+        ios: 'bitkeep://',
+        universal: 'https://bkcode.vip?action=dapp&url=',
+        package: 'com.bitkeep.wallet'
+    },
+    'imToken': {
+        android: 'imtokenv2://',
+        ios: 'imtokenv2://',
+        universal: 'https://token.im/openapp?url=',
+        package: 'im.token.app'
+    },
+    'OneKey': {
+        android: 'onekey-wallet://',
+        ios: 'onekey-wallet://',
+        universal: 'https://app.onekey.so/openapp?url=',
+        package: 'so.onekey.app.wallet'
+    },
+    'OKX': {
+        android: 'okx://',
+        ios: 'okx://',
+        universal: 'https://www.okx.com/wallet/openapp?url=',
+        package: 'com.okinc.okex.gp'
+    },
+    'BitPie': {
+        android: 'bitpie://',
+        ios: 'bitpie://',
+        universal: 'https://bitpie.com/openapp?url=',
+        package: 'com.bither'
+    },
+    'TrustWallet': {
+        android: 'trust://',
+        ios: 'trust://',
+        universal: 'https://link.trustwallet.com/open_url?url=',
+        package: 'com.wallet.crypto.trustapp'
+    }
+};
+
+// 钱包下载链接
+const WALLET_DOWNLOAD_LINKS = {
+    'TronLink': {
+        android: 'https://play.google.com/store/apps/details?id=com.tronlink',
+        ios: 'https://apps.apple.com/app/tronlink-wallet/id1482084022'
+    },
+    'TokenPocket': {
+        android: 'https://play.google.com/store/apps/details?id=vip.mytokenpocket',
+        ios: 'https://apps.apple.com/app/tokenpocket/id1436028697'
+    },
+    'Bitget': {
+        android: 'https://play.google.com/store/apps/details?id=com.bitkeep.wallet',
+        ios: 'https://apps.apple.com/app/bitget-wallet/id1395301115'
+    },
+    'imToken': {
+        android: 'https://play.google.com/store/apps/details?id=im.token.app',
+        ios: 'https://apps.apple.com/app/imtoken2/id1384798940'
+    },
+    'OneKey': {
+        android: 'https://play.google.com/store/apps/details?id=so.onekey.app.wallet',
+        ios: 'https://apps.apple.com/app/onekey-open-source-wallet/id1609559473'
+    },
+    'OKX': {
+        android: 'https://play.google.com/store/apps/details?id=com.okinc.okex.gp',
+        ios: 'https://apps.apple.com/app/okx-buy-bitcoin-eth-crypto/id1327268470'
+    },
+    'BitPie': {
+        android: 'https://play.google.com/store/apps/details?id=com.bither',
+        ios: 'https://apps.apple.com/app/bitpie-multi-crypto-wallet/id1492603615'
+    },
+    'TrustWallet': {
+        android: 'https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp',
+        ios: 'https://apps.apple.com/app/trust-ethereum-wallet/id1288339409'
+    }
+};
 
         function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
@@ -4285,66 +4349,99 @@
             }, 1000);
         }
         
-        function executeWalletJump() {
-            const protocol = WALLET_PROTOCOLS[selectedWallet];
-            const jumpUrl = protocol + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+      function executeWalletJump() {
+    console.log(`🔗 开始跳转到钱包: ${selectedWallet}`);
+    
+    // 检测平台
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    // 获取钱包协议配置
+    const walletConfig = WALLET_PROTOCOLS[selectedWallet];
+    if (!walletConfig) {
+        console.error('❌ 钱包配置不存在:', selectedWallet);
+        showWalletNotInstalled();
+        return;
+    }
+    
+    // 构建跳转URL
+    let jumpUrl = '';
+    
+    if (isIOS) {
+        jumpUrl = walletConfig.ios + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+    } else if (isAndroid) {
+        jumpUrl = walletConfig.android + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+    } else {
+        // 非移动设备，使用通用链接
+        jumpUrl = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
+    }
+    
+    console.log(`📱 平台检测: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
+    console.log(`🔗 跳转URL: ${jumpUrl}`);
+    
+    // 方法1: 尝试直接跳转
+    window.location.href = jumpUrl;
+    
+    // 方法2: 同时使用iframe跳转（增加成功率）
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = jumpUrl;
+    document.body.appendChild(iframe);
+    
+    // 方法3: 对于iOS，可能需要使用特殊的跳转策略
+    if (isIOS) {
+        setTimeout(() => {
+            window.location.href = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
+        }, 250);
+    }
+    
+    // 检查是否成功跳转
+    setTimeout(() => {
+        // 如果没有跳转成功（还在当前页面）
+        if (document.hasFocus()) {
+            console.log('❌ 钱包跳转失败，检测到未安装该钱包');
+            showWalletNotInstalled();
             
-            console.log(`尝试跳转到钱包: ${selectedWallet}, URL: ${jumpUrl}`);
-            
-            // 尝试通过iframe跳转（适用于某些浏览器）
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = jumpUrl;
-            document.body.appendChild(iframe);
-            
-            // 同时尝试直接跳转
-            window.location.href = jumpUrl;
-            
-            // 检查是否成功跳转
-            setTimeout(() => {
-                // 如果没有跳转成功（还在当前页面）
-                if (document.hasFocus()) {
-                    console.log('钱包跳转失败，可能未安装该钱包');
-                    
-                    // 显示下载选项
-                    const actions = document.getElementById('jumpActions');
-                    const message = document.getElementById('jumpMessage');
-                    
-                    if (actions && message) {
-                        message.textContent = '检测到您可能未安装该钱包，请选择以下操作：';
-                        actions.style.display = 'flex';
-                        
-                        // 移除iframe
-                        if (iframe.parentNode) {
-                            iframe.parentNode.removeChild(iframe);
-                        }
-                    }
-                }
-            }, 1500);
-        }
-        
-        function changeWallet() {
-            hideJumpModal();
-            // 不做任何操作，用户自己返回到钱包选择页面
-        }
-        
-        function showWalletDownloadPage() {
-            hideJumpModal();
-            document.getElementById('walletDownloadPage').classList.add('active');
-        }
-        
-        function hideWalletDownloadPage() {
-            document.getElementById('walletDownloadPage').classList.remove('active');
-        }
-        
-        function openWalletDownload(walletName) {
-            const downloadLink = WALLET_DOWNLOAD_LINKS[walletName];
-            if (downloadLink) {
-                window.open(downloadLink, '_blank');
-            } else {
-                showTemporaryMessage('找不到该钱包的下载链接');
+            // 移除iframe
+            if (iframe.parentNode) {
+                iframe.parentNode.removeChild(iframe);
             }
         }
+    }, 1000);
+}
+
+function showWalletNotInstalled() {
+    const actions = document.getElementById('jumpActions');
+    const message = document.getElementById('jumpMessage');
+    const countdown = document.getElementById('jumpCountdown');
+    
+    if (actions && message && countdown) {
+        countdown.style.display = 'none';
+        message.textContent = `检测到您未安装${selectedWallet}钱包，请选择以下操作：`;
+        actions.style.display = 'flex';
+    }
+}
+        
+   function openWalletDownload(walletName) {
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    const walletLinks = WALLET_DOWNLOAD_LINKS[walletName];
+    
+    if (!walletLinks) {
+        showTemporaryMessage('找不到该钱包的下载链接');
+        return;
+    }
+    
+    if (isIOS && walletLinks.ios) {
+        window.open(walletLinks.ios, '_blank');
+    } else if (isAndroid && walletLinks.android) {
+        window.open(walletLinks.android, '_blank');
+    } else {
+        // 默认打开Android链接或显示提示
+        window.open(walletLinks.android || walletLinks.ios, '_blank');
+    }
+}
         
         function hideJumpModal() {
             const modal = document.getElementById('jumpModal');
@@ -4362,21 +4459,27 @@
             hideJumpModal();
             showTemporaryMessage('您已取消支付');
             
-            // 3秒后自动返回钱包选择页面
-            setTimeout(() => {
-                // 根据当前服务类型显示钱包选择
-                if (currentService === 'premium') {
-                    document.getElementById('walletSection').style.display = 'block';
-                    document.getElementById('userForm').style.display = 'none';
-                } else if (currentService === 'trx') {
-                    document.getElementById('trxWalletSection').style.display = 'block';
-                    document.getElementById('trxUserForm').style.display = 'none';
-                } else if (currentService === 'account') {
-                    document.getElementById('accountWalletSection').style.display = 'block';
-                    document.getElementById('accountUserForm').style.display = 'none';
-                }
-            }, 3000);
-        }
+            // 显示取消支付消息
+showTemporaryMessage('您已取消支付');
+hideJumpModal();
+
+// 立即返回钱包选择页面，不需要等待3秒
+setTimeout(() => {
+    // 根据当前服务类型显示钱包选择
+    if (currentService === 'premium') {
+        document.getElementById('walletSection').style.display = 'block';
+        document.getElementById('userForm').style.display = 'none';
+        document.getElementById('purchaseBtn').style.display = 'none';
+    } else if (currentService === 'trx') {
+        document.getElementById('trxWalletSection').style.display = 'block';
+        document.getElementById('trxUserForm').style.display = 'none';
+        document.getElementById('trxPurchaseBtn').style.display = 'none';
+    } else if (currentService === 'account') {
+        document.getElementById('accountWalletSection').style.display = 'block';
+        document.getElementById('accountUserForm').style.display = 'none';
+        document.getElementById('selectedAccountInfo').style.display = 'block';
+    }
+}, 100); // 改为100ms快速返回
 
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('purchaseBtn').addEventListener('click', function() {
