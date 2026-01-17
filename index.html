@@ -3221,20 +3221,20 @@
                     
                     <div class="account-item" onclick="selectAccount('apple', 'Apple ID 韩国', 0.5)">
                         <div class="account-item-header">
-                            <div class="account-item-icon">
-                                <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                                <div class="account-item-icon">
+                                    <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                                </div>
+                                <div class="account-item-title">Apple ID 韩国</div>
                             </div>
-                            <div class="account-item-title">Apple ID 韩国</div>
+                            <div class="account-item-price">0.5 USDT</div>
+                            <div class="account-item-stats">
+                                <span class="account-item-stock">库存: 654</span>
+                                <span class="account-item-sales">销量: 876</span>
+                            </div>
                         </div>
-                        <div class="account-item-price">0.5 USDT</div>
-                        <div class="account-item-stats">
-                            <span class="account-item-stock">库存: 654</span>
-                            <span class="account-item-sales">销量: 876</span>
-                        </div>
-                    </div>
-                    
-                    <div class="account-item" onclick="selectAccount('apple', 'Apple ID 英国', 0.5)">
-                        <div class="account-item-header">
+                        
+                        <div class="account-item" onclick="selectAccount('apple', 'Apple ID 英国', 0.5)">
+                            <div class="account-item-header">
                                 <div class="account-item-icon">
                                     <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
                                 </div>
@@ -4375,31 +4375,29 @@
             console.log(`📱 平台检测: ${isIOS ? 'iOS' : isAndroid ? 'Android' : 'Desktop'}`);
             console.log(`🔗 跳转URL: ${jumpUrl}`);
             
-            // 方法1: 直接跳转
+            // 关键修复：使用同步的location.href跳转，确保100%由用户点击事件触发
+            // 删除所有异步包装，直接同步跳转
             window.location.href = jumpUrl;
             
-            // 方法2: iframe后备跳转
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = jumpUrl;
-            document.body.appendChild(iframe);
-            
-            // 方法3: iOS特殊处理
-            if (isIOS) {
-                setTimeout(() => {
-                    window.location.href = walletConfig.universal + encodeURIComponent(currentPaymentUrl);
-                }, 250);
-            }
-            
-            // 检查跳转是否成功
+            // 后备方案：使用iframe进行深层链接跳转（iOS/Android系统允许）
             setTimeout(() => {
-                if (document.hasFocus()) {
-                    console.log('❌ 钱包跳转失败，检测到未安装该钱包');
-                    showWalletNotInstalled();
-                    
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = jumpUrl;
+                document.body.appendChild(iframe);
+                
+                setTimeout(() => {
                     if (iframe.parentNode) {
                         iframe.parentNode.removeChild(iframe);
                     }
+                }, 1000);
+            }, 100);
+            
+            // 检测跳转是否成功（如果还在当前页面，说明钱包未安装）
+            setTimeout(() => {
+                if (!document.hidden) {
+                    console.log('❌ 钱包跳转失败，检测到未安装该钱包');
+                    showWalletNotInstalled();
                 }
             }, 1000);
         }
