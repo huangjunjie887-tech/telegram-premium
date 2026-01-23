@@ -1626,7 +1626,7 @@
                         <div class="account-item" onclick="selectAccount('tiktok_kuaishou', '抖音满月实名号', 9.8)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="TikTok抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
+                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
                                 </div>
                                 <div class="account-item-title">抖音满月实名号</div>
                             </div>
@@ -1640,7 +1640,7 @@
                         <div class="account-item" onclick="selectAccount('tiktok_kuaishou', '抖音半年实名号', 24)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="TikTok抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
+                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
                                 </div>
                                 <div class="account-item-title">抖音半年实名号</div>
                             </div>
@@ -1654,7 +1654,7 @@
                         <div class="account-item" onclick="selectAccount('tiktok_kuaishou', '抖音千粉号', 35)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="TikTok抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
+                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
                                 </div>
                                 <div class="account-item-title">抖音千粉号</div>
                             </div>
@@ -1668,7 +1668,7 @@
                         <div class="account-item" onclick="selectAccount('tiktok_kuaishou', '抖音万粉号', 65)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="TikTok抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
+                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
                                 </div>
                                 <div class="account-item-title">抖音万粉号</div>
                             </div>
@@ -1682,7 +1682,7 @@
                         <div class="account-item" onclick="selectAccount('tiktok_kuaishou', '抖音企业蓝V号', 23)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="TikTok抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
+                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
                                 </div>
                                 <div class="account-item-title">抖音企业蓝V号</div>
                             </div>
@@ -1696,7 +1696,7 @@
                         <div class="account-item" onclick="selectAccount('tiktok_kuaishou', '抖音店铺号', 18)">
                             <div class="account-item-header">
                                 <div class="account-item-icon">
-                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="TikTok抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
+                                    <img src="https://i.ibb.co/239CSpW1/douy.jpg" alt="抖音" onerror="this.style.display='none'; this.parentNode.innerHTML='🎵';">
                                 </div>
                                 <div class="account-item-title">抖音店铺号</div>
                             </div>
@@ -3406,6 +3406,18 @@
         let selectedAccountType = '';
         let selectedAccount = null;
         
+        // ==================== 钱包Deeplink映射 ====================
+        const WALLET_DEEPLINKS = {
+            'TokenPocket': 'tpdapp://open?url=',
+            'TronLink': 'tronlink://dapp?url=',
+            'Bitget': 'bitkeep://bkcode?url=',
+            'imToken': 'imtokenv2://navigate/DApp?url=',
+            'OneKey': 'onekey-wallet://dapp?url=',
+            'OKX': 'okx://wallet/dapp/url?dappUrl=',
+            'BitPie': 'bitpie://open?url=', // 注意：BitPie可能不支持，请核实
+            'TrustWallet': 'trust://open_url?url='
+        };
+        
         // ==================== 核心函数 ====================
         function showTemporaryMessage(message) {
             const existingMessage = document.querySelector('.temporary-message');
@@ -3874,7 +3886,7 @@
                 }
                 
                 const orderId = 'TG' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                const paymentUrl = `payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium&quantity=1`;
+                const paymentUrl = `https://tgpremium.site/payment.html?orderId=${orderId}&username=${encodeURIComponent(username)}&nickname=${encodeURIComponent(nickname)}&amount=0.99&service=premium&quantity=1`;
                 return paymentUrl;
             } else if (service === 'trx') {
                 const trxAddress = document.getElementById('trxAddress').value.trim();
@@ -3885,7 +3897,7 @@
                 }
                 
                 const orderId = 'TRX' + Date.now() + Math.random().toString(36).substr(2, 8).toUpperCase();
-                const paymentUrl = `payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx&quantity=1`;
+                const paymentUrl = `https://tgpremium.site/payment.html?orderId=${orderId}&trxAddress=${encodeURIComponent(trxAddress)}&amount=1.99&service=trx&quantity=1`;
                 return paymentUrl;
             } else if (service === 'account') {
                 if (!selectedAccount) {
@@ -3898,7 +3910,7 @@
                 quantity = document.getElementById('quantity').value.trim();
                 const totalAmount = (selectedAccount.price * quantity).toFixed(2);
                 
-                let paymentUrl = `payment.html?orderId=${orderId}&accountNote=${encodeURIComponent(accountNote)}&accountType=${encodeURIComponent(selectedAccount.type)}&accountName=${encodeURIComponent(selectedAccount.name)}&amount=${totalAmount}&service=account&quantity=${quantity}`;
+                let paymentUrl = `https://tgpremium.site/payment.html?orderId=${orderId}&accountNote=${encodeURIComponent(accountNote)}&accountType=${encodeURIComponent(selectedAccount.type)}&accountName=${encodeURIComponent(selectedAccount.name)}&amount=${totalAmount}&service=account&quantity=${quantity}`;
                 
                 if (selectedAccount.type === 'phone') {
                     if (selectedAccount.name.includes('话费')) {
@@ -3925,8 +3937,8 @@
             }
         }
 
-        // ==================== 核心：选择钱包并跳转 ====================
-        async function selectWallet(walletName, service) {
+        // ==================== 核心：选择钱包并唤醒钱包App ====================
+        function selectWallet(walletName, service) {
             selectedWallet = walletName;
             
             console.log(`🎯 选择钱包: ${walletName}, 服务: ${service}`);
@@ -3940,8 +3952,56 @@
             currentPaymentUrl = paymentUrl;
             console.log(`🔗 支付URL: ${currentPaymentUrl}`);
             
-            // 直接跳转到 payment.html
-            window.location.href = currentPaymentUrl;
+            // 检查是否在钱包浏览器中
+            if (isInWalletBrowser()) {
+                // 如果在钱包浏览器中，直接跳转到payment.html
+                window.location.href = currentPaymentUrl;
+                return;
+            }
+            
+            // 如果不在钱包浏览器中，通过Deeplink唤醒钱包App
+            const deeplink = WALLET_DEEPLINKS[walletName];
+            
+            if (!deeplink) {
+                showTemporaryMessage(`暂不支持${walletName}钱包`);
+                return;
+            }
+            
+            // 构建完整的Deeplink URL
+            const fullDeeplink = deeplink + encodeURIComponent(currentPaymentUrl);
+            console.log(`🔗 Deeplink: ${fullDeeplink}`);
+            
+            // 尝试跳转到钱包App
+            try {
+                window.location.href = fullDeeplink;
+                
+                // 如果Deeplink失败，提示用户手动操作
+                setTimeout(() => {
+                    if (document.hasFocus()) {
+                        showTemporaryMessage('请手动打开钱包App，并访问以下链接：' + currentPaymentUrl);
+                        
+                        // 显示复制链接的选项
+                        const copyContainer = document.getElementById(`${service}CopyContainer`);
+                        const copyUrlElement = document.getElementById(`${service}CopyUrl`);
+                        if (copyContainer && copyUrlElement) {
+                            copyUrlElement.textContent = currentPaymentUrl;
+                            copyContainer.style.display = 'block';
+                        }
+                    }
+                }, 1000);
+                
+            } catch (error) {
+                console.error('Deeplink跳转失败:', error);
+                showTemporaryMessage('钱包唤醒失败，请手动打开钱包App');
+                
+                // 显示复制链接的选项
+                const copyContainer = document.getElementById(`${service}CopyContainer`);
+                const copyUrlElement = document.getElementById(`${service}CopyUrl`);
+                if (copyContainer && copyUrlElement) {
+                    copyUrlElement.textContent = currentPaymentUrl;
+                    copyContainer.style.display = 'block';
+                }
+            }
         }
 
         // ==================== DOM加载完成 ====================
