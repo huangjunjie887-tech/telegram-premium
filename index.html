@@ -393,6 +393,7 @@
         .select-service-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
             margin-top: 20px;
             padding: 12px 25px;
@@ -402,10 +403,11 @@
             border-radius: 8px;
             font-family: 'Exo 2', sans-serif;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
+            width: 100%;
         }
         
         .select-service-btn:hover {
@@ -417,10 +419,11 @@
         .price-badge {
             background: rgba(255, 255, 255, 0.1);
             color: var(--accent);
-            padding: 4px 12px;
+            padding: 4px 10px;
             border-radius: 6px;
             font-weight: 700;
             font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
             border: 1px solid rgba(255, 0, 110, 0.3);
         }
         
@@ -428,19 +431,21 @@
         .subscribe-btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            margin-top: 20px;
-            padding: 12px 25px;
+            margin-top: 10px;
+            padding: 10px 20px;
             background: rgba(0, 243, 255, 0.1);
             color: var(--primary);
             border: 2px solid var(--primary);
             border-radius: 8px;
             font-family: 'Exo 2', sans-serif;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s;
             text-align: center;
+            width: 100%;
         }
         
         .subscribe-btn:hover {
@@ -536,7 +541,7 @@
         
         .robot-card h3 {
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             margin-bottom: 20px;
             color: var(--primary);
             display: flex;
@@ -546,6 +551,7 @@
         
         .robot-card h3 i {
             color: var(--secondary);
+            font-size: 1.3rem;
         }
         
         .robot-list {
@@ -553,11 +559,10 @@
         }
         
         .robot-list li {
-            padding: 12px 0;
+            padding: 14px 0;
             border-bottom: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
             transition: all 0.3s;
         }
         
@@ -572,6 +577,27 @@
         
         .robot-name {
             font-weight: 500;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            color: #e2f1ff;
+        }
+        
+        .robot-price-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 5px;
+        }
+        
+        .robot-price {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.95rem;
+            color: var(--accent);
+            background: rgba(255, 0, 110, 0.1);
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 0, 110, 0.3);
         }
         
         /* 页脚 */
@@ -637,6 +663,15 @@
             .section-title {
                 font-size: 2rem;
             }
+            
+            .robot-price-info {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .subscribe-btn {
+                width: 100%;
+            }
         }
         
         @media (max-width: 480px) {
@@ -653,16 +688,27 @@
                 font-size: 1.8rem;
             }
             
+            .robot-card h3 {
+                font-size: 1.3rem;
+            }
+            
+            .robot-name {
+                font-size: 1rem;
+            }
+            
+            .robot-price {
+                font-size: 0.85rem;
+                padding: 4px 8px;
+            }
+            
             .subscribe-btn, .select-service-btn {
-                padding: 10px 20px;
-                font-size: 0.9rem;
-                flex-direction: column;
-                gap: 5px;
+                padding: 10px 18px;
+                font-size: 0.8rem;
             }
             
             .price-badge {
+                font-size: 0.8rem;
                 padding: 3px 8px;
-                font-size: 0.9rem;
             }
         }
         
@@ -860,32 +906,40 @@
                             <h3><i class="fas fa-microchip"></i> 金融交易类</h3>
                             <ul class="robot-list">
                                 <li>
-                                    <span class="robot-name">钱包机器人</span>
-                                    <button class="subscribe-btn" data-service="钱包机器人" data-category="机器人定制">
-                                        <span class="price-badge">$1,500</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">钱包机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$1,500</span>
+                                        <button class="subscribe-btn" data-service="钱包机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">记账机器人</span>
-                                    <button class="subscribe-btn" data-service="记账机器人" data-category="机器人定制">
-                                        <span class="price-badge">$1,200</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">记账机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$1,200</span>
+                                        <button class="subscribe-btn" data-service="记账机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">汇旺机器人</span>
-                                    <button class="subscribe-btn" data-service="汇旺机器人" data-category="机器人定制">
-                                        <span class="price-badge">$1,800</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">汇旺机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$1,800</span>
+                                        <button class="subscribe-btn" data-service="汇旺机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">TRX兑换机器人</span>
-                                    <button class="subscribe-btn" data-service="TRX兑换机器人" data-category="机器人定制">
-                                        <span class="price-badge">$1,600</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">TRX兑换机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$1,600</span>
+                                        <button class="subscribe-btn" data-service="TRX兑换机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -894,32 +948,40 @@
                             <h3><i class="fas fa-network-wired"></i> 社群管理类</h3>
                             <ul class="robot-list">
                                 <li>
-                                    <span class="robot-name">群管机器人</span>
-                                    <button class="subscribe-btn" data-service="群管机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,000</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">群管机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,000</span>
+                                        <button class="subscribe-btn" data-service="群管机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">验群机器人</span>
-                                    <button class="subscribe-btn" data-service="验群机器人" data-category="机器人定制">
-                                        <span class="price-badge">$1,800</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">验群机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$1,800</span>
+                                        <button class="subscribe-btn" data-service="验群机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">会员机器人</span>
-                                    <button class="subscribe-btn" data-service="会员机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,500</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">会员机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,500</span>
+                                        <button class="subscribe-btn" data-service="会员机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">查群关系机器人</span>
-                                    <button class="subscribe-btn" data-service="查群关系机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,200</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">查群关系机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,200</span>
+                                        <button class="subscribe-btn" data-service="查群关系机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -928,32 +990,40 @@
                             <h3><i class="fas fa-broadcast-tower"></i> 营销推广类</h3>
                             <ul class="robot-list">
                                 <li>
-                                    <span class="robot-name">供需机器人</span>
-                                    <button class="subscribe-btn" data-service="供需机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,800</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">供需机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,800</span>
+                                        <button class="subscribe-btn" data-service="供需机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">发卡机器人</span>
-                                    <button class="subscribe-btn" data-service="发卡机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,400</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">发卡机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,400</span>
+                                        <button class="subscribe-btn" data-service="发卡机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">群发机器人</span>
-                                    <button class="subscribe-btn" data-service="群发机器人" data-category="机器人定制">
-                                        <span class="price-badge">$3,200</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">群发机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$3,200</span>
+                                        <button class="subscribe-btn" data-service="群发机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">群发双向机器人</span>
-                                    <button class="subscribe-btn" data-service="群发双向机器人" data-category="机器人定制">
-                                        <span class="price-badge">$3,500</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">群发双向机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$3,500</span>
+                                        <button class="subscribe-btn" data-service="群发双向机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
@@ -962,32 +1032,40 @@
                             <h3><i class="fas fa-eye"></i> 安全监控类</h3>
                             <ul class="robot-list">
                                 <li>
-                                    <span class="robot-name">查档机器人</span>
-                                    <button class="subscribe-btn" data-service="查档机器人" data-category="机器人定制">
-                                        <span class="price-badge">$1,900</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">查档机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$1,900</span>
+                                        <button class="subscribe-btn" data-service="查档机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">关键词监控机器人</span>
-                                    <button class="subscribe-btn" data-service="关键词监控机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,300</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">关键词监控机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,300</span>
+                                        <button class="subscribe-btn" data-service="关键词监控机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">区块链交易监控机器人</span>
-                                    <button class="subscribe-btn" data-service="区块链交易监控机器人" data-category="机器人定制">
-                                        <span class="price-badge">$3,800</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">区块链交易监控机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$3,800</span>
+                                        <button class="subscribe-btn" data-service="区块链交易监控机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                                 <li>
-                                    <span class="robot-name">曝光骗子机器人</span>
-                                    <button class="subscribe-btn" data-service="曝光骗子机器人" data-category="机器人定制">
-                                        <span class="price-badge">$2,700</span>
-                                        <span>订阅</span>
-                                    </button>
+                                    <div class="robot-name">曝光骗子机器人</div>
+                                    <div class="robot-price-info">
+                                        <span class="robot-price">$2,700</span>
+                                        <button class="subscribe-btn" data-service="曝光骗子机器人" data-category="机器人定制">
+                                            订阅
+                                        </button>
+                                    </div>
                                 </li>
                             </ul>
                         </div>
