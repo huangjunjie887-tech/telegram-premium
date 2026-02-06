@@ -459,145 +459,6 @@
             font-weight: bold;
         }
         
-        /* 已选服务区域 */
-        .selected-services-section {
-            background: linear-gradient(145deg, rgba(18, 24, 40, 0.9), rgba(10, 14, 23, 0.95));
-            border-radius: 20px;
-            padding: 40px;
-            margin: 60px 0;
-            position: relative;
-            border: 2px solid rgba(0, 243, 255, 0.2);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            overflow: hidden;
-            display: none;
-        }
-        
-        .selected-services-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
-        }
-        
-        .selected-services-title {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--primary);
-            font-family: 'Orbitron', sans-serif;
-            font-size: 2.2rem;
-        }
-        
-        .selected-services-list {
-            list-style: none;
-            margin-bottom: 30px;
-        }
-        
-        .selected-service-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            margin-bottom: 15px;
-            border: 1px solid rgba(0, 243, 255, 0.1);
-            transition: all 0.3s;
-        }
-        
-        .selected-service-item:hover {
-            border-color: var(--primary);
-            background: rgba(0, 243, 255, 0.05);
-        }
-        
-        .service-item-info h4 {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.3rem;
-            color: var(--primary);
-            margin-bottom: 8px;
-        }
-        
-        .service-item-info p {
-            color: #a0b3d6;
-            font-size: 0.95rem;
-        }
-        
-        .remove-service-btn {
-            background: rgba(255, 0, 110, 0.1);
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            border-radius: 6px;
-            padding: 8px 15px;
-            cursor: pointer;
-            font-family: 'Exo 2', sans-serif;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .remove-service-btn:hover {
-            background: rgba(255, 0, 110, 0.2);
-            transform: scale(1.05);
-        }
-        
-        .selected-services-actions {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 30px;
-        }
-        
-        .clear-selection-btn {
-            padding: 15px 30px;
-            background: rgba(255, 0, 110, 0.1);
-            color: var(--accent);
-            border: 2px solid var(--accent);
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .clear-selection-btn:hover {
-            background: rgba(255, 0, 110, 0.2);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(255, 0, 110, 0.2);
-        }
-        
-        .payment-btn {
-            padding: 15px 40px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-family: 'Orbitron', sans-serif;
-            font-weight: 600;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        
-        .payment-btn:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
-            background: linear-gradient(90deg, var(--primary-dark), var(--secondary-dark));
-        }
-        
-        .payment-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-        
-        .payment-btn:disabled:hover {
-            transform: none;
-            box-shadow: none;
-        }
-        
         /* 科技感亮点区域 */
         .tech-highlight {
             background: linear-gradient(135deg, rgba(0, 163, 255, 0.1), rgba(157, 78, 221, 0.1));
@@ -785,21 +646,6 @@
             
             .section-title {
                 font-size: 2rem;
-            }
-            
-            .selected-services-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .selected-service-item {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .remove-service-btn {
-                align-self: flex-end;
             }
         }
         
@@ -2341,24 +2187,6 @@
                 </div>
             </div>
             
-            <!-- 已选服务区域 -->
-            <div class="selected-services-section" id="selectedServicesSection">
-                <h3 class="selected-services-title">已选服务</h3>
-                
-                <div class="selected-services-list" id="selectedServicesList">
-                    <!-- 已选服务将动态添加到这里 -->
-                </div>
-                
-                <div class="selected-services-actions">
-                    <button class="clear-selection-btn" id="clearSelectionBtn">
-                        <i class="fas fa-trash"></i> 清空选择
-                    </button>
-                    <a href="payment.html" class="payment-btn" id="paymentBtn" disabled>
-                        <i class="fas fa-bolt"></i> 前往支付定金
-                    </a>
-                </div>
-            </div>
-            
             <!-- 科技感亮点区域 -->
             <div class="tech-highlight">
                 <h3><i class="fas fa-bolt"></i> 开发流程与保障</h3>
@@ -2400,9 +2228,6 @@
     </div>
     
     <script>
-        // 存储已选服务的数组
-        let selectedServices = [];
-        
         // 侧边栏导航切换功能
         const navLinks = document.querySelectorAll('.nav-link');
         const serviceSections = document.querySelectorAll('.service-section');
@@ -2473,29 +2298,28 @@
             }, 3000);
         }
         
-        // 添加服务选择功能
+        // 服务选择功能 - 直接跳转到支付页面
         document.addEventListener('DOMContentLoaded', function() {
-            // 为所有选择按钮添加点击事件（包括机器人板块的订阅按钮）
+            // 为所有选择按钮添加点击事件
             document.addEventListener('click', function(e) {
                 // 处理选择此服务按钮
                 if (e.target.classList.contains('select-service-btn')) {
                     const service = e.target.getAttribute('data-service');
                     const category = e.target.getAttribute('data-category');
                     
-                    // 检查是否已选择
-                    const isSelected = e.target.classList.contains('selected');
+                    // 添加短暂的视觉反馈
+                    e.target.style.background = 'rgba(0, 243, 255, 0.3)';
+                    e.target.style.borderColor = 'var(--accent)';
+                    e.target.style.color = 'var(--accent)';
                     
-                    if (isSelected) {
-                        // 取消选择
-                        e.target.classList.remove('selected');
-                        removeService(service);
-                        showNotification(`已取消选择: ${service}`, 'error');
-                    } else {
-                        // 选择服务
-                        e.target.classList.add('selected');
-                        addService(service, category);
-                        showNotification(`已选择: ${service}`);
-                    }
+                    setTimeout(() => {
+                        e.target.style.background = '';
+                        e.target.style.borderColor = '';
+                        e.target.style.color = '';
+                    }, 300);
+                    
+                    // 跳转到支付页面，传递服务信息
+                    redirectToPayment(service, category);
                 }
                 
                 // 处理机器人板块的订阅按钮
@@ -2503,164 +2327,55 @@
                     const service = e.target.getAttribute('data-service');
                     const category = e.target.getAttribute('data-category');
                     
-                    // 检查是否已选择
-                    const isSelected = e.target.classList.contains('selected');
+                    // 添加短暂的视觉反馈
+                    e.target.style.background = 'rgba(0, 243, 255, 0.3)';
+                    e.target.style.borderColor = 'var(--accent)';
+                    e.target.style.color = 'var(--accent)';
                     
-                    if (isSelected) {
-                        // 取消选择
-                        e.target.classList.remove('selected');
-                        removeService(service);
-                        showNotification(`已取消选择: ${service}`, 'error');
-                    } else {
-                        // 选择服务
-                        e.target.classList.add('selected');
-                        addService(service, category);
-                        showNotification(`已选择: ${service}`);
-                    }
+                    setTimeout(() => {
+                        e.target.style.background = '';
+                        e.target.style.borderColor = '';
+                        e.target.style.color = '';
+                    }, 300);
+                    
+                    // 跳转到支付页面，传递服务信息
+                    redirectToPayment(service, category);
                 }
-                
-                // 删除服务按钮
-                if (e.target.classList.contains('remove-service-btn') || 
-                    e.target.parentElement.classList.contains('remove-service-btn')) {
-                    const serviceItem = e.target.closest('.selected-service-item');
-                    const serviceName = serviceItem.querySelector('h4').textContent;
-                    
-                    // 从数组中移除
-                    removeService(serviceName);
-                    
-                    // 更新选择按钮状态
-                    const selectButtons = document.querySelectorAll('.select-service-btn, .subscribe-btn');
-                    selectButtons.forEach(btn => {
-                        if (btn.getAttribute('data-service') === serviceName) {
-                            btn.classList.remove('selected');
-                        }
-                    });
-                    
-                    showNotification(`已移除: ${serviceName}`, 'error');
-                }
-            });
-            
-            // 清空选择按钮
-            document.getElementById('clearSelectionBtn').addEventListener('click', function() {
-                if (selectedServices.length === 0) {
-                    showNotification('您还没有选择任何服务', 'error');
-                    return;
-                }
-                
-                selectedServices = [];
-                updateSelectedServicesList();
-                
-                // 重置所有选择按钮
-                const selectButtons = document.querySelectorAll('.select-service-btn, .subscribe-btn');
-                selectButtons.forEach(btn => {
-                    btn.classList.remove('selected');
-                });
-                
-                showNotification('已清空所有选择的服务', 'error');
             });
         });
         
-        // 添加服务到数组
-        function addService(serviceName, category) {
-            // 检查是否已存在
-            const exists = selectedServices.some(service => service.name === serviceName);
+        // 跳转到支付页面函数
+        function redirectToPayment(serviceName, categoryName) {
+            // 显示通知
+            showNotification(`正在跳转到支付页面: ${serviceName}`, 'info');
             
-            if (!exists) {
-                selectedServices.push({
-                    id: Date.now(),
-                    name: serviceName,
-                    category: category,
-                    date: new Date().toLocaleDateString()
-                });
-                
-                updateSelectedServicesList();
-            }
-        }
-        
-        // 从数组中移除服务
-        function removeService(serviceName) {
-            selectedServices = selectedServices.filter(service => service.name !== serviceName);
-            updateSelectedServicesList();
-        }
-        
-        // 更新已选服务列表
-function updateSelectedServicesList() {
-    const selectedServicesList = document.getElementById('selectedServicesList');
-    const selectedServicesSection = document.getElementById('selectedServicesSection');
-    const paymentBtn = document.getElementById('paymentBtn');
-    
-    // 清空列表
-    selectedServicesList.innerHTML = '';
-    
-    if (selectedServices.length === 0) {
-        // 隐藏已选服务区域
-        selectedServicesSection.style.display = 'none';
-        paymentBtn.disabled = true;
-        return;
-    }
-    
-    // 显示已选服务区域
-    selectedServicesSection.style.display = 'block';
-    
-    // 添加服务到列表
-    selectedServices.forEach(service => {
-        const serviceItem = document.createElement('div');
-        serviceItem.className = 'selected-service-item';
-        serviceItem.innerHTML = `
-            <div class="service-item-info">
-                <h4>${service.name}</h4>
-                <p>${service.category} · 选择时间: ${service.date}</p>
-            </div>
-            <button class="remove-service-btn">
-                <i class="fas fa-times"></i> 移除
-            </button>
-        `;
-        selectedServicesList.appendChild(serviceItem);
-    });
-    
-    // 启用支付按钮
-    paymentBtn.disabled = false;
-    
-    // 获取当前分类（从第一个选中的服务获取）
-    let currentCategory = '';
-    if (selectedServices.length > 0) {
-        const categoryMap = {
-            "机器人定制": "robots",
-            "官网定制": "website",
-            "Web3项目": "web3",
-            "DApp开发": "dapp",
-            "交易系统": "trading",
-            "管理系统": "management",
-            "工具平台": "tools",
-            "智能合约": "contract",
-            "代币发币": "token",
-            "发币配套": "launch",
-            "合约安全": "security",
-            "生态配套": "ecosystem"
-        };
-        
-        const firstCategory = selectedServices[0].category;
-        currentCategory = categoryMap[firstCategory] || "robots";
-    }
-    
-    // 更新支付链接，传递分类和已选服务
-    const servicesParam = encodeURIComponent(JSON.stringify(selectedServices.map(s => s.name)));
-    paymentBtn.href = `payment.html?category=${currentCategory}&services=${servicesParam}`;
-}
-        
-        // 页面加载时检查URL参数
-        function checkUrlParams() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const servicesParam = urlParams.get('services');
+            // 分类映射
+            const categoryMap = {
+                "机器人定制": "robots",
+                "官网定制": "website",
+                "Web3项目": "web3",
+                "DApp开发": "dapp",
+                "交易系统": "trading",
+                "管理系统": "management",
+                "工具平台": "tools",
+                "智能合约": "contract",
+                "代币发币": "token",
+                "发币配套": "launch",
+                "合约安全": "security",
+                "生态配套": "ecosystem"
+            };
             
-            if (servicesParam) {
-                try {
-                    const services = JSON.parse(decodeURIComponent(servicesParam));
-                    // 这里可以处理从支付页面返回时预选服务
-                } catch (e) {
-                    console.error('解析URL参数失败:', e);
-                }
-            }
+            // 获取对应的分类代码
+            const categoryCode = categoryMap[categoryName] || "robots";
+            
+            // 构建支付页面URL参数
+            const servicesParam = encodeURIComponent(JSON.stringify([serviceName]));
+            const paymentUrl = `payment.html?category=${categoryCode}&services=${servicesParam}`;
+            
+            // 跳转到支付页面
+            setTimeout(() => {
+                window.location.href = paymentUrl;
+            }, 800);
         }
         
         // 初始化
@@ -2671,9 +2386,6 @@ function updateSelectedServicesList() {
             setTimeout(() => {
                 document.body.style.opacity = '1';
             }, 100);
-            
-            // 检查URL参数
-            checkUrlParams();
             
             // 添加一些随机闪烁效果
             setInterval(() => {
