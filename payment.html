@@ -623,6 +623,20 @@
             box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
         }
         
+        /* 分类标签 */
+        .category-tag {
+            display: inline-block;
+            padding: 6px 15px;
+            background: rgba(0, 243, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 20px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        
         /* 响应式调整 */
         @media (max-width: 768px) {
             .payment-section {
@@ -678,6 +692,8 @@
             <div class="payment-content">
                 <h2 class="payment-title">支付定金</h2>
                 
+                <div id="categoryInfo" class="category-tag">服务类型</div>
+                
                 <form id="paymentForm" class="payment-form">
                     <div class="form-grid">
                         <div class="form-group">
@@ -692,7 +708,7 @@
                     </div>
                     
                     <div class="form-group">
-                        <label><i class="fas fa-laptop-code"></i> 选择服务类型</label>
+                        <label><i class="fas fa-laptop-code"></i> 选择具体服务</label>
                         <div class="service-select-grid" id="serviceSelect">
                             <!-- 服务选项将通过JS动态生成 -->
                         </div>
@@ -824,152 +840,250 @@
     </div>
     
     <script>
-        // 服务数据
+        // 服务数据 - 完整服务列表
         const services = {
             robots: [
-                {id: 'robot-0', name: "钱包机器人"},
-                {id: 'robot-1', name: "记账机器人"},
-                {id: 'robot-2', name: "群管机器人"},
-                {id: 'robot-3', name: "供需机器人"}
+                {id: 'robot-1', name: "钱包机器人", category: "机器人定制"},
+                {id: 'robot-2', name: "记账机器人", category: "机器人定制"},
+                {id: 'robot-3', name: "汇旺机器人", category: "机器人定制"},
+                {id: 'robot-4', name: "TRX兑换机器人", category: "机器人定制"},
+                {id: 'robot-5', name: "群管机器人", category: "机器人定制"},
+                {id: 'robot-6', name: "验群机器人", category: "机器人定制"},
+                {id: 'robot-7', name: "会员机器人", category: "机器人定制"},
+                {id: 'robot-8', name: "查群关系机器人", category: "机器人定制"},
+                {id: 'robot-9', name: "供需机器人", category: "机器人定制"},
+                {id: 'robot-10', name: "发卡机器人", category: "机器人定制"},
+                {id: 'robot-11', name: "群发机器人", category: "机器人定制"},
+                {id: 'robot-12', name: "群发双向机器人", category: "机器人定制"},
+                {id: 'robot-13', name: "查档机器人", category: "机器人定制"},
+                {id: 'robot-14', name: "关键词监控机器人", category: "机器人定制"},
+                {id: 'robot-15', name: "区块链交易监控机器人", category: "机器人定制"},
+                {id: 'robot-16', name: "曝光骗子机器人", category: "机器人定制"}
             ],
             website: [
-                {id: 'website-1', name: "企业官网定制"},
-                {id: 'website-2', name: "品牌官网定制"},
-                {id: 'website-3', name: "产品展示官网"}
+                {id: 'website-1', name: "企业官网定制", category: "官网定制"},
+                {id: 'website-2', name: "品牌官网定制", category: "官网定制"},
+                {id: 'website-3', name: "产品展示官网", category: "官网定制"},
+                {id: 'website-4', name: "外贸/多语言官网", category: "官网定制"},
+                {id: 'website-5', name: "项目宣传官网", category: "官网定制"},
+                {id: 'website-6', name: "活动/落地页官网", category: "官网定制"}
             ],
             web3: [
-                {id: 'web3-1', name: "区块链项目官网"},
-                {id: 'web3-2', name: "Web3项目官网"},
-                {id: 'web3-3', name: "DeFi项目官网"}
+                {id: 'web3-1', name: "区块链项目官网", category: "Web3项目"},
+                {id: 'web3-2', name: "Web3项目官网", category: "Web3项目"},
+                {id: 'web3-3', name: "DeFi项目官网", category: "Web3项目"},
+                {id: 'web3-4', name: "NFT项目官网", category: "Web3项目"},
+                {id: 'web3-5', name: "DAO项目官网", category: "Web3项目"},
+                {id: 'web3-6', name: "空投/白皮书官网", category: "Web3项目"}
             ],
             dapp: [
-                {id: 'dapp-1', name: "钱包交互DApp"},
-                {id: 'dapp-2', name: "DeFi应用DApp"},
-                {id: 'dapp-3', name: "交易类DApp"}
+                {id: 'dapp-1', name: "钱包交互DApp", category: "DApp开发"},
+                {id: 'dapp-2', name: "DeFi应用DApp", category: "DApp开发"},
+                {id: 'dapp-3', name: "交易类DApp", category: "DApp开发"},
+                {id: 'dapp-4', name: "NFT应用DApp", category: "DApp开发"},
+                {id: 'dapp-5', name: "资产管理DApp", category: "DApp开发"},
+                {id: 'dapp-6', name: "授权/身份DApp", category: "DApp开发"}
             ],
             trading: [
-                {id: 'trading-1', name: "链上交易系统"},
-                {id: 'trading-2', name: "自动交易系统"},
-                {id: 'trading-3', name: "跟单交易系统"}
+                {id: 'trading-1', name: "链上交易系统", category: "交易系统"},
+                {id: 'trading-2', name: "自动交易系统", category: "交易系统"},
+                {id: 'trading-3', name: "跟单交易系统", category: "交易系统"},
+                {id: 'trading-4', name: "地址监听系统", category: "交易系统"},
+                {id: 'trading-5', name: "量化策略面板", category: "交易系统"},
+                {id: 'trading-6', name: "收益统计系统", category: "交易系统"}
             ],
             management: [
-                {id: 'management-1', name: "Web3管理后台"},
-                {id: 'management-2', name: "用户管理系统"},
-                {id: 'management-3', name: "数据统计后台"}
+                {id: 'management-1', name: "Web3管理后台", category: "管理系统"},
+                {id: 'management-2', name: "用户管理系统", category: "管理系统"},
+                {id: 'management-3', name: "数据统计后台", category: "管理系统"},
+                {id: 'management-4', name: "钱包管理系统", category: "管理系统"},
+                {id: 'management-5', name: "权限管理系统", category: "管理系统"},
+                {id: 'management-6', name: "风控监控系统", category: "管理系统"}
             ],
             tools: [
-                {id: 'tools-1', name: "链上数据平台"},
-                {id: 'tools-2', name: "钱包查询工具"},
-                {id: 'tools-3', name: "NFT管理平台"}
+                {id: 'tools-1', name: "链上数据平台", category: "工具平台"},
+                {id: 'tools-2', name: "钱包查询工具", category: "工具平台"},
+                {id: 'tools-3', name: "NFT管理平台", category: "工具平台"},
+                {id: 'tools-4', name: "项目数据看板", category: "工具平台"},
+                {id: 'tools-5', name: "Web3 SaaS平台", category: "工具平台"}
             ],
             contract: [
-                {id: 'contract-1', name: "全链智能合约部署"},
-                {id: 'contract-2', name: "多链合约定制开发"},
-                {id: 'contract-3', name: "EVM合约部署服务"}
+                {id: 'contract-1', name: "全链智能合约部署", category: "智能合约"},
+                {id: 'contract-2', name: "多链合约定制开发", category: "智能合约"},
+                {id: 'contract-3', name: "EVM合约部署服务", category: "智能合约"},
+                {id: 'contract-4', name: "非EVM合约部署", category: "智能合约"},
+                {id: 'contract-5', name: "合约升级/代理部署", category: "智能合约"},
+                {id: 'contract-6', name: "合约二次开发与维护", category: "智能合约"}
             ],
             token: [
-                {id: 'token-1', name: "代币发行（Token Launch）"},
-                {id: 'token-2', name: "ERC20 / BEP20 代币部署"},
-                {id: 'token-3', name: "TRC20 代币部署"}
+                {id: 'token-1', name: "代币发行", category: "代币发币"},
+                {id: 'token-2', name: "ERC20/BEP20代币部署", category: "代币发币"},
+                {id: 'token-3', name: "TRC20代币部署", category: "代币发币"},
+                {id: 'token-4', name: "多链代币同步发行", category: "代币发币"},
+                {id: 'token-5', name: "代币映射/跨链发行", category: "代币发币"},
+                {id: 'token-6', name: "项目代币初始化部署", category: "代币发币"}
             ],
             launch: [
-                {id: 'launch-1', name: "发币官网 / Mint 页面"},
-                {id: 'launch-2', name: "空投领取系统"},
-                {id: 'launch-3', name: "白名单 / 预售系统"}
+                {id: 'launch-1', name: "发币官网/Mint页面", category: "发币配套"},
+                {id: 'launch-2', name: "空投领取系统", category: "发币配套"},
+                {id: 'launch-3', name: "白名单/预售系统", category: "发币配套"},
+                {id: 'launch-4', name: "私募/公募系统", category: "发币配套"},
+                {id: 'launch-5', name: "锁仓/释放合约", category: "发币配套"},
+                {id: 'launch-6', name: "分红/回购合约", category: "发币配套"}
             ],
             security: [
-                {id: 'security-1', name: "合约权限管理"},
-                {id: 'security-2', name: "多签钱包部署"},
-                {id: 'security-3', name: "合约安全加固"}
+                {id: 'security-1', name: "合约权限管理", category: "合约安全"},
+                {id: 'security-2', name: "多签钱包部署", category: "合约安全"},
+                {id: 'security-3', name: "合约安全加固", category: "合约安全"},
+                {id: 'security-4', name: "合约审计对接", category: "合约安全"},
+                {id: 'security-5', name: "合约风险检测", category: "合约安全"},
+                {id: 'security-6', name: "合约暂停/黑名单", category: "合约安全"}
             ],
             ecosystem: [
-                {id: 'ecosystem-1', name: "多链钱包适配"},
-                {id: 'ecosystem-2', name: "跨链桥对接"},
-                {id: 'ecosystem-3', name: "链上数据同步"}
+                {id: 'ecosystem-1', name: "多链钱包适配", category: "生态配套"},
+                {id: 'ecosystem-2', name: "跨链桥对接", category: "生态配套"},
+                {id: 'ecosystem-3', name: "链上数据同步", category: "生态配套"},
+                {id: 'ecosystem-4', name: "多链资产管理", category: "生态配套"},
+                {id: 'ecosystem-5', name: "多链DApp对接", category: "生态配套"},
+                {id: 'ecosystem-6', name: "节点服务部署", category: "生态配套"}
             ]
         };
         
-        // 动态生成服务选择选项
-        const serviceSelectContainer = document.getElementById('serviceSelect');
+        // 分类显示名称
+        const categoryNames = {
+            robots: "机器人定制",
+            website: "官网定制", 
+            web3: "Web3项目",
+            dapp: "DApp开发",
+            trading: "交易系统",
+            management: "管理系统",
+            tools: "工具平台",
+            contract: "智能合约",
+            token: "代币发币",
+            launch: "发币配套",
+            security: "合约安全",
+            ecosystem: "生态配套"
+        };
         
-        // 合并所有服务
-        const allServices = [];
-        for (const category in services) {
-            allServices.push(...services[category]);
-        }
+        // 获取URL参数
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category') || 'robots';
+        const servicesParam = urlParams.get('services');
         
-        // 只显示前12个服务作为示例
-        allServices.slice(0, 12).forEach(service => {
-            const option = document.createElement('div');
-            option.className = 'service-option';
-            option.innerHTML = `
-                <input type="radio" name="serviceType" id="${service.id}" value="${service.id}">
-                <label for="${service.id}" style="cursor: pointer; color: #e2f1ff;">${service.name}</label>
-            `;
-            serviceSelectContainer.appendChild(option);
-        });
-        
-        // 添加服务选项选择事件
-        const serviceOptions = document.querySelectorAll('.service-option');
-        serviceOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                const radio = this.querySelector('input[type="radio"]');
-                radio.checked = true;
-                serviceOptions.forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
+        // 根据分类显示对应的服务
+        function loadServicesByCategory(categoryKey) {
+            const serviceSelectContainer = document.getElementById('serviceSelect');
+            const categoryInfo = document.getElementById('categoryInfo');
+            
+            // 清空容器
+            serviceSelectContainer.innerHTML = '';
+            
+            // 更新分类信息显示
+            categoryInfo.textContent = categoryNames[categoryKey] || "机器人定制";
+            
+            // 获取对应分类的服务列表
+            const categoryServices = services[categoryKey] || services.robots;
+            
+            // 生成服务选项
+            categoryServices.forEach(service => {
+                const option = document.createElement('div');
+                option.className = 'service-option';
+                option.innerHTML = `
+                    <input type="radio" name="serviceType" id="${service.id}" value="${service.id}" data-name="${service.name}">
+                    <label for="${service.id}" style="cursor: pointer; color: #e2f1ff;">${service.name}</label>
+                `;
+                serviceSelectContainer.appendChild(option);
             });
-        });
-        
-        // 默认选择第一个选项
-        if (serviceOptions.length > 0) {
-            const firstOption = serviceOptions[0];
-            const firstRadio = firstOption.querySelector('input[type="radio"]');
-            firstRadio.checked = true;
-            firstOption.classList.add('selected');
-        }
-        
-        // 金额选择功能
-        const amountOptions = document.querySelectorAll('.amount-option');
-        let selectedAmount = 1500; // 默认金额
-        
-        amountOptions.forEach(option => {
-            option.addEventListener('click', function() {
-                amountOptions.forEach(opt => opt.classList.remove('selected'));
-                this.classList.add('selected');
-                selectedAmount = parseInt(this.getAttribute('data-amount'));
-                document.getElementById('customAmount').value = '';
+            
+            // 添加服务选项选择事件
+            const serviceOptions = document.querySelectorAll('.service-option');
+            serviceOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    serviceOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
             });
-        });
-        
-        // 设置默认选中
-        amountOptions[1].classList.add('selected');
-        
-        // 自定义金额应用
-        document.getElementById('applyCustomAmount').addEventListener('click', function() {
-            const customAmount = document.getElementById('customAmount').value;
-            if (customAmount && !isNaN(customAmount) && customAmount >= 100 && customAmount <= 100000) {
-                selectedAmount = parseInt(customAmount);
-                amountOptions.forEach(opt => opt.classList.remove('selected'));
-                
-                // 添加自定义金额的视觉反馈
-                const customOption = document.querySelector('.custom-amount');
-                customOption.style.border = '2px solid var(--primary)';
-                customOption.style.borderRadius = '10px';
-                customOption.style.padding = '15px';
-                customOption.style.background = 'rgba(0, 243, 255, 0.05)';
-                customOption.style.transition = 'all 0.3s';
-                
-                setTimeout(() => {
-                    customOption.style.border = '';
-                    customOption.style.background = '';
-                    customOption.style.padding = '';
-                }, 1500);
-                
-                // 显示成功消息
-                showNotification(`已设置自定义金额: $${selectedAmount}`);
-            } else {
-                showNotification('请输入有效的金额 (100-100000之间)', 'error');
+            
+            // 默认选择第一个选项
+            if (serviceOptions.length > 0) {
+                const firstOption = serviceOptions[0];
+                const firstRadio = firstOption.querySelector('input[type="radio"]');
+                firstRadio.checked = true;
+                firstOption.classList.add('selected');
             }
+            
+            // 如果有从主页面传递过来的已选服务，选中它
+            if (servicesParam) {
+                try {
+                    const selectedServices = JSON.parse(decodeURIComponent(servicesParam));
+                    if (selectedServices.length > 0) {
+                        const firstSelectedService = selectedServices[0];
+                        serviceOptions.forEach(option => {
+                            const radio = option.querySelector('input[type="radio"]');
+                            const serviceName = radio.getAttribute('data-name');
+                            if (serviceName === firstSelectedService) {
+                                radio.checked = true;
+                                option.classList.add('selected');
+                                // 滚动到选中的服务
+                                option.scrollIntoView({behavior: 'smooth', block: 'center'});
+                            }
+                        });
+                    }
+                } catch (e) {
+                    console.error('解析服务参数失败:', e);
+                }
+            }
+        }
+        
+        // 页面加载时根据URL参数加载服务
+        document.addEventListener('DOMContentLoaded', function() {
+            loadServicesByCategory(category);
+            
+            // 金额选择功能
+            const amountOptions = document.querySelectorAll('.amount-option');
+            let selectedAmount = 1500; // 默认金额
+            
+            amountOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    amountOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                    selectedAmount = parseInt(this.getAttribute('data-amount'));
+                    document.getElementById('customAmount').value = '';
+                });
+            });
+            
+            // 设置默认选中
+            amountOptions[1].classList.add('selected');
+            
+            // 自定义金额应用
+            document.getElementById('applyCustomAmount').addEventListener('click', function() {
+                const customAmount = document.getElementById('customAmount').value;
+                if (customAmount && !isNaN(customAmount) && customAmount >= 100 && customAmount <= 100000) {
+                    selectedAmount = parseInt(customAmount);
+                    amountOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // 添加自定义金额的视觉反馈
+                    const customOption = document.querySelector('.custom-amount');
+                    customOption.style.border = '2px solid var(--primary)';
+                    customOption.style.borderRadius = '10px';
+                    customOption.style.padding = '15px';
+                    customOption.style.background = 'rgba(0, 243, 255, 0.05)';
+                    customOption.style.transition = 'all 0.3s';
+                    
+                    setTimeout(() => {
+                        customOption.style.border = '';
+                        customOption.style.background = '';
+                        customOption.style.padding = '';
+                    }, 1500);
+                    
+                    // 显示成功消息
+                    showNotification(`已设置自定义金额: $${selectedAmount}`);
+                } else {
+                    showNotification('请输入有效的金额 (100-100000之间)', 'error');
+                }
+            });
         });
         
         // 显示通知函数
@@ -1026,17 +1140,9 @@
                 return;
             }
             
-            // 查找服务名称
-            let serviceName = '';
-            const serviceId = selectedService.value;
-            
-            for (const category in services) {
-                const foundService = services[category].find(s => s.id === serviceId);
-                if (foundService) {
-                    serviceName = foundService.name;
-                    break;
-                }
-            }
+            // 获取服务名称
+            const serviceName = selectedService.getAttribute('data-name');
+            const categoryName = categoryNames[category] || "机器人定制";
             
             // 生成随机订单号
             const orderNumber = 'QUANTUM' + new Date().getFullYear() + 
@@ -1046,7 +1152,7 @@
             
             // 更新成功消息
             document.getElementById('successMessage').textContent = 
-                `尊敬的 ${customerName}，您已成功支付 ${serviceName} 的定金。`;
+                `尊敬的 ${customerName}，您已成功支付 ${categoryName} - ${serviceName} 的定金。`;
             document.getElementById('orderNumber').textContent = orderNumber;
             document.getElementById('paidAmount').textContent = '$' + selectedAmount;
             
@@ -1084,6 +1190,7 @@
                 console.log('支付信息:', {
                     姓名: customerName,
                     联系方式: contactInfo,
+                    服务分类: categoryName,
                     服务类型: serviceName,
                     金额: selectedAmount,
                     支付方式: 'USDT',
@@ -1102,8 +1209,12 @@
             // 重置表单
             document.getElementById('paymentForm').reset();
             // 重置选择状态
+            const amountOptions = document.querySelectorAll('.amount-option');
             amountOptions[1].classList.add('selected');
             selectedAmount = 1500;
+            
+            // 重新加载服务选择（保持当前分类）
+            loadServicesByCategory(category);
             
             // 显示确认消息
             showNotification('订单已确认！项目经理将尽快与您联系。');
