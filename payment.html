@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>支付定金 | 量子技术定制</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #00f3ff;
+            --primary-dark: #00a8ff;
+            --secondary: #9d4edd;
+            --secondary-dark: #7b2cbf;
+            --dark: #0a0e17;
+            --dark-light: #121828;
+            --gray: #2a324b;
+            --light: #e2f1ff;
+            --accent: #ff006e;
+            --accent-light: #ff5c8d;
+            --category-1: #00f3ff;
+            --category-2: #9d4edd;
+            --category-3: #00d4aa;
+            --category-4: #ff9500;
+            --category-5: #ff2e63;
+            --category-6: #7e57c2;
+            --category-7: #00b8d4;
+        }
+        
+        body {
+            background-color: var(--dark);
+            color: var(--light);
+            font-family: 'Exo 2', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(157, 78, 221, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.1) 0%, transparent 20%),
+                linear-gradient(to bottom, rgba(10, 14, 23, 0.9), rgba(10, 14, 23, 0.95));
+            min-height: 100vh;
+        }
+        
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        /* 返回按钮 */
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 99;
+            background: rgba(0, 243, 255, 0.1);
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            color: var(--primary);
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+        }
+        
+        .back-btn:hover {
+            background: rgba(0, 243, 255, 0.2);
+            transform: scale(1.1);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 头部样式 */
+        .tech-header {
+            text-align: center;
+            padding: 60px 0 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        .tech-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.05), transparent);
+            animation: scanline 8s infinite linear;
+        }
+        
+        @keyframes scanline {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .logo-icon {
+            font-size: 3.5rem;
+            color: var(--primary);
+            text-shadow: 0 0 15px var(--primary);
+            animation: pulse 3s infinite alternate;
+        }
+        
+        @keyframes pulse {
+            0% { text-shadow: 0 0 10px var(--primary); }
+            100% { text-shadow: 0 0 25px var(--primary), 0 0 35px var(--primary); }
+        }
+        
+        .logo-text h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #a0b3d6;
+            max-width: 800px;
+            margin: 0 auto;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        
+        /* 支付区域 */
+        .payment-section {
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.9), rgba(10, 14, 23, 0.95));
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 50px;
+            position: relative;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+        }
+        
+        .payment-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 243, 255, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+        
+        .payment-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .payment-title {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            position: relative;
+        }
+        
+        .payment-title::after {
+            content: '';
+            display: block;
+            width: 120px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            margin: 15px auto;
+            border-radius: 2px;
+        }
+        
+        .payment-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        .tech-input {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            border-radius: 10px;
+            font-size: 1.1rem;
+            color: var(--light);
+            transition: all 0.3s;
+            font-family: 'Exo 2', sans-serif;
+        }
+        
+        .tech-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+        }
+        
+        .tech-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* 服务选择 */
+        .service-select-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .service-option {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid rgba(0, 243, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .service-option::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 243, 255, 0.1), transparent);
+            transition: left 0.6s;
+        }
+        
+        .service-option:hover::before {
+            left: 100%;
+        }
+        
+        .service-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+        }
+        
+        .service-option.selected {
+            background: rgba(0, 243, 255, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        }
+        
+        .service-option input {
+            margin-right: 12px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+        
+        /* 金额选择 */
+        .amount-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+            margin-top: 15px;
+        }
+        
+        .amount-option {
+            text-align: center;
+            padding: 25px 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid rgba(0, 243, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .amount-option:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        .amount-option.selected {
+            background: linear-gradient(145deg, rgba(0, 243, 255, 0.15), rgba(157, 78, 221, 0.15));
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.2);
+        }
+        
+        .amount-option .amount {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            margin-bottom: 8px;
+        }
+        
+        .amount-option .desc {
+            font-size: 0.95rem;
+            color: #a0b3d6;
+        }
+        
+        .custom-amount {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+            gap: 15px;
+        }
+        
+        .custom-amount input {
+            flex: 1;
+        }
+        
+        /* 支付方式 */
+        .payment-method-single {
+            text-align: center;
+            padding: 30px 20px;
+            background: linear-gradient(145deg, rgba(0, 243, 255, 0.15), rgba(157, 78, 221, 0.15));
+            border-radius: 12px;
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.2);
+            margin-top: 15px;
+            max-width: 300px;
+        }
+        
+        .payment-method-single i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+        }
+        
+        .payment-method-single .method-name {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--light);
+        }
+        
+        .payment-method-single .method-desc {
+            font-size: 1rem;
+            color: #a0b3d6;
+            margin-top: 10px;
+        }
+        
+        /* 提交按钮 */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 40px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.3);
+        }
+        
+        .btn-submit:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 243, 255, 0.4);
+            background: linear-gradient(90deg, var(--primary-dark), var(--secondary-dark));
+        }
+        
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+        
+        .btn-submit i {
+            margin-right: 15px;
+        }
+        
+        /* 科技感亮点区域 */
+        .tech-highlight {
+            background: linear-gradient(135deg, rgba(0, 163, 255, 0.1), rgba(157, 78, 221, 0.1));
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 40px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tech-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .tech-highlight h3 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .highlight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .highlight-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        
+        .highlight-item i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+        
+        /* 页脚 */
+        .tech-footer {
+            text-align: center;
+            padding: 40px 0;
+            color: #a0b3d6;
+            font-size: 0.95rem;
+            border-top: 1px solid rgba(0, 243, 255, 0.2);
+            margin-top: 40px;
+        }
+        
+        .tech-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .tech-footer a:hover {
+            color: var(--accent);
+            text-decoration: underline;
+        }
+        
+        /* 模态框 */
+        .tech-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.95), rgba(10, 14, 23, 0.98));
+            padding: 50px;
+            border-radius: 20px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 243, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: modalAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        @keyframes modalAppear {
+            from { opacity: 0; transform: scale(0.8) translateY(-50px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: var(--primary);
+            text-shadow: 0 0 20px var(--primary);
+            margin-bottom: 25px;
+            animation: successPulse 2s infinite;
+        }
+        
+        @keyframes successPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .modal-content h3 {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .modal-content p {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #d1d9f0;
+        }
+        
+        .order-details {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+        
+        .order-details div {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .order-details div:last-child {
+            border-bottom: none;
+        }
+        
+        .btn-close {
+            padding: 15px 40px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            margin-top: 20px;
+        }
+        
+        .btn-close:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
+        }
+        
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .payment-section {
+                padding: 30px 20px;
+            }
+            
+            .amount-grid, .service-select-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .logo-text h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .amount-grid, .service-select-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo-text h1 {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-bg"></div>
+    
+    <!-- 返回按钮 -->
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <div class="container">
+        <!-- 头部 -->
+        <header class="tech-header">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>支付定金</h1>
+                        <p class="tagline">安全便捷 · USDT支付 · 专业服务保障</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 支付区域 -->
+        <div class="payment-section">
+            <div class="payment-content">
+                <h2 class="payment-title">支付定金</h2>
+                
+                <form id="paymentForm" class="payment-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="customerName"><i class="fas fa-user-astronaut"></i> 姓名/昵称</label>
+                            <input type="text" id="customerName" class="tech-input" placeholder="请输入您的姓名或昵称" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contactInfo"><i class="fas fa-satellite-dish"></i> 联系方式</label>
+                            <input type="text" id="contactInfo" class="tech-input" placeholder="Telegram / 微信 / 手机号" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-laptop-code"></i> 选择服务类型</label>
+                        <div class="service-select-grid" id="serviceSelect">
+                            <!-- 服务选项将通过JS动态生成 -->
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-coins"></i> 定金金额 (总费用的50%)</label>
+                        <div class="amount-grid">
+                            <div class="amount-option" data-amount="500">
+                                <div class="amount">$500</div>
+                                <div class="desc">基础项目</div>
+                            </div>
+                            <div class="amount-option" data-amount="1500">
+                                <div class="amount">$1500</div>
+                                <div class="desc">标准项目</div>
+                            </div>
+                            <div class="amount-option" data-amount="3000">
+                                <div class="amount">$3000</div>
+                                <div class="desc">高级项目</div>
+                            </div>
+                            <div class="amount-option" data-amount="5000">
+                                <div class="amount">$5000</div>
+                                <div class="desc">企业项目</div>
+                            </div>
+                            <div class="amount-option" data-amount="10000">
+                                <div class="amount">$10000+</div>
+                                <div class="desc">定制项目</div>
+                            </div>
+                        </div>
+                        
+                        <div class="custom-amount">
+                            <input type="number" id="customAmount" class="tech-input" placeholder="自定义金额 ($)" min="100" max="100000">
+                            <button type="button" id="applyCustomAmount" class="btn-close" style="padding: 15px 25px;">应用</button>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label><i class="fas fa-qrcode"></i> 支付方式</label>
+                        <div class="payment-method-single">
+                            <i class="fas fa-coins"></i>
+                            <div class="method-name">USDT支付</div>
+                            <div class="method-desc">泰达币 · 稳定币支付 · 多链支持</div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="specialRequirements"><i class="fas fa-code"></i> 特殊要求/功能说明</label>
+                        <textarea id="specialRequirements" class="tech-input" rows="5" placeholder="请详细描述您的定制需求，包括功能要求、界面风格、集成平台等"></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-bolt"></i> 确认支付定金
+                    </button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 科技感亮点区域 -->
+        <div class="tech-highlight">
+            <h3><i class="fas fa-bolt"></i> 支付保障</h3>
+            <div class="highlight-grid">
+                <div class="highlight-item">
+                    <i class="fas fa-lock"></i>
+                    <span>支付定金后启动开发，定金为总费用50%</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>资金安全有保障，多重验证机制</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-clock"></i>
+                    <span>24小时内确认收款，启动项目开发</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-headset"></i>
+                    <span>7x24小时客服支持，随时解答疑问</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-file-contract"></i>
+                    <span>签订正式合同，保障双方权益</span>
+                </div>
+                <div class="highlight-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>不满意可退款，透明公正的交易流程</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="tech-footer">
+            <p>© 2023 量子技术定制 | 全栈开发团队 | 联系邮箱: quantum@techdev.com</p>
+            <p>支付成功后，我们的项目经理将在24小时内通过您提供的联系方式与您联系</p>
+            <p style="margin-top: 15px;">技术支持热线: +852 1234 5678 | 服务时间: 周一至周五 9:00-18:00</p>
+            <p style="margin-top: 10px; font-size: 0.85rem; color: #8895b3;">专业区块链开发 · 智能合约部署 · 代币发行 · 全链生态建设</p>
+        </div>
+    </div>
+    
+    <!-- 支付成功弹窗 -->
+    <div id="successModal" class="tech-modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>支付成功！</h3>
+            <p>您的定金支付已成功提交，量子开发团队将立即启动项目。</p>
+            
+            <div class="order-details">
+                <div>
+                    <span>订单号:</span>
+                    <strong id="orderNumber">QUANTUM20230001</strong>
+                </div>
+                <div>
+                    <span>支付金额:</span>
+                    <strong id="paidAmount">$1500</strong>
+                </div>
+                <div>
+                    <span>支付方式:</span>
+                    <strong id="paidMethod">USDT (泰达币)</strong>
+                </div>
+                <div>
+                    <span>预计完成:</span>
+                    <strong id="estimatedDate">5个工作日内</strong>
+                </div>
+            </div>
+            
+            <p id="successMessage">我们的项目经理将在1小时内与您联系，确认详细需求。</p>
+            <button class="btn-close" id="closeModal">确认</button>
+        </div>
+    </div>
+    
+    <script>
+        // 服务数据
+        const services = {
+            robots: [
+                {id: 'robot-0', name: "钱包机器人"},
+                {id: 'robot-1', name: "记账机器人"},
+                {id: 'robot-2', name: "群管机器人"},
+                {id: 'robot-3', name: "供需机器人"}
+            ],
+            website: [
+                {id: 'website-1', name: "企业官网定制"},
+                {id: 'website-2', name: "品牌官网定制"},
+                {id: 'website-3', name: "产品展示官网"}
+            ],
+            web3: [
+                {id: 'web3-1', name: "区块链项目官网"},
+                {id: 'web3-2', name: "Web3项目官网"},
+                {id: 'web3-3', name: "DeFi项目官网"}
+            ],
+            dapp: [
+                {id: 'dapp-1', name: "钱包交互DApp"},
+                {id: 'dapp-2', name: "DeFi应用DApp"},
+                {id: 'dapp-3', name: "交易类DApp"}
+            ],
+            trading: [
+                {id: 'trading-1', name: "链上交易系统"},
+                {id: 'trading-2', name: "自动交易系统"},
+                {id: 'trading-3', name: "跟单交易系统"}
+            ],
+            management: [
+                {id: 'management-1', name: "Web3管理后台"},
+                {id: 'management-2', name: "用户管理系统"},
+                {id: 'management-3', name: "数据统计后台"}
+            ],
+            tools: [
+                {id: 'tools-1', name: "链上数据平台"},
+                {id: 'tools-2', name: "钱包查询工具"},
+                {id: 'tools-3', name: "NFT管理平台"}
+            ],
+            contract: [
+                {id: 'contract-1', name: "全链智能合约部署"},
+                {id: 'contract-2', name: "多链合约定制开发"},
+                {id: 'contract-3', name: "EVM合约部署服务"}
+            ],
+            token: [
+                {id: 'token-1', name: "代币发行（Token Launch）"},
+                {id: 'token-2', name: "ERC20 / BEP20 代币部署"},
+                {id: 'token-3', name: "TRC20 代币部署"}
+            ],
+            launch: [
+                {id: 'launch-1', name: "发币官网 / Mint 页面"},
+                {id: 'launch-2', name: "空投领取系统"},
+                {id: 'launch-3', name: "白名单 / 预售系统"}
+            ],
+            security: [
+                {id: 'security-1', name: "合约权限管理"},
+                {id: 'security-2', name: "多签钱包部署"},
+                {id: 'security-3', name: "合约安全加固"}
+            ],
+            ecosystem: [
+                {id: 'ecosystem-1', name: "多链钱包适配"},
+                {id: 'ecosystem-2', name: "跨链桥对接"},
+                {id: 'ecosystem-3', name: "链上数据同步"}
+            ]
+        };
+        
+        // 动态生成服务选择选项
+        const serviceSelectContainer = document.getElementById('serviceSelect');
+        
+        // 合并所有服务
+        const allServices = [];
+        for (const category in services) {
+            allServices.push(...services[category]);
+        }
+        
+        // 只显示前12个服务作为示例
+        allServices.slice(0, 12).forEach(service => {
+            const option = document.createElement('div');
+            option.className = 'service-option';
+            option.innerHTML = `
+                <input type="radio" name="serviceType" id="${service.id}" value="${service.id}">
+                <label for="${service.id}" style="cursor: pointer; color: #e2f1ff;">${service.name}</label>
+            `;
+            serviceSelectContainer.appendChild(option);
+        });
+        
+        // 添加服务选项选择事件
+        const serviceOptions = document.querySelectorAll('.service-option');
+        serviceOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const radio = this.querySelector('input[type="radio"]');
+                radio.checked = true;
+                serviceOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+        
+        // 默认选择第一个选项
+        if (serviceOptions.length > 0) {
+            const firstOption = serviceOptions[0];
+            const firstRadio = firstOption.querySelector('input[type="radio"]');
+            firstRadio.checked = true;
+            firstOption.classList.add('selected');
+        }
+        
+        // 金额选择功能
+        const amountOptions = document.querySelectorAll('.amount-option');
+        let selectedAmount = 1500; // 默认金额
+        
+        amountOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                amountOptions.forEach(opt => opt.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedAmount = parseInt(this.getAttribute('data-amount'));
+                document.getElementById('customAmount').value = '';
+            });
+        });
+        
+        // 设置默认选中
+        amountOptions[1].classList.add('selected');
+        
+        // 自定义金额应用
+        document.getElementById('applyCustomAmount').addEventListener('click', function() {
+            const customAmount = document.getElementById('customAmount').value;
+            if (customAmount && !isNaN(customAmount) && customAmount >= 100 && customAmount <= 100000) {
+                selectedAmount = parseInt(customAmount);
+                amountOptions.forEach(opt => opt.classList.remove('selected'));
+                
+                // 添加自定义金额的视觉反馈
+                const customOption = document.querySelector('.custom-amount');
+                customOption.style.border = '2px solid var(--primary)';
+                customOption.style.borderRadius = '10px';
+                customOption.style.padding = '15px';
+                customOption.style.background = 'rgba(0, 243, 255, 0.05)';
+                customOption.style.transition = 'all 0.3s';
+                
+                setTimeout(() => {
+                    customOption.style.border = '';
+                    customOption.style.background = '';
+                    customOption.style.padding = '';
+                }, 1500);
+                
+                // 显示成功消息
+                showNotification(`已设置自定义金额: $${selectedAmount}`);
+            } else {
+                showNotification('请输入有效的金额 (100-100000之间)', 'error');
+            }
+        });
+        
+        // 显示通知函数
+        function showNotification(message, type = 'success') {
+            // 创建通知元素
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '15px 25px';
+            notification.style.background = type === 'error' ? 'rgba(255, 0, 110, 0.9)' : 'rgba(0, 243, 255, 0.9)';
+            notification.style.color = 'white';
+            notification.style.borderRadius = '8px';
+            notification.style.fontFamily = "'Orbitron', sans-serif";
+            notification.style.fontWeight = '600';
+            notification.style.zIndex = '10000';
+            notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
+            notification.style.transform = 'translateX(150%)';
+            notification.style.transition = 'transform 0.4s ease';
+            
+            document.body.appendChild(notification);
+            
+            // 显示通知
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 10);
+            
+            // 隐藏通知
+            setTimeout(() => {
+                notification.style.transform = 'translateX(150%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 400);
+            }, 3000);
+        }
+        
+        // 表单提交
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const customerName = document.getElementById('customerName').value;
+            const contactInfo = document.getElementById('contactInfo').value;
+            const selectedService = document.querySelector('input[name="serviceType"]:checked');
+            const requirements = document.getElementById('specialRequirements').value;
+            
+            if (!selectedService) {
+                showNotification('请选择服务类型', 'error');
+                return;
+            }
+            
+            if (!customerName || !contactInfo) {
+                showNotification('请填写姓名和联系方式', 'error');
+                return;
+            }
+            
+            // 查找服务名称
+            let serviceName = '';
+            const serviceId = selectedService.value;
+            
+            for (const category in services) {
+                const foundService = services[category].find(s => s.id === serviceId);
+                if (foundService) {
+                    serviceName = foundService.name;
+                    break;
+                }
+            }
+            
+            // 生成随机订单号
+            const orderNumber = 'QUANTUM' + new Date().getFullYear() + 
+                String(new Date().getMonth() + 1).padStart(2, '0') + 
+                String(new Date().getDate()).padStart(2, '0') + 
+                Math.floor(10000 + Math.random() * 90000);
+            
+            // 更新成功消息
+            document.getElementById('successMessage').textContent = 
+                `尊敬的 ${customerName}，您已成功支付 ${serviceName} 的定金。`;
+            document.getElementById('orderNumber').textContent = orderNumber;
+            document.getElementById('paidAmount').textContent = '$' + selectedAmount;
+            
+            // 计算预计完成时间（根据金额调整）
+            const today = new Date();
+            const estimatedDate = new Date(today);
+            let daysToAdd = 5;
+            
+            if (selectedAmount >= 5000) {
+                daysToAdd = 14;
+            } else if (selectedAmount >= 3000) {
+                daysToAdd = 10;
+            } else if (selectedAmount >= 1500) {
+                daysToAdd = 7;
+            }
+            
+            estimatedDate.setDate(today.getDate() + daysToAdd);
+            const formattedDate = estimatedDate.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+            document.getElementById('estimatedDate').textContent = formattedDate + ' 前';
+            
+            // 支付方式固定为USDT
+            document.getElementById('paidMethod').textContent = 'USDT (泰达币)';
+            
+            // 显示成功模态框
+            document.getElementById('successModal').style.display = 'flex';
+            
+            // 模拟支付处理动画
+            const submitBtn = document.querySelector('.btn-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-cog fa-spin"></i> 处理支付中...';
+            submitBtn.disabled = true;
+            
+            // 在实际应用中，这里应该调用支付API
+            setTimeout(() => {
+                console.log('支付信息:', {
+                    姓名: customerName,
+                    联系方式: contactInfo,
+                    服务类型: serviceName,
+                    金额: selectedAmount,
+                    支付方式: 'USDT',
+                    特殊要求: requirements,
+                    订单号: orderNumber
+                });
+                
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }, 1500);
+        });
+        
+        // 关闭模态框
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('successModal').style.display = 'none';
+            // 重置表单
+            document.getElementById('paymentForm').reset();
+            // 重置选择状态
+            amountOptions[1].classList.add('selected');
+            selectedAmount = 1500;
+            
+            // 显示确认消息
+            showNotification('订单已确认！项目经理将尽快与您联系。');
+        });
+        
+        // 关闭模态框 (点击背景)
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('successModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+        
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.8s';
+            
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
