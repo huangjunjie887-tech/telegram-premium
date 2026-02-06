@@ -626,13 +626,13 @@
         /* 分类标签 */
         .category-tag {
             display: inline-block;
-            padding: 6px 15px;
+            padding: 8px 20px;
             background: rgba(0, 243, 255, 0.1);
             color: var(--primary);
             border: 1px solid rgba(0, 243, 255, 0.3);
             border-radius: 20px;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
+            font-size: 1rem;
             letter-spacing: 1px;
             margin-bottom: 10px;
         }
@@ -692,7 +692,7 @@
             <div class="payment-content">
                 <h2 class="payment-title">支付定金</h2>
                 
-                <div id="categoryInfo" class="category-tag">服务类型</div>
+                <div id="categoryInfo" class="category-tag">正在加载分类...</div>
                 
                 <form id="paymentForm" class="payment-form">
                     <div class="form-grid">
@@ -979,7 +979,9 @@
             serviceSelectContainer.innerHTML = '';
             
             // 更新分类信息显示
-            categoryInfo.textContent = categoryNames[categoryKey] || "机器人定制";
+            const displayName = categoryNames[categoryKey] || "机器人定制";
+            categoryInfo.textContent = displayName;
+            categoryInfo.style.background = getCategoryColor(categoryKey);
             
             // 获取对应分类的服务列表
             const categoryServices = services[categoryKey] || services.robots;
@@ -1037,8 +1039,32 @@
             }
         }
         
+        // 根据分类获取对应的颜色
+        function getCategoryColor(categoryKey) {
+            const colors = {
+                robots: "rgba(0, 243, 255, 0.1)",
+                website: "rgba(157, 78, 221, 0.1)",
+                web3: "rgba(0, 212, 170, 0.1)",
+                dapp: "rgba(255, 149, 0, 0.1)",
+                trading: "rgba(255, 46, 99, 0.1)",
+                management: "rgba(126, 87, 194, 0.1)",
+                tools: "rgba(0, 184, 212, 0.1)",
+                contract: "rgba(0, 243, 255, 0.1)",
+                token: "rgba(157, 78, 221, 0.1)",
+                launch: "rgba(0, 212, 170, 0.1)",
+                security: "rgba(255, 149, 0, 0.1)",
+                ecosystem: "rgba(255, 46, 99, 0.1)"
+            };
+            return colors[categoryKey] || "rgba(0, 243, 255, 0.1)";
+        }
+        
         // 页面加载时根据URL参数加载服务
         document.addEventListener('DOMContentLoaded', function() {
+            // 先添加页面加载动画
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.8s';
+            
+            // 加载服务
             loadServicesByCategory(category);
             
             // 金额选择功能
@@ -1084,6 +1110,11 @@
                     showNotification('请输入有效的金额 (100-100000之间)', 'error');
                 }
             });
+            
+            // 显示页面
+            setTimeout(() => {
+                document.body.style.opacity = '1';
+            }, 100);
         });
         
         // 显示通知函数
@@ -1226,16 +1257,6 @@
             if (e.target === modal) {
                 modal.style.display = 'none';
             }
-        });
-        
-        // 添加页面加载动画
-        document.addEventListener('DOMContentLoaded', function() {
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.8s';
-            
-            setTimeout(() => {
-                document.body.style.opacity = '1';
-            }, 100);
         });
     </script>
 </body>

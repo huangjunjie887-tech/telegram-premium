@@ -2584,47 +2584,69 @@
         }
         
         // 更新已选服务列表
-        function updateSelectedServicesList() {
-            const selectedServicesList = document.getElementById('selectedServicesList');
-            const selectedServicesSection = document.getElementById('selectedServicesSection');
-            const paymentBtn = document.getElementById('paymentBtn');
-            
-            // 清空列表
-            selectedServicesList.innerHTML = '';
-            
-            if (selectedServices.length === 0) {
-                // 隐藏已选服务区域
-                selectedServicesSection.style.display = 'none';
-                paymentBtn.disabled = true;
-                return;
-            }
-            
-            // 显示已选服务区域
-            selectedServicesSection.style.display = 'block';
-            
-            // 添加服务到列表
-            selectedServices.forEach(service => {
-                const serviceItem = document.createElement('div');
-                serviceItem.className = 'selected-service-item';
-                serviceItem.innerHTML = `
-                    <div class="service-item-info">
-                        <h4>${service.name}</h4>
-                        <p>${service.category} · 选择时间: ${service.date}</p>
-                    </div>
-                    <button class="remove-service-btn">
-                        <i class="fas fa-times"></i> 移除
-                    </button>
-                `;
-                selectedServicesList.appendChild(serviceItem);
-            });
-            
-            // 启用支付按钮
-            paymentBtn.disabled = false;
-            
-            // 更新支付链接，传递已选服务
-            const servicesParam = encodeURIComponent(JSON.stringify(selectedServices.map(s => s.name)));
-            paymentBtn.href = `payment.html?services=${servicesParam}`;
-        }
+function updateSelectedServicesList() {
+    const selectedServicesList = document.getElementById('selectedServicesList');
+    const selectedServicesSection = document.getElementById('selectedServicesSection');
+    const paymentBtn = document.getElementById('paymentBtn');
+    
+    // 清空列表
+    selectedServicesList.innerHTML = '';
+    
+    if (selectedServices.length === 0) {
+        // 隐藏已选服务区域
+        selectedServicesSection.style.display = 'none';
+        paymentBtn.disabled = true;
+        return;
+    }
+    
+    // 显示已选服务区域
+    selectedServicesSection.style.display = 'block';
+    
+    // 添加服务到列表
+    selectedServices.forEach(service => {
+        const serviceItem = document.createElement('div');
+        serviceItem.className = 'selected-service-item';
+        serviceItem.innerHTML = `
+            <div class="service-item-info">
+                <h4>${service.name}</h4>
+                <p>${service.category} · 选择时间: ${service.date}</p>
+            </div>
+            <button class="remove-service-btn">
+                <i class="fas fa-times"></i> 移除
+            </button>
+        `;
+        selectedServicesList.appendChild(serviceItem);
+    });
+    
+    // 启用支付按钮
+    paymentBtn.disabled = false;
+    
+    // 获取当前分类（从第一个选中的服务获取）
+    let currentCategory = '';
+    if (selectedServices.length > 0) {
+        const categoryMap = {
+            "机器人定制": "robots",
+            "官网定制": "website",
+            "Web3项目": "web3",
+            "DApp开发": "dapp",
+            "交易系统": "trading",
+            "管理系统": "management",
+            "工具平台": "tools",
+            "智能合约": "contract",
+            "代币发币": "token",
+            "发币配套": "launch",
+            "合约安全": "security",
+            "生态配套": "ecosystem"
+        };
+        
+        const firstCategory = selectedServices[0].category;
+        currentCategory = categoryMap[firstCategory] || "robots";
+    }
+    
+    // 更新支付链接，传递分类和已选服务
+    const servicesParam = encodeURIComponent(JSON.stringify(selectedServices.map(s => s.name)));
+    paymentBtn.href = `payment.html?category=${currentCategory}&services=${servicesParam}`;
+}
         
         // 页面加载时检查URL参数
         function checkUrlParams() {
