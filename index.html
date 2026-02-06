@@ -391,7 +391,9 @@
         
         /* 选择服务按钮 */
         .select-service-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 20px;
             padding: 12px 25px;
             background: rgba(0, 243, 255, 0.1);
@@ -412,21 +414,21 @@
             box-shadow: 0 5px 15px rgba(0, 243, 255, 0.2);
         }
         
-        .select-service-btn.selected {
-            background: rgba(0, 243, 255, 0.2);
-            border-color: var(--accent);
+        .price-badge {
+            background: rgba(255, 255, 255, 0.1);
             color: var(--accent);
-            box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
-        }
-        
-        .select-service-btn.selected::after {
-            content: ' ✓';
-            font-weight: bold;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            border: 1px solid rgba(255, 0, 110, 0.3);
         }
         
         /* 机器人订阅按钮 */
         .subscribe-btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
             margin-top: 20px;
             padding: 12px 25px;
             background: rgba(0, 243, 255, 0.1);
@@ -445,18 +447,6 @@
             background: rgba(0, 243, 255, 0.2);
             transform: translateY(-3px);
             box-shadow: 0 5px 15px rgba(0, 243, 255, 0.2);
-        }
-        
-        .subscribe-btn.selected {
-            background: rgba(0, 243, 255, 0.2);
-            border-color: var(--accent);
-            color: var(--accent);
-            box-shadow: 0 0 15px rgba(255, 0, 110, 0.3);
-        }
-        
-        .subscribe-btn.selected::after {
-            content: ' ✓';
-            font-weight: bold;
         }
         
         /* 科技感亮点区域 */
@@ -663,9 +653,16 @@
                 font-size: 1.8rem;
             }
             
-            .subscribe-btn {
-                padding: 12px 25px;
-                font-size: 1rem;
+            .subscribe-btn, .select-service-btn {
+                padding: 10px 20px;
+                font-size: 0.9rem;
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .price-badge {
+                padding: 3px 8px;
+                font-size: 0.9rem;
             }
         }
         
@@ -864,19 +861,31 @@
                             <ul class="robot-list">
                                 <li>
                                     <span class="robot-name">钱包机器人</span>
-                                    <button class="subscribe-btn" data-service="钱包机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="钱包机器人" data-category="机器人定制">
+                                        <span class="price-badge">$1,500</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">记账机器人</span>
-                                    <button class="subscribe-btn" data-service="记账机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="记账机器人" data-category="机器人定制">
+                                        <span class="price-badge">$1,200</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">汇旺机器人</span>
-                                    <button class="subscribe-btn" data-service="汇旺机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="汇旺机器人" data-category="机器人定制">
+                                        <span class="price-badge">$1,800</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">TRX兑换机器人</span>
-                                    <button class="subscribe-btn" data-service="TRX兑换机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="TRX兑换机器人" data-category="机器人定制">
+                                        <span class="price-badge">$1,600</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -886,19 +895,31 @@
                             <ul class="robot-list">
                                 <li>
                                     <span class="robot-name">群管机器人</span>
-                                    <button class="subscribe-btn" data-service="群管机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="群管机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,000</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">验群机器人</span>
-                                    <button class="subscribe-btn" data-service="验群机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="验群机器人" data-category="机器人定制">
+                                        <span class="price-badge">$1,800</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">会员机器人</span>
-                                    <button class="subscribe-btn" data-service="会员机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="会员机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,500</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">查群关系机器人</span>
-                                    <button class="subscribe-btn" data-service="查群关系机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="查群关系机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,200</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -908,19 +929,31 @@
                             <ul class="robot-list">
                                 <li>
                                     <span class="robot-name">供需机器人</span>
-                                    <button class="subscribe-btn" data-service="供需机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="供需机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,800</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">发卡机器人</span>
-                                    <button class="subscribe-btn" data-service="发卡机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="发卡机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,400</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">群发机器人</span>
-                                    <button class="subscribe-btn" data-service="群发机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="群发机器人" data-category="机器人定制">
+                                        <span class="price-badge">$3,200</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">群发双向机器人</span>
-                                    <button class="subscribe-btn" data-service="群发双向机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="群发双向机器人" data-category="机器人定制">
+                                        <span class="price-badge">$3,500</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -930,19 +963,31 @@
                             <ul class="robot-list">
                                 <li>
                                     <span class="robot-name">查档机器人</span>
-                                    <button class="subscribe-btn" data-service="查档机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="查档机器人" data-category="机器人定制">
+                                        <span class="price-badge">$1,900</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">关键词监控机器人</span>
-                                    <button class="subscribe-btn" data-service="关键词监控机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="关键词监控机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,300</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">区块链交易监控机器人</span>
-                                    <button class="subscribe-btn" data-service="区块链交易监控机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="区块链交易监控机器人" data-category="机器人定制">
+                                        <span class="price-badge">$3,800</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                                 <li>
                                     <span class="robot-name">曝光骗子机器人</span>
-                                    <button class="subscribe-btn" data-service="曝光骗子机器人" data-category="机器人定制">订阅</button>
+                                    <button class="subscribe-btn" data-service="曝光骗子机器人" data-category="机器人定制">
+                                        <span class="price-badge">$2,700</span>
+                                        <span>订阅</span>
+                                    </button>
                                 </li>
                             </ul>
                         </div>
@@ -973,7 +1018,10 @@
                                 <li><i class="fas fa-check"></i> 后台管理系统</li>
                                 <li><i class="fas fa-check"></i> 多终端适配</li>
                             </ul>
-                            <button class="select-service-btn" data-service="企业官网定制" data-category="官网定制">选择此服务</button>
+                            <button class="select-service-btn" data-service="企业官网定制" data-category="官网定制">
+                                <span class="price-badge">$5,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -990,7 +1038,10 @@
                                 <li><i class="fas fa-check"></i> 产品展示系统</li>
                                 <li><i class="fas fa-check"></i> 客户案例展示</li>
                             </ul>
-                            <button class="select-service-btn" data-service="品牌官网定制" data-category="官网定制">选择此服务</button>
+                            <button class="select-service-btn" data-service="品牌官网定制" data-category="官网定制">
+                                <span class="price-badge">$6,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1007,7 +1058,10 @@
                                 <li><i class="fas fa-check"></i> 在线咨询系统</li>
                                 <li><i class="fas fa-check"></i> 购物车功能</li>
                             </ul>
-                            <button class="select-service-btn" data-service="产品展示官网" data-category="官网定制">选择此服务</button>
+                            <button class="select-service-btn" data-service="产品展示官网" data-category="官网定制">
+                                <span class="price-badge">$5,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1024,7 +1078,10 @@
                                 <li><i class="fas fa-check"></i> 时区自适应</li>
                                 <li><i class="fas fa-check"></i> 跨国SEO优化</li>
                             </ul>
-                            <button class="select-service-btn" data-service="外贸/多语言官网" data-category="官网定制">选择此服务</button>
+                            <button class="select-service-btn" data-service="外贸/多语言官网" data-category="官网定制">
+                                <span class="price-badge">$7,200</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1041,7 +1098,10 @@
                                 <li><i class="fas fa-check"></i> 投资信息展示</li>
                                 <li><i class="fas fa-check"></i> 新闻动态更新</li>
                             </ul>
-                            <button class="select-service-btn" data-service="项目宣传官网" data-category="官网定制">选择此服务</button>
+                            <button class="select-service-btn" data-service="项目宣传官网" data-category="官网定制">
+                                <span class="price-badge">$6,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1058,7 +1118,10 @@
                                 <li><i class="fas fa-check"></i> 数据统计分析</li>
                                 <li><i class="fas fa-check"></i> 社交媒体集成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="活动/落地页官网" data-category="官网定制">选择此服务</button>
+                            <button class="select-service-btn" data-service="活动/落地页官网" data-category="官网定制">
+                                <span class="price-badge">$4,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1087,7 +1150,10 @@
                                 <li><i class="fas fa-check"></i> 节点信息查询</li>
                                 <li><i class="fas fa-check"></i> 区块浏览器集成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="区块链项目官网" data-category="Web3项目">选择此服务</button>
+                            <button class="select-service-btn" data-service="区块链项目官网" data-category="Web3项目">
+                                <span class="price-badge">$8,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1104,7 +1170,10 @@
                                 <li><i class="fas fa-check"></i> 治理投票系统</li>
                                 <li><i class="fas fa-check"></i> 社区治理展示</li>
                             </ul>
-                            <button class="select-service-btn" data-service="Web3项目官网" data-category="Web3项目">选择此服务</button>
+                            <button class="select-service-btn" data-service="Web3项目官网" data-category="Web3项目">
+                                <span class="price-badge">$9,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1121,7 +1190,10 @@
                                 <li><i class="fas fa-check"></i> 质押收益展示</li>
                                 <li><i class="fas fa-check"></i> 交易对信息</li>
                             </ul>
-                            <button class="select-service-btn" data-service="DeFi项目官网" data-category="Web3项目">选择此服务</button>
+                            <button class="select-service-btn" data-service="DeFi项目官网" data-category="Web3项目">
+                                <span class="price-badge">$10,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1138,7 +1210,10 @@
                                 <li><i class="fas fa-check"></i> 地板价追踪</li>
                                 <li><i class="fas fa-check"></i> 铸造倒计时</li>
                             </ul>
-                            <button class="select-service-btn" data-service="NFT项目官网" data-category="Web3项目">选择此服务</button>
+                            <button class="select-service-btn" data-service="NFT项目官网" data-category="Web3项目">
+                                <span class="price-badge">$9,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1155,7 +1230,10 @@
                                 <li><i class="fas fa-check"></i> 国库资金透明</li>
                                 <li><i class="fas fa-check"></i> 成员资格展示</li>
                             </ul>
-                            <button class="select-service-btn" data-service="DAO项目官网" data-category="Web3项目">选择此服务</button>
+                            <button class="select-service-btn" data-service="DAO项目官网" data-category="Web3项目">
+                                <span class="price-badge">$11,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1172,7 +1250,10 @@
                                 <li><i class="fas fa-check"></i> 空投进度追踪</li>
                                 <li><i class="fas fa-check"></i> 社交媒体任务集成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="空投/白皮书官网" data-category="Web3项目">选择此服务</button>
+                            <button class="select-service-btn" data-service="空投/白皮书官网" data-category="Web3项目">
+                                <span class="price-badge">$7,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1201,7 +1282,10 @@
                                 <li><i class="fas fa-check"></i> 交易签名功能</li>
                                 <li><i class="fas fa-check"></i> 授权管理界面</li>
                             </ul>
-                            <button class="select-service-btn" data-service="钱包交互DApp" data-category="DApp开发">选择此服务</button>
+                            <button class="select-service-btn" data-service="钱包交互DApp" data-category="DApp开发">
+                                <span class="price-badge">$12,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1218,7 +1302,10 @@
                                 <li><i class="fas fa-check"></i> 收益耕种优化</li>
                                 <li><i class="fas fa-check"></i> 风险管理工具</li>
                             </ul>
-                            <button class="select-service-btn" data-service="DeFi应用DApp" data-category="DApp开发">选择此服务</button>
+                            <button class="select-service-btn" data-service="DeFi应用DApp" data-category="DApp开发">
+                                <span class="price-badge">$15,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1235,7 +1322,10 @@
                                 <li><i class="fas fa-check"></i> 交易图表分析</li>
                                 <li><i class="fas fa-check"></i> 滑点保护机制</li>
                             </ul>
-                            <button class="select-service-btn" data-service="交易类DApp" data-category="DApp开发">选择此服务</button>
+                            <button class="select-service-btn" data-service="交易类DApp" data-category="DApp开发">
+                                <span class="price-badge">$13,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1252,7 +1342,10 @@
                                 <li><i class="fas fa-check"></i> 批量操作支持</li>
                                 <li><i class="fas fa-check"></i> 稀有度分析工具</li>
                             </ul>
-                            <button class="select-service-btn" data-service="NFT应用DApp" data-category="DApp开发">选择此服务</button>
+                            <button class="select-service-btn" data-service="NFT应用DApp" data-category="DApp开发">
+                                <span class="price-badge">$14,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1269,7 +1362,10 @@
                                 <li><i class="fas fa-check"></i> 收益追踪报告</li>
                                 <li><i class="fas fa-check"></i> 风险预警系统</li>
                             </ul>
-                            <button class="select-service-btn" data-service="资产管理DApp" data-category="DApp开发">选择此服务</button>
+                            <button class="select-service-btn" data-service="资产管理DApp" data-category="DApp开发">
+                                <span class="price-badge">$16,200</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1286,7 +1382,10 @@
                                 <li><i class="fas fa-check"></i> 数字凭证发放</li>
                                 <li><i class="fas fa-check"></i> 零知识证明集成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="授权/身份DApp" data-category="DApp开发">选择此服务</button>
+                            <button class="select-service-btn" data-service="授权/身份DApp" data-category="DApp开发">
+                                <span class="price-badge">$15,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1315,7 +1414,10 @@
                                 <li><i class="fas fa-check"></i> 多链交易执行</li>
                                 <li><i class="fas fa-check"></i> 交易回测功能</li>
                             </ul>
-                            <button class="select-service-btn" data-service="链上交易系统" data-category="交易系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="链上交易系统" data-category="交易系统">
+                                <span class="price-badge">$18,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1332,7 +1434,10 @@
                                 <li><i class="fas fa-check"></i> 风险控制模块</li>
                                 <li><i class="fas fa-check"></i> 实时监控报警</li>
                             </ul>
-                            <button class="select-service-btn" data-service="自动交易系统" data-category="交易系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="自动交易系统" data-category="交易系统">
+                                <span class="price-badge">$20,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1349,7 +1454,10 @@
                                 <li><i class="fas fa-check"></i> 风险参数设置</li>
                                 <li><i class="fas fa-check"></i> 跟单绩效分析</li>
                             </ul>
-                            <button class="select-service-btn" data-service="跟单交易系统" data-category="交易系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="跟单交易系统" data-category="交易系统">
+                                <span class="price-badge">$16,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1366,7 +1474,10 @@
                                 <li><i class="fas fa-check"></i> 资金流向追踪</li>
                                 <li><i class="fas fa-check"></i> 自定义监控规则</li>
                             </ul>
-                            <button class="select-service-btn" data-service="地址监听系统" data-category="交易系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="地址监听系统" data-category="交易系统">
+                                <span class="price-badge">$14,200</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1383,7 +1494,10 @@
                                 <li><i class="fas fa-check"></i> 绩效分析报告</li>
                                 <li><i class="fas fa-check"></i> 风险指标计算</li>
                             </ul>
-                            <button class="select-service-btn" data-service="量化策略面板" data-category="交易系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="量化策略面板" data-category="交易系统">
+                                <span class="price-badge">$19,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1400,7 +1514,10 @@
                                 <li><i class="fas fa-check"></i> 税务报告生成</li>
                                 <li><i class="fas fa-check"></i> ROI分析工具</li>
                             </ul>
-                            <button class="select-service-btn" data-service="收益统计系统" data-category="交易系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="收益统计系统" data-category="交易系统">
+                                <span class="price-badge">$15,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1429,7 +1546,10 @@
                                 <li><i class="fas fa-check"></i> 链上数据监控</li>
                                 <li><i class="fas fa-check"></i> 多链管理支持</li>
                             </ul>
-                            <button class="select-service-btn" data-service="Web3管理后台" data-category="管理系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="Web3管理后台" data-category="管理系统">
+                                <span class="price-badge">$22,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1446,7 +1566,10 @@
                                 <li><i class="fas fa-check"></i> 用户画像构建</li>
                                 <li><i class="fas fa-check"></i> 权限分级控制</li>
                             </ul>
-                            <button class="select-service-btn" data-service="用户管理系统" data-category="管理系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="用户管理系统" data-category="管理系统">
+                                <span class="price-badge">$18,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1463,7 +1586,10 @@
                                 <li><i class="fas fa-check"></i> 自定义报表生成</li>
                                 <li><i class="fas fa-check"></i> 业务洞察分析</li>
                             </ul>
-                            <button class="select-service-btn" data-service="数据统计后台" data-category="管理系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="数据统计后台" data-category="管理系统">
+                                <span class="price-badge">$19,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1480,7 +1606,10 @@
                                 <li><i class="fas fa-check"></i> 风险控制规则</li>
                                 <li><i class="fas fa-check"></i> 审计日志记录</li>
                             </ul>
-                            <button class="select-service-btn" data-service="钱包管理系统" data-category="管理系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="钱包管理系统" data-category="管理系统">
+                                <span class="price-badge">$21,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1497,7 +1626,10 @@
                                 <li><i class="fas fa-check"></i> 操作审计日志</li>
                                 <li><i class="fas fa-check"></i> 安全合规检查</li>
                             </ul>
-                            <button class="select-service-btn" data-service="权限管理系统" data-category="管理系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="权限管理系统" data-category="管理系统">
+                                <span class="price-badge">$20,200</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1514,7 +1646,10 @@
                                 <li><i class="fas fa-check"></i> 多级预警通知</li>
                                 <li><i class="fas fa-check"></i> 风险报告生成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="风控监控系统" data-category="管理系统">选择此服务</button>
+                            <button class="select-service-btn" data-service="风控监控系统" data-category="管理系统">
+                                <span class="price-badge">$22,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1543,7 +1678,10 @@
                                 <li><i class="fas fa-check"></i> 数据可视化</li>
                                 <li><i class="fas fa-check"></i> API接口服务</li>
                             </ul>
-                            <button class="select-service-btn" data-service="链上数据平台" data-category="工具平台">选择此服务</button>
+                            <button class="select-service-btn" data-service="链上数据平台" data-category="工具平台">
+                                <span class="price-badge">$25,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1560,7 +1698,10 @@
                                 <li><i class="fas fa-check"></i> 资产统计报表</li>
                                 <li><i class="fas fa-check"></i> 代币持有分析</li>
                             </ul>
-                            <button class="select-service-btn" data-service="钱包查询工具" data-category="工具平台">选择此服务</button>
+                            <button class="select-service-btn" data-service="钱包查询工具" data-category="工具平台">
+                                <span class="price-badge">$18,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1577,7 +1718,10 @@
                                 <li><i class="fas fa-check"></i> 稀有度分析</li>
                                 <li><i class="fas fa-check"></i> 市场数据追踪</li>
                             </ul>
-                            <button class="select-service-btn" data-service="NFT管理平台" data-category="工具平台">选择此服务</button>
+                            <button class="select-service-btn" data-service="NFT管理平台" data-category="工具平台">
+                                <span class="price-badge">$21,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1594,7 +1738,10 @@
                                 <li><i class="fas fa-check"></i> 实时数据更新</li>
                                 <li><i class="fas fa-check"></i> 多维度分析</li>
                             </ul>
-                            <button class="select-service-btn" data-service="项目数据看板" data-category="工具平台">选择此服务</button>
+                            <button class="select-service-btn" data-service="项目数据看板" data-category="工具平台">
+                                <span class="price-badge">$19,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1611,7 +1758,10 @@
                                 <li><i class="fas fa-check"></i> API集成接口</li>
                                 <li><i class="fas fa-check"></i> 订阅计费系统</li>
                             </ul>
-                            <button class="select-service-btn" data-service="Web3 SaaS平台" data-category="工具平台">选择此服务</button>
+                            <button class="select-service-btn" data-service="Web3 SaaS平台" data-category="工具平台">
+                                <span class="price-badge">$28,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1640,7 +1790,10 @@
                                 <li><i class="fas fa-check"></i> 统一接口标准</li>
                                 <li><i class="fas fa-check"></i> 链间通信协议</li>
                             </ul>
-                            <button class="select-service-btn" data-service="全链智能合约部署" data-category="智能合约">选择此服务</button>
+                            <button class="select-service-btn" data-service="全链智能合约部署" data-category="智能合约">
+                                <span class="price-badge">$30,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1657,7 +1810,10 @@
                                 <li><i class="fas fa-check"></i> 统一用户体验</li>
                                 <li><i class="fas fa-check"></i> 状态同步机制</li>
                             </ul>
-                            <button class="select-service-btn" data-service="多链合约定制开发" data-category="智能合约">选择此服务</button>
+                            <button class="select-service-btn" data-service="多链合约定制开发" data-category="智能合约">
+                                <span class="price-badge">$32,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1674,7 +1830,10 @@
                                 <li><i class="fas fa-check"></i> Gas优化部署</li>
                                 <li><i class="fas fa-check"></i> 合约验证服务</li>
                             </ul>
-                            <button class="select-service-btn" data-service="EVM合约部署服务" data-category="智能合约">选择此服务</button>
+                            <button class="select-service-btn" data-service="EVM合约部署服务" data-category="智能合约">
+                                <span class="price-badge">$25,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1691,7 +1850,10 @@
                                 <li><i class="fas fa-check"></i> 特殊链适配</li>
                                 <li><i class="fas fa-check"></i> 跨链桥接方案</li>
                             </ul>
-                            <button class="select-service-btn" data-service="非EVM合约部署" data-category="智能合约">选择此服务</button>
+                            <button class="select-service-btn" data-service="非EVM合约部署" data-category="智能合约">
+                                <span class="price-badge">$28,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1708,7 +1870,10 @@
                                 <li><i class="fas fa-check"></i> 安全升级方案</li>
                                 <li><i class="fas fa-check"></i> 版本管理控制</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约升级/代理部署" data-category="智能合约">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约升级/代理部署" data-category="智能合约">
+                                <span class="price-badge">$23,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1725,7 +1890,10 @@
                                 <li><i class="fas fa-check"></i> Bug修复服务</li>
                                 <li><i class="fas fa-check"></i> 持续技术维护</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约二次开发与维护" data-category="智能合约">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约二次开发与维护" data-category="智能合约">
+                                <span class="price-badge">$20,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1754,7 +1922,10 @@
                                 <li><i class="fas fa-check"></i> 市场推广策略</li>
                                 <li><i class="fas fa-check"></i> 流动性解决方案</li>
                             </ul>
-                            <button class="select-service-btn" data-service="代币发行" data-category="代币发币">选择此服务</button>
+                            <button class="select-service-btn" data-service="代币发行" data-category="代币发币">
+                                <span class="price-badge">$35,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1771,7 +1942,10 @@
                                 <li><i class="fas fa-check"></i> 安全审计保证</li>
                                 <li><i class="fas fa-check"></i> 流动性池创建</li>
                             </ul>
-                            <button class="select-service-btn" data-service="ERC20/BEP20代币部署" data-category="代币发币">选择此服务</button>
+                            <button class="select-service-btn" data-service="ERC20/BEP20代币部署" data-category="代币发币">
+                                <span class="price-badge">$18,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1788,7 +1962,10 @@
                                 <li><i class="fas fa-check"></i> 高吞吐量支持</li>
                                 <li><i class="fas fa-check"></i> 快速交易确认</li>
                             </ul>
-                            <button class="select-service-btn" data-service="TRC20代币部署" data-category="代币发币">选择此服务</button>
+                            <button class="select-service-btn" data-service="TRC20代币部署" data-category="代币发币">
+                                <span class="price-badge">$16,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1805,7 +1982,10 @@
                                 <li><i class="fas fa-check"></i> 统一品牌管理</li>
                                 <li><i class="fas fa-check"></i> 跨链桥集成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="多链代币同步发行" data-category="代币发币">选择此服务</button>
+                            <button class="select-service-btn" data-service="多链代币同步发行" data-category="代币发币">
+                                <span class="price-badge">$38,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1822,7 +2002,10 @@
                                 <li><i class="fas fa-check"></i> 跨链资产转移</li>
                                 <li><i class="fas fa-check"></i> 映射管理后台</li>
                             </ul>
-                            <button class="select-service-btn" data-service="代币映射/跨链发行" data-category="代币发币">选择此服务</button>
+                            <button class="select-service-btn" data-service="代币映射/跨链发行" data-category="代币发币">
+                                <span class="price-badge">$32,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1839,7 +2022,10 @@
                                 <li><i class="fas fa-check"></i> 代币分配方案</li>
                                 <li><i class="fas fa-check"></i> 锁仓机制设计</li>
                             </ul>
-                            <button class="select-service-btn" data-service="项目代币初始化部署" data-category="代币发币">选择此服务</button>
+                            <button class="select-service-btn" data-service="项目代币初始化部署" data-category="代币发币">
+                                <span class="price-badge">$25,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1868,7 +2054,10 @@
                                 <li><i class="fas fa-check"></i> 钱包连接集成</li>
                                 <li><i class="fas fa-check"></i> 移动端适配</li>
                             </ul>
-                            <button class="select-service-btn" data-service="发币官网/Mint页面" data-category="发币配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="发币官网/Mint页面" data-category="发币配套">
+                                <span class="price-badge">$15,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1885,7 +2074,10 @@
                                 <li><i class="fas fa-check"></i> 防作弊机制</li>
                                 <li><i class="fas fa-check"></i> 批量发放功能</li>
                             </ul>
-                            <button class="select-service-btn" data-service="空投领取系统" data-category="发币配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="空投领取系统" data-category="发币配套">
+                                <span class="price-badge">$18,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1902,7 +2094,10 @@
                                 <li><i class="fas fa-check"></i> 公平分配机制</li>
                                 <li><i class="fas fa-check"></i> KYC验证集成</li>
                             </ul>
-                            <button class="select-service-btn" data-service="白名单/预售系统" data-category="发币配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="白名单/预售系统" data-category="发币配套">
+                                <span class="price-badge">$20,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1919,7 +2114,10 @@
                                 <li><i class="fas fa-check"></i> 投资额度管理</li>
                                 <li><i class="fas fa-check"></i> 资金安全方案</li>
                             </ul>
-                            <button class="select-service-btn" data-service="私募/公募系统" data-category="发币配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="私募/公募系统" data-category="发币配套">
+                                <span class="price-badge">$28,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1936,7 +2134,10 @@
                                 <li><i class="fas fa-check"></i> 团队锁仓方案</li>
                                 <li><i class="fas fa-check"></i> 投资者锁仓方案</li>
                             </ul>
-                            <button class="select-service-btn" data-service="锁仓/释放合约" data-category="发币配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="锁仓/释放合约" data-category="发币配套">
+                                <span class="price-badge">$12,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1953,7 +2154,10 @@
                                 <li><i class="fas fa-check"></i> 收益分配系统</li>
                                 <li><i class="fas fa-check"></i> 税务合规方案</li>
                             </ul>
-                            <button class="select-service-btn" data-service="分红/回购合约" data-category="发币配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="分红/回购合约" data-category="发币配套">
+                                <span class="price-badge">$15,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1982,7 +2186,10 @@
                                 <li><i class="fas fa-check"></i> 操作权限分级</li>
                                 <li><i class="fas fa-check"></i> 权限变更审计</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约权限管理" data-category="合约安全">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约权限管理" data-category="合约安全">
+                                <span class="price-badge">$14,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -1999,7 +2206,10 @@
                                 <li><i class="fas fa-check"></i> 资金安全管理</li>
                                 <li><i class="fas fa-check"></i> 紧急情况处理</li>
                             </ul>
-                            <button class="select-service-btn" data-service="多签钱包部署" data-category="合约安全">选择此服务</button>
+                            <button class="select-service-btn" data-service="多签钱包部署" data-category="合约安全">
+                                <span class="price-badge">$16,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2016,7 +2226,10 @@
                                 <li><i class="fas fa-check"></i> 代码安全优化</li>
                                 <li><i class="fas fa-check"></i> 风险评估报告</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约安全加固" data-category="合约安全">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约安全加固" data-category="合约安全">
+                                <span class="price-badge">$18,200</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2033,7 +2246,10 @@
                                 <li><i class="fas fa-check"></i> 合规性认证</li>
                                 <li><i class="fas fa-check"></i> 审计问题修复</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约审计对接" data-category="合约安全">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约审计对接" data-category="合约安全">
+                                <span class="price-badge">$20,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2050,7 +2266,10 @@
                                 <li><i class="fas fa-check"></i> 安全预警系统</li>
                                 <li><i class="fas fa-check"></i> 应急响应机制</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约风险检测" data-category="合约安全">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约风险检测" data-category="合约安全">
+                                <span class="price-badge">$17,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2067,7 +2286,10 @@
                                 <li><i class="fas fa-check"></i> 风险地址封禁</li>
                                 <li><i class="fas fa-check"></i> 权限恢复流程</li>
                             </ul>
-                            <button class="select-service-btn" data-service="合约暂停/黑名单" data-category="合约安全">选择此服务</button>
+                            <button class="select-service-btn" data-service="合约暂停/黑名单" data-category="合约安全">
+                                <span class="price-badge">$13,800</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2096,7 +2318,10 @@
                                 <li><i class="fas fa-check"></i> 交易签名支持</li>
                                 <li><i class="fas fa-check"></i> 网络切换功能</li>
                             </ul>
-                            <button class="select-service-btn" data-service="多链钱包适配" data-category="生态配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="多链钱包适配" data-category="生态配套">
+                                <span class="price-badge">$22,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2113,7 +2338,10 @@
                                 <li><i class="fas fa-check"></i> 桥接安全性保障</li>
                                 <li><i class="fas fa-check"></i> 手续费优化</li>
                             </ul>
-                            <button class="select-service-btn" data-service="跨链桥对接" data-category="生态配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="跨链桥对接" data-category="生态配套">
+                                <span class="price-badge">$35,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2130,7 +2358,10 @@
                                 <li><i class="fas fa-check"></i> 历史数据归档</li>
                                 <li><i class="fas fa-check"></i> 数据API服务</li>
                             </ul>
-                            <button class="select-service-btn" data-service="链上数据同步" data-category="生态配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="链上数据同步" data-category="生态配套">
+                                <span class="price-badge">$28,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2147,7 +2378,10 @@
                                 <li><i class="fas fa-check"></i> 收益自动计算</li>
                                 <li><i class="fas fa-check"></i> 风险管理系统</li>
                             </ul>
-                            <button class="select-service-btn" data-service="多链资产管理" data-category="生态配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="多链资产管理" data-category="生态配套">
+                                <span class="price-badge">$26,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2164,7 +2398,10 @@
                                 <li><i class="fas fa-check"></i> 合约统一接口</li>
                                 <li><i class="fas fa-check"></i> 用户体验优化</li>
                             </ul>
-                            <button class="select-service-btn" data-service="多链DApp对接" data-category="生态配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="多链DApp对接" data-category="生态配套">
+                                <span class="price-badge">$24,500</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                         
                         <div class="service-card">
@@ -2181,7 +2418,10 @@
                                 <li><i class="fas fa-check"></i> API接口开发</li>
                                 <li><i class="fas fa-check"></i> 节点监控系统</li>
                             </ul>
-                            <button class="select-service-btn" data-service="节点服务部署" data-category="生态配套">选择此服务</button>
+                            <button class="select-service-btn" data-service="节点服务部署" data-category="生态配套">
+                                <span class="price-badge">$30,000</span>
+                                <span>选择此服务</span>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2303,19 +2543,23 @@
             // 为所有选择按钮添加点击事件
             document.addEventListener('click', function(e) {
                 // 处理选择此服务按钮
-                if (e.target.classList.contains('select-service-btn')) {
-                    const service = e.target.getAttribute('data-service');
-                    const category = e.target.getAttribute('data-category');
+                if (e.target.classList.contains('select-service-btn') || 
+                    e.target.closest('.select-service-btn')) {
+                    const button = e.target.classList.contains('select-service-btn') ? 
+                        e.target : e.target.closest('.select-service-btn');
+                    
+                    const service = button.getAttribute('data-service');
+                    const category = button.getAttribute('data-category');
                     
                     // 添加短暂的视觉反馈
-                    e.target.style.background = 'rgba(0, 243, 255, 0.3)';
-                    e.target.style.borderColor = 'var(--accent)';
-                    e.target.style.color = 'var(--accent)';
+                    button.style.background = 'rgba(0, 243, 255, 0.3)';
+                    button.style.borderColor = 'var(--accent)';
+                    button.style.color = 'var(--accent)';
                     
                     setTimeout(() => {
-                        e.target.style.background = '';
-                        e.target.style.borderColor = '';
-                        e.target.style.color = '';
+                        button.style.background = '';
+                        button.style.borderColor = '';
+                        button.style.color = '';
                     }, 300);
                     
                     // 跳转到支付页面，传递服务信息
@@ -2323,19 +2567,23 @@
                 }
                 
                 // 处理机器人板块的订阅按钮
-                if (e.target.classList.contains('subscribe-btn')) {
-                    const service = e.target.getAttribute('data-service');
-                    const category = e.target.getAttribute('data-category');
+                if (e.target.classList.contains('subscribe-btn') || 
+                    e.target.closest('.subscribe-btn')) {
+                    const button = e.target.classList.contains('subscribe-btn') ? 
+                        e.target : e.target.closest('.subscribe-btn');
+                    
+                    const service = button.getAttribute('data-service');
+                    const category = button.getAttribute('data-category');
                     
                     // 添加短暂的视觉反馈
-                    e.target.style.background = 'rgba(0, 243, 255, 0.3)';
-                    e.target.style.borderColor = 'var(--accent)';
-                    e.target.style.color = 'var(--accent)';
+                    button.style.background = 'rgba(0, 243, 255, 0.3)';
+                    button.style.borderColor = 'var(--accent)';
+                    button.style.color = 'var(--accent)';
                     
                     setTimeout(() => {
-                        e.target.style.background = '';
-                        e.target.style.borderColor = '';
-                        e.target.style.color = '';
+                        button.style.background = '';
+                        button.style.borderColor = '';
+                        button.style.color = '';
                     }, 300);
                     
                     // 跳转到支付页面，传递服务信息
