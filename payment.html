@@ -1019,13 +1019,20 @@
             // 如果有从主页面传递过来的已选服务，选中它
             if (servicesParam) {
                 try {
-                    const selectedServices = JSON.parse(decodeURIComponent(servicesParam));
+                    // 解码并解析服务参数
+                    const selectedServices = decodeURIComponent(servicesParam).split(',');
                     if (selectedServices.length > 0) {
-                        const firstSelectedService = selectedServices[0];
+                        // 格式可能是 "category:name" 或直接是服务名
+                        const serviceNames = selectedServices.map(s => {
+                            const parts = s.split(':');
+                            return parts.length > 1 ? parts[1] : s;
+                        });
+                        
+                        // 找到匹配的服务并选中
                         serviceOptions.forEach(option => {
                             const radio = option.querySelector('input[type="radio"]');
                             const serviceName = radio.getAttribute('data-name');
-                            if (serviceName === firstSelectedService) {
+                            if (serviceNames.includes(serviceName)) {
                                 radio.checked = true;
                                 option.classList.add('selected');
                                 // 滚动到选中的服务
@@ -1035,6 +1042,7 @@
                     }
                 } catch (e) {
                     console.error('解析服务参数失败:', e);
+                    showNotification('解析已选服务时出错，请重新选择', 'error');
                 }
             }
         }
