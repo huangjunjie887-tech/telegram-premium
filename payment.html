@@ -677,6 +677,102 @@
             margin-bottom: 10px;
         }
         
+        /* 钱包选择模态框样式 */
+        .wallet-modal .modal-content {
+            max-width: 800px;
+            padding: 40px;
+        }
+        
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .wallet-option {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wallet-option:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.2);
+        }
+        
+        .wallet-option.selected {
+            background: linear-gradient(145deg, rgba(0, 243, 255, 0.15), rgba(157, 78, 221, 0.15));
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
+        }
+        
+        .wallet-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .wallet-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 5px;
+        }
+        
+        .wallet-type {
+            font-size: 0.85rem;
+            color: #a0b3d6;
+        }
+        
+        .wallet-info {
+            margin-top: 25px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(0, 243, 255, 0.1);
+        }
+        
+        .wallet-info h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .btn-connect {
+            padding: 15px 40px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-connect:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
+        }
+        
+        .btn-connect:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
         /* 响应式调整 */
         @media (max-width: 768px) {
             .payment-section {
@@ -690,6 +786,10 @@
             .logo-text h1 {
                 font-size: 2rem;
             }
+            
+            .wallet-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
         
         @media (max-width: 480px) {
@@ -699,6 +799,10 @@
             
             .logo-text h1 {
                 font-size: 1.8rem;
+            }
+            
+            .wallet-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -799,7 +903,7 @@
                         <div class="payment-method-single">
                             <i class="fas fa-coins"></i>
                             <div class="method-name">TRC20-USDT支付</div>
-                            <div class="method-desc">泰达币 · 稳定币支付</div>
+                            <div class="method-desc">泰达币 · 稳定币支付 · 支持八大主流钱包</div>
                         </div>
                     </div>
                     
@@ -850,6 +954,96 @@
         </div>
     </div>
     
+    <!-- 钱包选择模态框 -->
+    <div id="walletModal" class="tech-modal wallet-modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h3>请选择付款钱包</h3>
+            <p>选择您要使用的钱包进行TRC20-USDT支付</p>
+            
+            <div class="wallet-grid">
+                <div class="wallet-option" data-wallet="tronlink">
+                    <div class="wallet-icon">
+                        <i class="fas fa-plug"></i>
+                    </div>
+                    <div class="wallet-name">TronLink</div>
+                    <div class="wallet-type">波场官方钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="tokenpocket">
+                    <div class="wallet-icon">
+                        <i class="fas fa-credit-card"></i>
+                    </div>
+                    <div class="wallet-name">TokenPocket</div>
+                    <div class="wallet-type">多链钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="bitget">
+                    <div class="wallet-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="wallet-name">Bitget Wallet</div>
+                    <div class="wallet-type">交易型钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="imtoken">
+                    <div class="wallet-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="wallet-name">imToken</div>
+                    <div class="wallet-type">移动端钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="onekey">
+                    <div class="wallet-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <div class="wallet-name">OneKey</div>
+                    <div class="wallet-type">硬件钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="okx">
+                    <div class="wallet-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="wallet-name">OKX Web3 Wallet</div>
+                    <div class="wallet-type">交易所钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="bitpie">
+                    <div class="wallet-icon">
+                        <i class="fas fa-coins"></i>
+                    </div>
+                    <div class="wallet-name">BitPie比特派</div>
+                    <div class="wallet-type">老牌钱包</div>
+                </div>
+                
+                <div class="wallet-option" data-wallet="trust">
+                    <div class="wallet-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="wallet-name">Trust Wallet</div>
+                    <div class="wallet-type">币安官方钱包</div>
+                </div>
+            </div>
+            
+            <div class="wallet-info">
+                <h4><i class="fas fa-info-circle"></i> 支付说明</h4>
+                <p>请确保您选择的钱包中存有足够的USDT，并已切换到TRC20网络。支付完成后，系统将自动确认订单并启动项目开发。</p>
+            </div>
+            
+            <button class="btn-connect" id="connectWalletBtn" disabled>
+                连接钱包并支付
+            </button>
+            
+            <button class="btn-close" id="closeWalletModal" style="margin-top: 15px; background: rgba(255, 255, 255, 0.1);">
+                返回修改
+            </button>
+        </div>
+    </div>
+    
     <!-- 支付成功弹窗 -->
     <div id="successModal" class="tech-modal">
         <div class="modal-content">
@@ -873,6 +1067,10 @@
                     <strong id="paidMethod">USDT (泰达币)</strong>
                 </div>
                 <div>
+                    <span>钱包类型:</span>
+                    <strong id="walletType">未选择</strong>
+                </div>
+                <div>
                     <span>预计完成:</span>
                     <strong id="estimatedDate">5个工作日内</strong>
                 </div>
@@ -888,108 +1086,108 @@
         const services = {
             robots: [
                 {id: 'robot-1', name: "钱包机器人", category: "机器人定制", basePrice: 1500},
-                {id: 'robot-2', name: "记账机器人", category: "机器人定制", basePrice: 800},
-                {id: 'robot-3', name: "汇旺机器人", category: "机器人定制", basePrice: 1200},
-                {id: 'robot-4', name: "TRX兑换机器人", category: "机器人定制", basePrice: 900},
-                {id: 'robot-5', name: "群管机器人", category: "机器人定制", basePrice: 600},
-                {id: 'robot-6', name: "验群机器人", category: "机器人定制", basePrice: 700},
-                {id: 'robot-7', name: "会员机器人", category: "机器人定制", basePrice: 1100},
-                {id: 'robot-8', name: "查群关系机器人", category: "机器人定制", basePrice: 850},
-                {id: 'robot-9', name: "供需机器人", category: "机器人定制", basePrice: 950},
-                {id: 'robot-10', name: "发卡机器人", category: "机器人定制", basePrice: 1300},
-                {id: 'robot-11', name: "群发机器人", category: "机器人定制", basePrice: 550},
-                {id: 'robot-12', name: "群发双向机器人", category: "机器人定制", basePrice: 1400},
-                {id: 'robot-13', name: "查档机器人", category: "机器人定制", basePrice: 750},
-                {id: 'robot-14', name: "关键词监控机器人", category: "机器人定制", basePrice: 1050},
-                {id: 'robot-15', name: "区块链交易监控机器人", category: "机器人定制", basePrice: 1600},
-                {id: 'robot-16', name: "曝光骗子机器人", category: "机器人定制", basePrice: 1250}
+                {id: 'robot-2', name: "记账机器人", category: "机器人定制", basePrice: 1200},
+                {id: 'robot-3', name: "汇旺机器人", category: "机器人定制", basePrice: 1800},
+                {id: 'robot-4', name: "TRX兑换机器人", category: "机器人定制", basePrice: 1600},
+                {id: 'robot-5', name: "群管机器人", category: "机器人定制", basePrice: 2000},
+                {id: 'robot-6', name: "验群机器人", category: "机器人定制", basePrice: 1800},
+                {id: 'robot-7', name: "会员机器人", category: "机器人定制", basePrice: 2500},
+                {id: 'robot-8', name: "查群关系机器人", category: "机器人定制", basePrice: 2200},
+                {id: 'robot-9', name: "供需机器人", category: "机器人定制", basePrice: 2800},
+                {id: 'robot-10', name: "发卡机器人", category: "机器人定制", basePrice: 2400},
+                {id: 'robot-11', name: "群发机器人", category: "机器人定制", basePrice: 3200},
+                {id: 'robot-12', name: "群发双向机器人", category: "机器人定制", basePrice: 3500},
+                {id: 'robot-13', name: "查档机器人", category: "机器人定制", basePrice: 1900},
+                {id: 'robot-14', name: "关键词监控机器人", category: "机器人定制", basePrice: 2300},
+                {id: 'robot-15', name: "区块链交易监控机器人", category: "机器人定制", basePrice: 3800},
+                {id: 'robot-16', name: "曝光骗子机器人", category: "机器人定制", basePrice: 2700}
             ],
             website: [
-                {id: 'website-1', name: "企业官网定制", category: "官网定制", basePrice: 2000},
-                {id: 'website-2', name: "品牌官网定制", category: "官网定制", basePrice: 2500},
-                {id: 'website-3', name: "产品展示官网", category: "官网定制", basePrice: 1800},
-                {id: 'website-4', name: "外贸/多语言官网", category: "官网定制", basePrice: 3000},
-                {id: 'website-5', name: "项目宣传官网", category: "官网定制", basePrice: 2200},
-                {id: 'website-6', name: "活动/落地页官网", category: "官网定制", basePrice: 1500}
+                {id: 'website-1', name: "企业官网定制", category: "官网定制", basePrice: 5000},
+                {id: 'website-2', name: "品牌官网定制", category: "官网定制", basePrice: 6500},
+                {id: 'website-3', name: "产品展示官网", category: "官网定制", basePrice: 5800},
+                {id: 'website-4', name: "外贸/多语言官网", category: "官网定制", basePrice: 7200},
+                {id: 'website-5', name: "项目宣传官网", category: "官网定制", basePrice: 6000},
+                {id: 'website-6', name: "活动/落地页官网", category: "官网定制", basePrice: 4500}
             ],
             web3: [
-                {id: 'web3-1', name: "区块链项目官网", category: "Web3项目", basePrice: 3500},
-                {id: 'web3-2', name: "Web3项目官网", category: "Web3项目", basePrice: 3200},
-                {id: 'web3-3', name: "DeFi项目官网", category: "Web3项目", basePrice: 4000},
-                {id: 'web3-4', name: "NFT项目官网", category: "Web3项目", basePrice: 3800},
-                {id: 'web3-5', name: "DAO项目官网", category: "Web3项目", basePrice: 4200},
-                {id: 'web3-6', name: "空投/白皮书官网", category: "Web3项目", basePrice: 2800}
+                {id: 'web3-1', name: "区块链项目官网", category: "Web3项目", basePrice: 8500},
+                {id: 'web3-2', name: "Web3项目官网", category: "Web3项目", basePrice: 9000},
+                {id: 'web3-3', name: "DeFi项目官网", category: "Web3项目", basePrice: 10500},
+                {id: 'web3-4', name: "NFT项目官网", category: "Web3项目", basePrice: 9800},
+                {id: 'web3-5', name: "DAO项目官网", category: "Web3项目", basePrice: 11000},
+                {id: 'web3-6', name: "空投/白皮书官网", category: "Web3项目", basePrice: 7800}
             ],
             dapp: [
-                {id: 'dapp-1', name: "钱包交互DApp", category: "DApp开发", basePrice: 5000},
-                {id: 'dapp-2', name: "DeFi应用DApp", category: "DApp开发", basePrice: 6000},
-                {id: 'dapp-3', name: "交易类DApp", category: "DApp开发", basePrice: 5500},
-                {id: 'dapp-4', name: "NFT应用DApp", category: "DApp开发", basePrice: 4800},
-                {id: 'dapp-5', name: "资产管理DApp", category: "DApp开发", basePrice: 5200},
-                {id: 'dapp-6', name: "授权/身份DApp", category: "DApp开发", basePrice: 4500}
+                {id: 'dapp-1', name: "钱包交互DApp", category: "DApp开发", basePrice: 12500},
+                {id: 'dapp-2', name: "DeFi应用DApp", category: "DApp开发", basePrice: 15000},
+                {id: 'dapp-3', name: "交易类DApp", category: "DApp开发", basePrice: 13800},
+                {id: 'dapp-4', name: "NFT应用DApp", category: "DApp开发", basePrice: 14500},
+                {id: 'dapp-5', name: "资产管理DApp", category: "DApp开发", basePrice: 16200},
+                {id: 'dapp-6', name: "授权/身份DApp", category: "DApp开发", basePrice: 15500}
             ],
             trading: [
-                {id: 'trading-1', name: "链上交易系统", category: "交易系统", basePrice: 8000},
-                {id: 'trading-2', name: "自动交易系统", category: "交易系统", basePrice: 10000},
-                {id: 'trading-3', name: "跟单交易系统", category: "交易系统", basePrice: 7500},
-                {id: 'trading-4', name: "地址监听系统", category: "交易系统", basePrice: 6500},
-                {id: 'trading-5', name: "量化策略面板", category: "交易系统", basePrice: 8500},
-                {id: 'trading-6', name: "收益统计系统", category: "交易系统", basePrice: 5500}
+                {id: 'trading-1', name: "链上交易系统", category: "交易系统", basePrice: 18500},
+                {id: 'trading-2', name: "自动交易系统", category: "交易系统", basePrice: 20000},
+                {id: 'trading-3', name: "跟单交易系统", category: "交易系统", basePrice: 16800},
+                {id: 'trading-4', name: "地址监听系统", category: "交易系统", basePrice: 14200},
+                {id: 'trading-5', name: "量化策略面板", category: "交易系统", basePrice: 19500},
+                {id: 'trading-6', name: "收益统计系统", category: "交易系统", basePrice: 15000}
             ],
             management: [
-                {id: 'management-1', name: "Web3管理后台", category: "管理系统", basePrice: 4500},
-                {id: 'management-2', name: "用户管理系统", category: "管理系统", basePrice: 3800},
-                {id: 'management-3', name: "数据统计后台", category: "管理系统", basePrice: 4200},
-                {id: 'management-4', name: "钱包管理系统", category: "管理系统", basePrice: 5000},
-                {id: 'management-5', name: "权限管理系统", category: "管理系统", basePrice: 4000},
-                {id: 'management-6', name: "风控监控系统", category: "管理系统", basePrice: 4800}
+                {id: 'management-1', name: "Web3管理后台", category: "管理系统", basePrice: 22000},
+                {id: 'management-2', name: "用户管理系统", category: "管理系统", basePrice: 18500},
+                {id: 'management-3', name: "数据统计后台", category: "管理系统", basePrice: 19800},
+                {id: 'management-4', name: "钱包管理系统", category: "管理系统", basePrice: 21500},
+                {id: 'management-5', name: "权限管理系统", category: "管理系统", basePrice: 20200},
+                {id: 'management-6', name: "风控监控系统", category: "管理系统", basePrice: 22800}
             ],
             tools: [
-                {id: 'tools-1', name: "链上数据平台", category: "工具平台", basePrice: 7000},
-                {id: 'tools-2', name: "钱包查询工具", category: "工具平台", basePrice: 3500},
-                {id: 'tools-3', name: "NFT管理平台", category: "工具平台", basePrice: 6000},
-                {id: 'tools-4', name: "项目数据看板", category: "工具平台", basePrice: 5500},
-                {id: 'tools-5', name: "Web3 SaaS平台", category: "工具平台", basePrice: 9000}
+                {id: 'tools-1', name: "链上数据平台", category: "工具平台", basePrice: 25000},
+                {id: 'tools-2', name: "钱包查询工具", category: "工具平台", basePrice: 18000},
+                {id: 'tools-3', name: "NFT管理平台", category: "工具平台", basePrice: 21500},
+                {id: 'tools-4', name: "项目数据看板", category: "工具平台", basePrice: 19500},
+                {id: 'tools-5', name: "Web3 SaaS平台", category: "工具平台", basePrice: 28000}
             ],
             contract: [
-                {id: 'contract-1', name: "全链智能合约部署", category: "智能合约", basePrice: 3000},
-                {id: 'contract-2', name: "多链合约定制开发", category: "智能合约", basePrice: 5000},
-                {id: 'contract-3', name: "EVM合约部署服务", category: "智能合约", basePrice: 2500},
-                {id: 'contract-4', name: "非EVM合约部署", category: "智能合约", basePrice: 4000},
-                {id: 'contract-5', name: "合约升级/代理部署", category: "智能合约", basePrice: 3500},
-                {id: 'contract-6', name: "合约二次开发与维护", category: "智能合约", basePrice: 2800}
+                {id: 'contract-1', name: "全链智能合约部署", category: "智能合约", basePrice: 30000},
+                {id: 'contract-2', name: "多链合约定制开发", category: "智能合约", basePrice: 32500},
+                {id: 'contract-3', name: "EVM合约部署服务", category: "智能合约", basePrice: 25000},
+                {id: 'contract-4', name: "非EVM合约部署", category: "智能合约", basePrice: 28000},
+                {id: 'contract-5', name: "合约升级/代理部署", category: "智能合约", basePrice: 23500},
+                {id: 'contract-6', name: "合约二次开发与维护", category: "智能合约", basePrice: 20000}
             ],
             token: [
-                {id: 'token-1', name: "代币发行", category: "代币发币", basePrice: 1500},
-                {id: 'token-2', name: "ERC20/BEP20代币部署", category: "代币发币", basePrice: 1200},
-                {id: 'token-3', name: "TRC20代币部署", category: "代币发币", basePrice: 1000},
-                {id: 'token-4', name: "多链代币同步发行", category: "代币发币", basePrice: 2000},
-                {id: 'token-5', name: "代币映射/跨链发行", category: "代币发币", basePrice: 2500},
-                {id: 'token-6', name: "项目代币初始化部署", category: "代币发币", basePrice: 1800}
+                {id: 'token-1', name: "代币发行", category: "代币发币", basePrice: 35000},
+                {id: 'token-2', name: "ERC20/BEP20代币部署", category: "代币发币", basePrice: 18000},
+                {id: 'token-3', name: "TRC20代币部署", category: "代币发币", basePrice: 16500},
+                {id: 'token-4', name: "多链代币同步发行", category: "代币发币", basePrice: 38000},
+                {id: 'token-5', name: "代币映射/跨链发行", category: "代币发币", basePrice: 32000},
+                {id: 'token-6', name: "项目代币初始化部署", category: "代币发币", basePrice: 25000}
             ],
             launch: [
-                {id: 'launch-1', name: "发币官网/Mint页面", category: "发币配套", basePrice: 3000},
-                {id: 'launch-2', name: "空投领取系统", category: "发币配套", basePrice: 2500},
-                {id: 'launch-3', name: "白名单/预售系统", category: "发币配套", basePrice: 2800},
-                {id: 'launch-4', name: "私募/公募系统", category: "发币配套", basePrice: 3500},
-                {id: 'launch-5', name: "锁仓/释放合约", category: "发币配套", basePrice: 2000},
-                {id: 'launch-6', name: "分红/回购合约", category: "发币配套", basePrice: 2200}
+                {id: 'launch-1', name: "发币官网/Mint页面", category: "发币配套", basePrice: 15000},
+                {id: 'launch-2', name: "空投领取系统", category: "发币配套", basePrice: 18500},
+                {id: 'launch-3', name: "白名单/预售系统", category: "发币配套", basePrice: 20000},
+                {id: 'launch-4', name: "私募/公募系统", category: "发币配套", basePrice: 28000},
+                {id: 'launch-5', name: "锁仓/释放合约", category: "发币配套", basePrice: 12000},
+                {id: 'launch-6', name: "分红/回购合约", category: "发币配套", basePrice: 15500}
             ],
             security: [
-                {id: 'security-1', name: "合约权限管理", category: "合约安全", basePrice: 1800},
-                {id: 'security-2', name: "多签钱包部署", category: "合约安全", basePrice: 2500},
-                {id: 'security-3', name: "合约安全加固", category: "合约安全", basePrice: 2200},
-                {id: 'security-4', name: "合约审计对接", category: "合约安全", basePrice: 3000},
-                {id: 'security-5', name: "合约风险检测", category: "合约安全", basePrice: 1500},
-                {id: 'security-6', name: "合约暂停/黑名单", category: "合约安全", basePrice: 2000}
+                {id: 'security-1', name: "合约权限管理", category: "合约安全", basePrice: 14500},
+                {id: 'security-2', name: "多签钱包部署", category: "合约安全", basePrice: 16800},
+                {id: 'security-3', name: "合约安全加固", category: "合约安全", basePrice: 18200},
+                {id: 'security-4', name: "合约审计对接", category: "合约安全", basePrice: 20500},
+                {id: 'security-5', name: "合约风险检测", category: "合约安全", basePrice: 17500},
+                {id: 'security-6', name: "合约暂停/黑名单", category: "合约安全", basePrice: 13800}
             ],
             ecosystem: [
-                {id: 'ecosystem-1', name: "多链钱包适配", category: "生态配套", basePrice: 3500},
-                {id: 'ecosystem-2', name: "跨链桥对接", category: "生态配套", basePrice: 5000},
-                {id: 'ecosystem-3', name: "链上数据同步", category: "生态配套", basePrice: 2800},
-                {id: 'ecosystem-4', name: "多链资产管理", category: "生态配套", basePrice: 4200},
-                {id: 'ecosystem-5', name: "多链DApp对接", category: "生态配套", basePrice: 3800},
-                {id: 'ecosystem-6', name: "节点服务部署", category: "生态配套", basePrice: 4500}
+                {id: 'ecosystem-1', name: "多链钱包适配", category: "生态配套", basePrice: 22000},
+                {id: 'ecosystem-2', name: "跨链桥对接", category: "生态配套", basePrice: 35000},
+                {id: 'ecosystem-3', name: "链上数据同步", category: "生态配套", basePrice: 28500},
+                {id: 'ecosystem-4', name: "多链资产管理", category: "生态配套", basePrice: 26000},
+                {id: 'ecosystem-5', name: "多链DApp对接", category: "生态配套", basePrice: 24500},
+                {id: 'ecosystem-6', name: "节点服务部署", category: "生态配套", basePrice: 30000}
             ]
         };
         
@@ -1020,6 +1218,19 @@
         let selectedServices = [];
         let totalServicePrice = 0;
         let depositAmount = 0;
+        let selectedWallet = null;
+        
+        // 钱包显示名称映射
+        const walletNames = {
+            tronlink: "TronLink",
+            tokenpocket: "TokenPocket",
+            bitget: "Bitget Wallet",
+            imtoken: "imToken",
+            onekey: "OneKey",
+            okx: "OKX Web3 Wallet",
+            bitpie: "BitPie比特派",
+            trust: "Trust Wallet"
+        };
         
         // 根据URL参数加载已选服务
         function loadSelectedServices() {
@@ -1248,11 +1459,129 @@
                 }
             });
             
+            // 钱包选择功能
+            const walletOptions = document.querySelectorAll('.wallet-option');
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            
+            walletOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    // 移除其他选项的选中状态
+                    walletOptions.forEach(opt => opt.classList.remove('selected'));
+                    
+                    // 添加当前选项的选中状态
+                    this.classList.add('selected');
+                    
+                    // 获取选中的钱包
+                    selectedWallet = this.getAttribute('data-wallet');
+                    
+                    // 启用连接按钮
+                    connectWalletBtn.disabled = false;
+                    connectWalletBtn.textContent = `连接 ${walletNames[selectedWallet]} 并支付`;
+                });
+            });
+            
+            // 连接钱包并支付
+            connectWalletBtn.addEventListener('click', function() {
+                if (!selectedWallet) {
+                    showNotification('请先选择钱包', 'error');
+                    return;
+                }
+                
+                // 显示支付处理中
+                connectWalletBtn.disabled = true;
+                connectWalletBtn.innerHTML = '<i class="fas fa-cog fa-spin"></i> 处理支付中...';
+                
+                // 模拟支付处理
+                setTimeout(() => {
+                    // 显示支付成功模态框
+                    showPaymentSuccess();
+                }, 2000);
+            });
+            
+            // 关闭钱包模态框
+            document.getElementById('closeWalletModal').addEventListener('click', function() {
+                document.getElementById('walletModal').style.display = 'none';
+            });
+            
+            // 关闭成功模态框
+            document.getElementById('closeModal').addEventListener('click', function() {
+                document.getElementById('successModal').style.display = 'none';
+                // 重置表单
+                document.getElementById('paymentForm').reset();
+                
+                // 显示确认消息
+                showNotification('订单已确认！项目经理将尽快与您联系。');
+            });
+            
+            // 关闭模态框 (点击背景)
+            const modals = document.querySelectorAll('.tech-modal');
+            modals.forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            });
+            
             // 显示页面
             setTimeout(() => {
                 document.body.style.opacity = '1';
             }, 100);
         });
+        
+        // 显示支付成功模态框
+        function showPaymentSuccess() {
+            const customerName = document.getElementById('customerName').value;
+            const serviceNames = [];
+            const serviceItems = document.querySelectorAll('.service-info-item .value');
+            serviceItems.forEach(item => {
+                if (item.textContent !== categoryNames[category] && 
+                    !item.textContent.includes('服务分类') &&
+                    !item.textContent.includes('服务总计')) {
+                    serviceNames.push(item.textContent);
+                }
+            });
+            
+            const displayServiceName = serviceNames.length > 0 ? serviceNames[0] : '定制服务';
+            const categoryName = categoryNames[category] || "机器人定制";
+            
+            // 生成随机订单号
+            const orderNumber = 'QUANTUM' + new Date().getFullYear() + 
+                String(new Date().getMonth() + 1).padStart(2, '0') + 
+                String(new Date().getDate()).padStart(2, '0') + 
+                Math.floor(10000 + Math.random() * 90000);
+            
+            // 更新成功消息
+            document.getElementById('successMessage').textContent = 
+                `尊敬的 ${customerName}，您已成功支付 ${categoryName} - ${displayServiceName} 的定金。`;
+            document.getElementById('orderNumber').textContent = orderNumber;
+            document.getElementById('paidAmount').textContent = '$' + depositAmount;
+            document.getElementById('walletType').textContent = walletNames[selectedWallet] || '未选择';
+            
+            // 计算预计完成时间（根据总价调整）
+            const today = new Date();
+            const estimatedDate = new Date(today);
+            let daysToAdd = 5;
+            
+            if (totalServicePrice >= 5000) {
+                daysToAdd = 14;
+            } else if (totalServicePrice >= 3000) {
+                daysToAdd = 10;
+            } else if (totalServicePrice >= 1500) {
+                daysToAdd = 7;
+            }
+            
+            estimatedDate.setDate(today.getDate() + daysToAdd);
+            const formattedDate = estimatedDate.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+            document.getElementById('estimatedDate').textContent = formattedDate + ' 前';
+            
+            // 支付方式固定为USDT
+            document.getElementById('paidMethod').textContent = 'USDT (泰达币)';
+            
+            // 关闭钱包模态框，显示成功模态框
+            document.getElementById('walletModal').style.display = 'none';
+            document.getElementById('successModal').style.display = 'flex';
+        }
         
         // 显示通知函数
         function showNotification(message, type = 'success') {
@@ -1307,96 +1636,25 @@
                 return;
             }
             
-            // 获取服务信息
-            const serviceNames = [];
-            const serviceItems = document.querySelectorAll('.service-info-item .value');
-            serviceItems.forEach(item => {
-                if (item.textContent !== categoryNames[category] && 
-                    !item.textContent.includes('服务分类') &&
-                    !item.textContent.includes('服务总计')) {
-                    serviceNames.push(item.textContent);
-                }
+            // 显示钱包选择模态框
+            document.getElementById('walletModal').style.display = 'flex';
+            
+            // 重置钱包选择
+            selectedWallet = null;
+            const walletOptions = document.querySelectorAll('.wallet-option');
+            walletOptions.forEach(opt => opt.classList.remove('selected'));
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            connectWalletBtn.disabled = true;
+            connectWalletBtn.textContent = '连接钱包并支付';
+            
+            // 记录订单信息
+            console.log('订单信息:', {
+                姓名: customerName,
+                联系方式: contactInfo,
+                服务分类: categoryNames[category] || "机器人定制",
+                特殊要求: requirements,
+                定金金额: depositAmount
             });
-            
-            const displayServiceName = serviceNames.length > 0 ? serviceNames[0] : '定制服务';
-            const categoryName = categoryNames[category] || "机器人定制";
-            
-            // 生成随机订单号
-            const orderNumber = 'QUANTUM' + new Date().getFullYear() + 
-                String(new Date().getMonth() + 1).padStart(2, '0') + 
-                String(new Date().getDate()).padStart(2, '0') + 
-                Math.floor(10000 + Math.random() * 90000);
-            
-            // 更新成功消息
-            document.getElementById('successMessage').textContent = 
-                `尊敬的 ${customerName}，您已成功支付 ${categoryName} - ${displayServiceName} 的定金。`;
-            document.getElementById('orderNumber').textContent = orderNumber;
-            document.getElementById('paidAmount').textContent = '$' + depositAmount;
-            
-            // 计算预计完成时间（根据总价调整）
-            const today = new Date();
-            const estimatedDate = new Date(today);
-            let daysToAdd = 5;
-            
-            if (totalServicePrice >= 5000) {
-                daysToAdd = 14;
-            } else if (totalServicePrice >= 3000) {
-                daysToAdd = 10;
-            } else if (totalServicePrice >= 1500) {
-                daysToAdd = 7;
-            }
-            
-            estimatedDate.setDate(today.getDate() + daysToAdd);
-            const formattedDate = estimatedDate.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
-            document.getElementById('estimatedDate').textContent = formattedDate + ' 前';
-            
-            // 支付方式固定为USDT
-            document.getElementById('paidMethod').textContent = 'USDT (泰达币)';
-            
-            // 显示成功模态框
-            document.getElementById('successModal').style.display = 'flex';
-            
-            // 模拟支付处理动画
-            const submitBtn = document.querySelector('.btn-submit');
-            const originalText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-cog fa-spin"></i> 处理支付中...';
-            submitBtn.disabled = true;
-            
-            // 在实际应用中，这里应该调用支付API
-            setTimeout(() => {
-                console.log('支付信息:', {
-                    姓名: customerName,
-                    联系方式: contactInfo,
-                    服务分类: categoryName,
-                    已选服务: displayServiceName,
-                    服务总计: totalServicePrice,
-                    定金金额: depositAmount,
-                    支付方式: 'USDT',
-                    特殊要求: requirements,
-                    订单号: orderNumber
-                });
-                
-                submitBtn.innerHTML = originalText;
-                submitBtn.disabled = false;
-            }, 1500);
-        });
-        
-        // 关闭模态框
-        document.getElementById('closeModal').addEventListener('click', function() {
-            document.getElementById('successModal').style.display = 'none';
-            // 重置表单
-            document.getElementById('paymentForm').reset();
-            
-            // 显示确认消息
-            showNotification('订单已确认！项目经理将尽快与您联系。');
-        });
-        
-        // 关闭模态框 (点击背景)
-        window.addEventListener('click', function(e) {
-            const modal = document.getElementById('successModal');
-            if (e.target === modal) {
-                modal.style.display = 'none';
-            }
         });
     </script>
 </body>
