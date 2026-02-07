@@ -717,7 +717,227 @@
             text-decoration: underline;
         }
         
-        /* 模态框 - 移动端优化 */
+        /* 钱包选择模态框 - 优化为完整页面 */
+        .wallet-selection-page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.98);
+            z-index: 1000;
+            overflow: hidden;
+            backdrop-filter: blur(8px);
+        }
+        
+        .wallet-selection-content {
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.98), rgba(10, 14, 23, 0.99));
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 80px 20px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .wallet-selection-header {
+            text-align: center;
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .wallet-selection-header h2 {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .wallet-selection-header h2 {
+                font-size: 1.6rem;
+            }
+        }
+        
+        .wallet-selection-header p {
+            color: #a0b3d6;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        @media (max-width: 768px) {
+            .wallet-selection-header p {
+                font-size: 1rem;
+            }
+        }
+        
+        /* 钱包网格容器 - 固定高度 */
+        .wallet-grid-container {
+            width: 100%;
+            max-width: 800px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        
+        /* 钱包网格 - 优化滚动 */
+        .wallet-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 10px 5px 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            flex: 1;
+            max-height: calc(100vh - 300px);
+        }
+        
+        @media (max-width: 768px) {
+            .wallet-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                max-height: calc(100vh - 250px);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .wallet-grid {
+                gap: 10px;
+            }
+        }
+        
+        .wallet-option {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(0, 243, 255, 0.2);
+            border-radius: 12px;
+            padding: 25px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: rgba(0, 243, 255, 0.2);
+            touch-action: manipulation;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        @media (max-width: 768px) {
+            .wallet-option {
+                padding: 20px 15px;
+                min-height: 150px;
+                border-radius: 10px;
+            }
+        }
+        
+        .wallet-option:hover, .wallet-option:active {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 243, 255, 0.2);
+        }
+        
+        .wallet-option.selected {
+            background: linear-gradient(145deg, rgba(0, 243, 255, 0.15), rgba(157, 78, 221, 0.15));
+            border-color: var(--primary);
+            box-shadow: 0 8px 20px rgba(0, 243, 255, 0.3);
+        }
+        
+        /* 钱包LOGO样式 */
+        .wallet-logo {
+            width: 70px;
+            height: 70px;
+            margin-bottom: 15px;
+            object-fit: contain;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .wallet-logo {
+                width: 60px;
+                height: 60px;
+                padding: 8px;
+                margin-bottom: 12px;
+            }
+        }
+        
+        .wallet-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 5px;
+            line-height: 1.2;
+        }
+        
+        @media (max-width: 768px) {
+            .wallet-name {
+                font-size: 1rem;
+            }
+        }
+        
+        .wallet-type {
+            font-size: 0.85rem;
+            color: #a0b3d6;
+            line-height: 1.2;
+        }
+        
+        /* 按钮区域 - 固定在底部 */
+        .wallet-selection-buttons {
+            width: 100%;
+            max-width: 800px;
+            padding: 20px 0;
+            background: rgba(10, 14, 23, 0.9);
+            border-top: 1px solid rgba(0, 243, 255, 0.2);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+        
+        .btn-connect, .btn-close {
+            padding: 16px 30px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+            -webkit-tap-highlight-color: rgba(0, 243, 255, 0.3);
+            touch-action: manipulation;
+            min-height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        
+        .btn-connect:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        .btn-close {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 支付说明模态框 */
         .tech-modal {
             display: none;
             position: fixed;
@@ -739,7 +959,7 @@
             background: linear-gradient(145deg, rgba(18, 24, 40, 0.95), rgba(10, 14, 23, 0.98));
             padding: 30px;
             border-radius: 15px;
-            max-width: 800px;
+            max-width: 600px;
             width: 100%;
             text-align: center;
             border: 2px solid rgba(0, 243, 255, 0.3);
@@ -814,277 +1034,6 @@
             font-size: 1rem;
             color: #d1d9f0;
             line-height: 1.5;
-        }
-        
-        .order-details {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-        }
-        
-        @media (max-width: 768px) {
-            .order-details {
-                padding: 15px;
-            }
-        }
-        
-        .order-details div {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            flex-wrap: wrap;
-        }
-        
-        .order-details div:last-child {
-            border-bottom: none;
-        }
-        
-        /* 按钮通用样式 - 移动端优化 */
-        .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm {
-            padding: 14px 30px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 0.5px;
-            margin-top: 15px;
-            -webkit-tap-highlight-color: rgba(0, 243, 255, 0.3);
-            touch-action: manipulation;
-            min-height: 48px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        
-        @media (max-width: 768px) {
-            .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm {
-                padding: 12px 20px;
-                font-size: 0.95rem;
-                min-height: 45px;
-                width: 100%;
-            }
-        }
-        
-        .btn-close:hover, .btn-connect:hover, .btn-wallet:hover, .btn-retry:hover, .btn-confirm:hover,
-        .btn-close:active, .btn-connect:active, .btn-wallet:active, .btn-retry:active, .btn-confirm:active {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 15px rgba(0, 243, 255, 0.3);
-        }
-        
-        .btn-close:active, .btn-connect:active, .btn-wallet:active, .btn-retry:active, .btn-confirm:active {
-            transform: translateY(-1px);
-        }
-        
-        /* 钱包选择模态框样式 - 移动端优化 */
-        .wallet-modal .modal-content {
-            max-width: 800px;
-            padding: 25px;
-        }
-        
-        @media (max-width: 768px) {
-            .wallet-modal .modal-content {
-                padding: 20px 15px;
-            }
-        }
-        
-        /* 钱包网格 - 修复移动端滚动问题 */
-        .wallet-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin: 25px 0;
-            max-height: 400px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 10px 5px;
-            touch-action: pan-y;
-            overscroll-behavior: contain;
-        }
-        
-        @media (max-width: 768px) {
-            .wallet-grid {
-                gap: 12px;
-                margin: 20px 0;
-                max-height: 60vh;
-                padding-right: 5px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .wallet-grid {
-                gap: 10px;
-                padding-right: 3px;
-            }
-        }
-        
-        /* 移动端全屏适应 */
-        @media (max-width: 768px) and (orientation: portrait) {
-            .wallet-modal .modal-content {
-                max-height: 95vh;
-                height: 95vh;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                padding: 15px;
-            }
-            
-            .wallet-grid {
-                flex: 1;
-                overflow-y: auto;
-                -webkit-overflow-scrolling: touch;
-                max-height: 60vh;
-                padding-right: 5px;
-                margin-bottom: 15px;
-            }
-            
-            .wallet-grid::-webkit-scrollbar {
-                width: 4px;
-            }
-            
-            .wallet-grid::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.1);
-                border-radius: 2px;
-            }
-            
-            .wallet-grid::-webkit-scrollbar-thumb {
-                background: var(--primary);
-                border-radius: 2px;
-            }
-        }
-        
-        .wallet-option {
-            background: rgba(0, 0, 0, 0.3);
-            border: 2px solid rgba(0, 243, 255, 0.2);
-            border-radius: 12px;
-            padding: 20px 15px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            -webkit-tap-highlight-color: rgba(0, 243, 255, 0.2);
-            touch-action: manipulation;
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        @media (max-width: 768px) {
-            .wallet-option {
-                padding: 15px 10px;
-                min-height: 130px;
-                border-radius: 10px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .wallet-option {
-                min-height: 120px;
-                padding: 12px 8px;
-            }
-        }
-        
-        .wallet-option:hover, .wallet-option:active {
-            transform: translateY(-3px);
-            border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0, 243, 255, 0.2);
-        }
-        
-        .wallet-option.selected {
-            background: linear-gradient(145deg, rgba(0, 243, 255, 0.15), rgba(157, 78, 221, 0.15));
-            border-color: var(--primary);
-            box-shadow: 0 8px 20px rgba(0, 243, 255, 0.3);
-        }
-        
-        /* 钱包LOGO样式 */
-        .wallet-logo {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 12px;
-            object-fit: contain;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        @media (max-width: 768px) {
-            .wallet-logo {
-                width: 50px;
-                height: 50px;
-                padding: 6px;
-                margin-bottom: 10px;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .wallet-logo {
-                width: 45px;
-                height: 45px;
-                padding: 5px;
-                margin-bottom: 8px;
-            }
-        }
-        
-        .wallet-name {
-            font-size: 1rem;
-            font-weight: 600;
-            color: var(--light);
-            margin-bottom: 5px;
-            line-height: 1.2;
-        }
-        
-        @media (max-width: 768px) {
-            .wallet-name {
-                font-size: 0.95rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .wallet-name {
-                font-size: 0.9rem;
-            }
-        }
-        
-        .wallet-type {
-            font-size: 0.8rem;
-            color: #a0b3d6;
-            line-height: 1.2;
-        }
-        
-        @media (max-width: 480px) {
-            .wallet-type {
-                font-size: 0.75rem;
-            }
-        }
-        
-        .btn-connect:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-        
-        /* 支付说明模态框 - 选择钱包后弹出 */
-        .payment-instruction-modal .modal-content {
-            max-width: 600px;
-            padding: 30px;
-        }
-        
-        @media (max-width: 768px) {
-            .payment-instruction-modal .modal-content {
-                padding: 20px;
-            }
         }
         
         .instruction-icon {
@@ -1180,115 +1129,6 @@
             margin: 5px 0 0 0;
             font-size: 0.9rem;
             color: #a0b3d6;
-        }
-        
-        /* 进度条模态框 */
-        .progress-modal .modal-content {
-            max-width: 700px;
-        }
-        
-        .progress-timeline {
-            margin: 25px 0;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-        }
-        
-        .timeline-step {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin: 12px 0;
-            padding: 12px 15px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            border-left: 4px solid rgba(0, 243, 255, 0.5);
-            transition: all 0.3s;
-            flex-wrap: wrap;
-        }
-        
-        @media (max-width: 768px) {
-            .timeline-step {
-                padding: 10px 12px;
-                margin: 10px 0;
-            }
-        }
-        
-        .timeline-step.active {
-            background: rgba(0, 243, 255, 0.1);
-            border-left-color: var(--primary);
-        }
-        
-        .timeline-step.completed {
-            background: rgba(0, 255, 136, 0.1);
-            border-left-color: var(--success);
-        }
-        
-        .step-info {
-            flex: 1;
-            text-align: left;
-            min-width: 200px;
-        }
-        
-        @media (max-width: 480px) {
-            .step-info {
-                min-width: 150px;
-            }
-        }
-        
-        .step-name {
-            font-weight: 600;
-            color: var(--light);
-            margin-bottom: 4px;
-            font-size: 0.95rem;
-        }
-        
-        .step-status {
-            font-size: 0.85rem;
-            color: #a0b3d6;
-        }
-        
-        .step-progress {
-            width: 80px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 3px;
-            overflow: hidden;
-            position: relative;
-            margin: 0 15px;
-        }
-        
-        @media (max-width: 768px) {
-            .step-progress {
-                width: 60px;
-                margin: 0 10px;
-            }
-        }
-        
-        .progress-fill {
-            position: absolute;
-            top: 0;
-            left: 0;
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            width: 0%;
-            transition: width 1s ease;
-        }
-        
-        .step-countdown {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.2rem;
-            color: var(--primary);
-            min-width: 40px;
-            text-align: right;
-        }
-        
-        @media (max-width: 768px) {
-            .step-countdown {
-                font-size: 1.1rem;
-                min-width: 35px;
-            }
         }
         
         /* 钱包检测失败模态框 */
@@ -1432,8 +1272,6 @@
             }
         }
         
-        /* 交易详情页面 - 删除 */
-        
         /* 支付成功弹窗 */
         #successModal.tech-modal .modal-content {
             max-width: 500px;
@@ -1533,13 +1371,13 @@
         @media (hover: none) {
             .back-btn:hover, .btn-submit:hover, .btn-close:hover, 
             .btn-connect:hover, .btn-wallet:hover, .btn-retry:hover,
-            .wallet-option:hover, .btn-confirm-payment:hover, .btn-confirm:hover {
+            .wallet-option:hover, .btn-confirm:hover {
                 transform: none;
             }
             
             .back-btn:active, .btn-submit:active, .btn-close:active, 
             .btn-connect:active, .btn-wallet:active, .btn-retry:active,
-            .wallet-option:active, .btn-confirm-payment:active, .btn-confirm:active {
+            .wallet-option:active, .btn-confirm:active {
                 transform: scale(0.98);
             }
         }
@@ -1553,27 +1391,24 @@
         
         /* 防止长按弹出菜单 */
         .wallet-option, .btn-submit, .btn-close, .btn-connect, 
-        .btn-wallet, .btn-retry, .btn-confirm-payment, .btn-confirm {
+        .btn-wallet, .btn-retry, .btn-confirm {
             -webkit-user-select: none;
             user-select: none;
         }
         
         /* 滚动条优化 */
-        .modal-content::-webkit-scrollbar,
         .wallet-grid::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
         
-        .modal-content::-webkit-scrollbar-track,
         .wallet-grid::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.1);
-            border-radius: 3px;
+            border-radius: 2px;
         }
         
-        .modal-content::-webkit-scrollbar-thumb,
         .wallet-grid::-webkit-scrollbar-thumb {
             background: var(--primary);
-            border-radius: 3px;
+            border-radius: 2px;
         }
         
         /* 防止文本选中 */
@@ -1586,36 +1421,45 @@
             user-select: none;
         }
         
-        /* 钱包选择区域的触摸优化 */
-        .wallet-grid {
-            touch-action: pan-y;
-        }
-        
-        .wallet-option {
-            touch-action: manipulation;
-        }
-        
         /* 防止双击缩放 */
         button, a {
             touch-action: manipulation;
         }
         
         /* 钱包网格防误触优化 */
-        .wallet-grid-container {
+        .wallet-grid-scroll-area {
             position: relative;
             width: 100%;
+            height: 100%;
         }
         
-        /* 添加防误触层 */
-        .wallet-grid::before {
-            content: '';
+        /* 关闭钱包选择页面的按钮 */
+        .close-wallet-page {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 1;
-            pointer-events: none;
+            top: 25px;
+            right: 25px;
+            width: 50px;
+            height: 50px;
+            background: rgba(0, 243, 255, 0.1);
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            color: var(--primary);
+            border-radius: 10px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            -webkit-tap-highlight-color: rgba(0, 243, 255, 0.2);
+            touch-action: manipulation;
+            z-index: 100;
+        }
+        
+        .close-wallet-page:hover {
+            background: rgba(0, 243, 255, 0.2);
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -1766,74 +1610,80 @@
         </div>
     </div>
     
-    <!-- 钱包选择模态框 -->
-    <div id="walletModal" class="tech-modal wallet-modal">
-        <div class="modal-content">
-            <div class="success-icon">
-                <i class="fas fa-wallet"></i>
+    <!-- 钱包选择页面 - 优化为完整页面 -->
+    <div id="walletSelectionPage" class="wallet-selection-page">
+        <div class="wallet-selection-content">
+            <button class="close-wallet-page" id="closeWalletPage">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="wallet-selection-header">
+                <h2><i class="fas fa-wallet"></i> 请选择付款钱包</h2>
+                <p>选择您要使用的钱包进行TRC20-USDT支付</p>
             </div>
-            <h3>请选择付款钱包</h3>
-            <p>选择您要使用的钱包进行TRC20-USDT支付</p>
             
             <div class="wallet-grid-container">
-                <div class="wallet-grid">
-                    <div class="wallet-option" data-wallet="tronlink">
-                        <img src="https://i.ibb.co/V05xvP1T/tronlink.png" alt="TronLink" class="wallet-logo">
-                        <div class="wallet-name">TronLink</div>
-                        <div class="wallet-type">波场官方钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="tokenpocket">
-                        <img src="https://i.ibb.co/cXZn32qg/Token-Pocket.png" alt="TokenPocket" class="wallet-logo">
-                        <div class="wallet-name">TokenPocket</div>
-                        <div class="wallet-type">多链钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="bitget">
-                        <img src="https://i.ibb.co/hFh6RgMS/Bitget-wallet.png" alt="Bitget Wallet" class="wallet-logo">
-                        <div class="wallet-name">Bitget Wallet</div>
-                        <div class="wallet-type">交易型钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="imtoken">
-                        <img src="https://i.ibb.co/hJtZxxbM/imtoken.png" alt="imToken" class="wallet-logo">
-                        <div class="wallet-name">imToken</div>
-                        <div class="wallet-type">移动端钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="onekey">
-                        <img src="https://i.ibb.co/FLjZP1BZ/logo-green-vector.png" alt="OneKey" class="wallet-logo">
-                        <div class="wallet-name">OneKey</div>
-                        <div class="wallet-type">硬件钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="okx">
-                        <img src="https://i.ibb.co/gMjCDqRQ/OKX-WEB3.webp" alt="OKX Web3 Wallet" class="wallet-logo">
-                        <div class="wallet-name">OKX Web3 Wallet</div>
-                        <div class="wallet-type">交易所钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="bitpie">
-                        <img src="https://i.ibb.co/NdvGCbbv/bitpie.jpg" alt="BitPie比特派" class="wallet-logo">
-                        <div class="wallet-name">BitPie比特派</div>
-                        <div class="wallet-type">老牌钱包</div>
-                    </div>
-                    
-                    <div class="wallet-option" data-wallet="trust">
-                        <img src="https://i.ibb.co/9Hx58FCK/trust-wallet.jpg" alt="Trust Wallet" class="wallet-logo">
-                        <div class="wallet-name">Trust Wallet</div>
-                        <div class="wallet-type">币安官方钱包</div>
+                <div class="wallet-grid-scroll-area">
+                    <div class="wallet-grid" id="walletGrid">
+                        <div class="wallet-option" data-wallet="tronlink">
+                            <img src="https://i.ibb.co/V05xvP1T/tronlink.png" alt="TronLink" class="wallet-logo">
+                            <div class="wallet-name">TronLink</div>
+                            <div class="wallet-type">波场官方钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="tokenpocket">
+                            <img src="https://i.ibb.co/cXZn32qg/Token-Pocket.png" alt="TokenPocket" class="wallet-logo">
+                            <div class="wallet-name">TokenPocket</div>
+                            <div class="wallet-type">多链钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="bitget">
+                            <img src="https://i.ibb.co/hFh6RgMS/Bitget-wallet.png" alt="Bitget Wallet" class="wallet-logo">
+                            <div class="wallet-name">Bitget Wallet</div>
+                            <div class="wallet-type">交易型钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="imtoken">
+                            <img src="https://i.ibb.co/hJtZxxbM/imtoken.png" alt="imToken" class="wallet-logo">
+                            <div class="wallet-name">imToken</div>
+                            <div class="wallet-type">移动端钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="onekey">
+                            <img src="https://i.ibb.co/FLjZP1BZ/logo-green-vector.png" alt="OneKey" class="wallet-logo">
+                            <div class="wallet-name">OneKey</div>
+                            <div class="wallet-type">硬件钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="okx">
+                            <img src="https://i.ibb.co/gMjCDqRQ/OKX-WEB3.webp" alt="OKX Web3 Wallet" class="wallet-logo">
+                            <div class="wallet-name">OKX Web3 Wallet</div>
+                            <div class="wallet-type">交易所钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="bitpie">
+                            <img src="https://i.ibb.co/NdvGCbbv/bitpie.jpg" alt="BitPie比特派" class="wallet-logo">
+                            <div class="wallet-name">BitPie比特派</div>
+                            <div class="wallet-type">老牌钱包</div>
+                        </div>
+                        
+                        <div class="wallet-option" data-wallet="trust">
+                            <img src="https://i.ibb.co/9Hx58FCK/trust-wallet.jpg" alt="Trust Wallet" class="wallet-logo">
+                            <div class="wallet-name">Trust Wallet</div>
+                            <div class="wallet-type">币安官方钱包</div>
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <button class="btn-connect" id="connectWalletBtn" disabled>
-                连接钱包
-            </button>
-            
-            <button class="btn-close" id="closeWalletModal" style="margin-top: 15px; background: rgba(255, 255, 255, 0.1);">
-                返回修改
-            </button>
+            <div class="wallet-selection-buttons">
+                <button class="btn-connect" id="connectWalletBtn" disabled>
+                    连接钱包
+                </button>
+                <button class="btn-close" id="backToWalletSelectionBtn">
+                    返回修改
+                </button>
+            </div>
         </div>
     </div>
     
@@ -1885,72 +1735,10 @@
                 <button class="btn-confirm" id="proceedToPaymentBtn">
                     <i class="fas fa-check"></i> 继续支付
                 </button>
-                <button class="btn-close" id="backToWalletSelectionBtn" style="background: rgba(255, 255, 255, 0.1);">
+                <button class="btn-close" id="backToWalletSelectionModalBtn" style="background: rgba(255, 255, 255, 0.1);">
                     <i class="fas fa-arrow-left"></i> 重新选择钱包
                 </button>
             </div>
-        </div>
-    </div>
-    
-    <!-- 支付进度条模态框 -->
-    <div id="progressModal" class="tech-modal progress-modal">
-        <div class="modal-content">
-            <div class="success-icon">
-                <i class="fas fa-spinner fa-spin"></i>
-            </div>
-            <h3>处理支付中...</h3>
-            <p>正在确认您的交易，请勿关闭窗口</p>
-            
-            <div class="progress-timeline">
-                <div class="timeline-step" id="step1">
-                    <div class="step-info">
-                        <div class="step-name">正在确认交易...</div>
-                        <div class="step-status">等待区块链网络确认</div>
-                    </div>
-                    <div class="step-progress">
-                        <div class="progress-fill" id="progress1"></div>
-                    </div>
-                    <div class="step-countdown" id="countdown1">5</div>
-                </div>
-                
-                <div class="timeline-step" id="step2">
-                    <div class="step-info">
-                        <div class="step-name">正在验证支付...</div>
-                        <div class="step-status">确认USDT转账成功</div>
-                    </div>
-                    <div class="step-progress">
-                        <div class="progress-fill" id="progress2"></div>
-                    </div>
-                    <div class="step-countdown" id="countdown2">4</div>
-                </div>
-                
-                <div class="timeline-step" id="step3">
-                    <div class="step-info">
-                        <div class="step-name">正在更新订单状态...</div>
-                        <div class="step-status">记录交易信息到数据库</div>
-                    </div>
-                    <div class="step-progress">
-                        <div class="progress-fill" id="progress3"></div>
-                    </div>
-                    <div class="step-countdown" id="countdown3">3</div>
-                </div>
-                
-                <div class="timeline-step" id="step4">
-                    <div class="step-info">
-                        <div class="step-name">正在发送确认通知...</div>
-                        <div class="step-status">生成支付成功凭证</div>
-                    </div>
-                    <div class="step-progress">
-                        <div class="progress-fill" id="progress4"></div>
-                    </div>
-                    <div class="step-countdown" id="countdown4">2</div>
-                </div>
-            </div>
-            
-            <p style="color: #ffaa00; margin-top: 20px;">
-                <i class="fas fa-exclamation-triangle"></i> 
-                交易确认中，请等待区块链网络处理...
-            </p>
         </div>
     </div>
     
@@ -2273,12 +2061,9 @@
         let totalServicePrice = 0;
         let depositAmount = 0;
         let selectedWallet = null;
-        let currentPaymentStep = 0;
-        let paymentTimer = null;
         let transactionData = {};
-        let isScrollingWalletGrid = false;
-        let scrollStartY = 0;
-        let isTouchMoving = false;
+        let isWalletGridScrolling = false;
+        let touchStartY = 0;
         
         // ==================== 工具函数 ====================
         
@@ -2484,58 +2269,58 @@
             updateDepositDisplay(depositAmount);
         }
         
-        // ==================== 移动端滚动优化 ====================
+        // ==================== 钱包选择页面优化 ====================
         
-        // 修复钱包网格滚动问题
-        function setupWalletGridScrollFix() {
-            const walletGrid = document.querySelector('.wallet-grid');
-            if (!walletGrid) return;
+        // 设置钱包网格滚动和点击事件
+        function setupWalletGridEvents() {
+            const walletGrid = document.getElementById('walletGrid');
+            const walletOptions = walletGrid.querySelectorAll('.wallet-option');
             
-            // 移除所有现有的事件监听器
-            const newWalletGrid = walletGrid.cloneNode(true);
-            walletGrid.parentNode.replaceChild(newWalletGrid, walletGrid);
+            // 清除所有现有事件监听器
+            walletOptions.forEach(option => {
+                const newOption = option.cloneNode(true);
+                option.parentNode.replaceChild(newOption, option);
+            });
             
-            const walletOptions = newWalletGrid.querySelectorAll('.wallet-option');
+            // 重新获取元素
+            const newWalletOptions = walletGrid.querySelectorAll('.wallet-option');
             
-            // 添加触摸事件监听器
-            newWalletGrid.addEventListener('touchstart', handleWalletGridTouchStart, { passive: true });
-            newWalletGrid.addEventListener('touchmove', handleWalletGridTouchMove, { passive: true });
-            newWalletGrid.addEventListener('touchend', handleWalletGridTouchEnd, { passive: true });
+            // 为钱包网格添加滚动检测
+            walletGrid.addEventListener('touchstart', handleWalletGridTouchStart, { passive: true });
+            walletGrid.addEventListener('touchmove', handleWalletGridTouchMove, { passive: true });
+            walletGrid.addEventListener('touchend', handleWalletGridTouchEnd, { passive: true });
             
             // 为每个钱包选项添加点击事件
-            walletOptions.forEach(option => {
-                option.addEventListener('click', handleWalletClick);
-                option.addEventListener('touchstart', handleWalletTouch, { passive: true });
+            newWalletOptions.forEach(option => {
+                option.addEventListener('click', handleWalletOptionClick);
             });
         }
         
         function handleWalletGridTouchStart(e) {
-            scrollStartY = e.touches[0].clientY;
-            isTouchMoving = false;
+            touchStartY = e.touches[0].clientY;
+            isWalletGridScrolling = false;
         }
         
         function handleWalletGridTouchMove(e) {
             const currentY = e.touches[0].clientY;
-            const deltaY = Math.abs(currentY - scrollStartY);
+            const deltaY = Math.abs(currentY - touchStartY);
             
             if (deltaY > 5) {
-                isTouchMoving = true;
+                isWalletGridScrolling = true;
             }
         }
         
         function handleWalletGridTouchEnd(e) {
-            // 如果用户是在滚动，则阻止点击事件
-            if (isTouchMoving) {
-                e.preventDefault();
-                e.stopPropagation();
-            }
-            isTouchMoving = false;
+            // 短暂延迟后重置滚动状态
+            setTimeout(() => {
+                isWalletGridScrolling = false;
+            }, 100);
         }
         
-        // 钱包点击处理函数
-        function handleWalletClick(e) {
-            if (isTouchMoving) {
-                return; // 如果是滚动操作，不处理点击
+        function handleWalletOptionClick(e) {
+            // 如果正在滚动，不处理点击
+            if (isWalletGridScrolling) {
+                return;
             }
             
             const walletOptions = document.querySelectorAll('.wallet-option');
@@ -2560,20 +2345,29 @@
                     navigator.vibrate(50);
                 }
             }
-            
-            // 立即弹出支付说明模态框
-            showPaymentInstruction();
         }
         
-        // 钱包触摸处理函数
-        function handleWalletTouch(e) {
-            if (isMobile.any()) {
-                // 添加触摸反馈
-                this.style.opacity = '0.8';
-                setTimeout(() => {
-                    this.style.opacity = '';
-                }, 200);
-            }
+        // 显示钱包选择页面
+        function showWalletSelectionPage() {
+            document.getElementById('walletSelectionPage').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // 防止主页面滚动
+            
+            // 重置选择状态
+            selectedWallet = null;
+            const walletOptions = document.querySelectorAll('.wallet-option');
+            walletOptions.forEach(opt => opt.classList.remove('selected'));
+            const connectWalletBtn = document.getElementById('connectWalletBtn');
+            connectWalletBtn.disabled = true;
+            connectWalletBtn.textContent = '连接钱包';
+            
+            // 设置钱包网格事件
+            setTimeout(setupWalletGridEvents, 100);
+        }
+        
+        // 隐藏钱包选择页面
+        function hideWalletSelectionPage() {
+            document.getElementById('walletSelectionPage').style.display = 'none';
+            document.body.style.overflow = ''; // 恢复主页面滚动
         }
         
         // 显示支付说明模态框
@@ -2596,8 +2390,8 @@
                 </div>
             `;
             
-            // 关闭钱包选择模态框，打开支付说明模态框
-            document.getElementById('walletModal').style.display = 'none';
+            // 关闭钱包选择页面，打开支付说明模态框
+            hideWalletSelectionPage();
             document.getElementById('paymentInstructionModal').style.display = 'flex';
         }
         
@@ -2725,17 +2519,16 @@
             
             // 尝试打开钱包DApp
             try {
-                // 首先尝试直接打开DApp URL
+                // 隐藏所有模态框
+                document.getElementById('paymentInstructionModal').style.display = 'none';
+                
+                // 尝试打开DApp
                 window.location.href = dappUrl;
                 
-                // 设置超时，如果DApp没有响应，则显示进度模态框
+                // 显示一个简短的跳转提示
                 setTimeout(() => {
-                    // 如果页面还在，说明DApp没有打开
-                    if (!document.hidden) {
-                        // 显示进度模态框
-                        startPaymentProgress();
-                    }
-                }, 1000);
+                    showNotification('正在跳转到钱包DApp...', 'success', 2000);
+                }, 500);
                 
                 return true;
             } catch (error) {
@@ -2743,170 +2536,6 @@
                 showNotification('无法打开钱包DApp，请确保钱包已安装', 'error');
                 return false;
             }
-        }
-        
-        // ==================== 支付流程控制 ====================
-        
-        // 启动支付进度条
-        function startPaymentProgress() {
-            currentPaymentStep = 1;
-            const progressModal = document.getElementById('progressModal');
-            progressModal.style.display = 'flex';
-            
-            // 重置所有步骤
-            for (let i = 1; i <= 4; i++) {
-                document.getElementById(`step${i}`).className = 'timeline-step';
-                document.getElementById(`progress${i}`).style.width = '0%';
-                document.getElementById(`countdown${i}`).textContent = 
-                    i === 1 ? '5' : i === 2 ? '4' : i === 3 ? '3' : '2';
-            }
-            
-            // 开始步骤1
-            processStep1();
-        }
-        
-        function processStep1() {
-            const step1 = document.getElementById('step1');
-            const progress1 = document.getElementById('progress1');
-            const countdown1 = document.getElementById('countdown1');
-            
-            step1.classList.add('active');
-            
-            let progress = 0;
-            let countdown = 5;
-            
-            const timer = setInterval(() => {
-                progress += 5; // 25% / 5秒 = 5%/秒
-                countdown -= 1;
-                
-                progress1.style.width = `${progress}%`;
-                countdown1.textContent = countdown;
-                
-                if (progress >= 25) {
-                    clearInterval(timer);
-                    step1.classList.remove('active');
-                    step1.classList.add('completed');
-                    processStep2();
-                }
-            }, 1000);
-        }
-        
-        function processStep2() {
-            const step2 = document.getElementById('step2');
-            const progress2 = document.getElementById('progress2');
-            const countdown2 = document.getElementById('countdown2');
-            
-            step2.classList.add('active');
-            
-            let progress = 25;
-            let countdown = 4;
-            
-            const timer = setInterval(() => {
-                progress += 8.75; // (60-25)/4 = 8.75%/秒
-                countdown -= 1;
-                
-                progress2.style.width = `${progress}%`;
-                countdown2.textContent = countdown;
-                
-                if (progress >= 60) {
-                    clearInterval(timer);
-                    step2.classList.remove('active');
-                    step2.classList.add('completed');
-                    
-                    // 模拟交易验证
-                    setTimeout(() => {
-                        processStep3();
-                    }, 500);
-                }
-            }, 1000);
-        }
-        
-        function processStep3() {
-            const step3 = document.getElementById('step3');
-            const progress3 = document.getElementById('progress3');
-            const countdown3 = document.getElementById('countdown3');
-            
-            step3.classList.add('active');
-            
-            let progress = 60;
-            let countdown = 3;
-            
-            const timer = setInterval(() => {
-                progress += 10; // (90-60)/3 = 10%/秒
-                countdown -= 1;
-                
-                progress3.style.width = `${progress}%`;
-                countdown3.textContent = countdown;
-                
-                if (progress >= 90) {
-                    clearInterval(timer);
-                    step3.classList.remove('active');
-                    step3.classList.add('completed');
-                    
-                    // 模拟订单处理
-                    setTimeout(() => {
-                        processStep4();
-                    }, 500);
-                }
-            }, 1000);
-        }
-        
-        function processStep4() {
-            const step4 = document.getElementById('step4');
-            const progress4 = document.getElementById('progress4');
-            const countdown4 = document.getElementById('countdown4');
-            
-            step4.classList.add('active');
-            
-            let progress = 90;
-            let countdown = 2;
-            
-            const timer = setInterval(() => {
-                progress += 5; // (100-90)/2 = 5%/秒
-                countdown -= 1;
-                
-                progress4.style.width = `${progress}%`;
-                countdown4.textContent = countdown;
-                
-                if (progress >= 100) {
-                    clearInterval(timer);
-                    step4.classList.remove('active');
-                    step4.classList.add('completed');
-                    
-                    // 完成支付，显示成功页面
-                    setTimeout(() => {
-                        document.getElementById('progressModal').style.display = 'none';
-                        showSuccessPage();
-                    }, 1000);
-                }
-            }, 1000);
-        }
-        
-        // 显示失败页面
-        function showFailurePage() {
-            document.querySelector('.container').style.display = 'none';
-            document.getElementById('failurePage').style.display = 'block';
-            
-            // 移动端滚动到顶部
-            if (isMobile.any()) {
-                window.scrollTo(0, 0);
-            }
-        }
-        
-        // 显示成功页面
-        function showSuccessPage() {
-            const successModal = document.getElementById('successModal');
-            const orderNumber = generateOrderNumber();
-            const now = new Date();
-            const formattedTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
-            
-            // 更新成功页面信息
-            document.getElementById('orderNumber').textContent = orderNumber;
-            document.getElementById('paidAmount').textContent = `$${depositAmount}`;
-            document.getElementById('walletType').textContent = walletNames[selectedWallet] || "未知钱包";
-            document.getElementById('transactionTime').textContent = formattedTime;
-            
-            successModal.style.display = 'flex';
         }
         
         // ==================== 事件监听器 ====================
@@ -2918,9 +2547,6 @@
             
             // 加载已选服务
             loadSelectedServices();
-            
-            // 设置钱包网格滚动修复
-            setupWalletGridScrollFix();
             
             // 自定义金额应用
             document.getElementById('applyCustomAmount').addEventListener('click', function() {
@@ -2957,42 +2583,30 @@
             
             // 继续支付按钮 - 在支付说明页面
             document.getElementById('proceedToPaymentBtn').addEventListener('click', async function() {
-                // 关闭支付说明模态框
-                document.getElementById('paymentInstructionModal').style.display = 'none';
-                
-                // 跳转到钱包DApp
-                const dappOpened = openWalletDApp();
-                
-                if (dappOpened) {
-                    // 如果成功跳转到DApp，这里页面可能会被DApp接管
-                    // 设置一个超时，如果DApp没有响应，则显示进度条
-                    setTimeout(() => {
-                        // 检查页面是否可见，如果可见说明DApp没有打开
-                        if (!document.hidden) {
-                            startPaymentProgress();
-                        }
-                    }, 2000);
-                } else {
-                    // 如果无法打开DApp，显示检测失败模态框
-                    document.getElementById('walletDetectionModal').style.display = 'flex';
-                }
+                // 直接跳转到钱包DApp
+                openWalletDApp();
             });
             
             // 重新选择钱包按钮 - 在支付说明页面
-            document.getElementById('backToWalletSelectionBtn').addEventListener('click', function() {
+            document.getElementById('backToWalletSelectionModalBtn').addEventListener('click', function() {
                 document.getElementById('paymentInstructionModal').style.display = 'none';
-                document.getElementById('walletModal').style.display = 'flex';
+                showWalletSelectionPage();
             });
             
-            // 关闭钱包模态框
-            document.getElementById('closeWalletModal').addEventListener('click', function() {
-                document.getElementById('walletModal').style.display = 'none';
+            // 返回选择钱包按钮 - 在钱包选择页面底部
+            document.getElementById('backToWalletSelectionBtn').addEventListener('click', function() {
+                hideWalletSelectionPage();
+            });
+            
+            // 关闭钱包选择页面按钮
+            document.getElementById('closeWalletPage').addEventListener('click', function() {
+                hideWalletSelectionPage();
             });
             
             // 切换钱包按钮
             document.getElementById('switchWalletBtn').addEventListener('click', function() {
                 document.getElementById('walletDetectionModal').style.display = 'none';
-                document.getElementById('walletModal').style.display = 'flex';
+                showWalletSelectionPage();
             });
             
             // 下载钱包按钮
@@ -3038,7 +2652,7 @@
             document.getElementById('retryPaymentBtn').addEventListener('click', function() {
                 document.getElementById('failurePage').style.display = 'none';
                 document.querySelector('.container').style.display = 'block';
-                document.getElementById('walletModal').style.display = 'flex';
+                showWalletSelectionPage();
             });
             
             // 返回主页
@@ -3077,8 +2691,10 @@
                     if (storedTransaction) {
                         const transaction = JSON.parse(storedTransaction);
                         if (transaction.status === 'pending') {
-                            // 显示进度条
-                            startPaymentProgress();
+                            // 显示成功页面
+                            setTimeout(() => {
+                                showSuccessPage();
+                            }, 1000);
                         }
                     }
                 }
@@ -3108,16 +2724,8 @@
                 return;
             }
             
-            // 显示钱包选择模态框
-            document.getElementById('walletModal').style.display = 'flex';
-            
-            // 重置钱包选择
-            selectedWallet = null;
-            const walletOptions = document.querySelectorAll('.wallet-option');
-            walletOptions.forEach(opt => opt.classList.remove('selected'));
-            const connectWalletBtn = document.getElementById('connectWalletBtn');
-            connectWalletBtn.disabled = true;
-            connectWalletBtn.textContent = '连接钱包';
+            // 显示钱包选择页面
+            showWalletSelectionPage();
             
             // 记录订单信息
             console.log('订单信息:', {
@@ -3129,9 +2737,25 @@
             });
         });
         
-        // 页面加载完成后重新设置钱包网格事件
+        // 显示成功页面
+        function showSuccessPage() {
+            const successModal = document.getElementById('successModal');
+            const orderNumber = generateOrderNumber();
+            const now = new Date();
+            const formattedTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+            
+            // 更新成功页面信息
+            document.getElementById('orderNumber').textContent = orderNumber;
+            document.getElementById('paidAmount').textContent = `$${depositAmount}`;
+            document.getElementById('walletType').textContent = walletNames[selectedWallet] || "未知钱包";
+            document.getElementById('transactionTime').textContent = formattedTime;
+            
+            successModal.style.display = 'flex';
+        }
+        
+        // 页面加载完成后设置钱包网格事件
         window.addEventListener('load', function() {
-            setTimeout(setupWalletGridScrollFix, 100);
+            setTimeout(setupWalletGridEvents, 100);
         });
     </script>
 </body>
