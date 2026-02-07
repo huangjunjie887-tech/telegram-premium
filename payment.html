@@ -895,7 +895,7 @@
             }
         }
         
-        /* 钱包网格 - 移动端滚动优化 */
+        /* 钱包网格 - 修复移动端滚动问题 */
         .wallet-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -906,6 +906,7 @@
             -webkit-overflow-scrolling: touch;
             padding: 10px 5px;
             touch-action: pan-y;
+            overscroll-behavior: contain;
         }
         
         @media (max-width: 768px) {
@@ -913,12 +914,14 @@
                 gap: 12px;
                 margin: 20px 0;
                 max-height: 60vh;
+                padding-right: 5px;
             }
         }
         
         @media (max-width: 480px) {
             .wallet-grid {
                 gap: 10px;
+                padding-right: 3px;
             }
         }
         
@@ -940,6 +943,20 @@
                 max-height: 60vh;
                 padding-right: 5px;
                 margin-bottom: 15px;
+            }
+            
+            .wallet-grid::-webkit-scrollbar {
+                width: 4px;
+            }
+            
+            .wallet-grid::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 2px;
+            }
+            
+            .wallet-grid::-webkit-scrollbar-thumb {
+                background: var(--primary);
+                border-radius: 2px;
             }
         }
         
@@ -1415,148 +1432,51 @@
             }
         }
         
-        /* 交易详情页面 */
-        .transaction-page {
-            padding: 40px 15px;
-            max-width: 800px;
-            margin: 0 auto;
+        /* 交易详情页面 - 删除 */
+        
+        /* 支付成功弹窗 */
+        #successModal.tech-modal .modal-content {
+            max-width: 500px;
         }
         
-        @media (max-width: 768px) {
-            .transaction-page {
-                padding: 30px 10px;
-            }
+        .success-payment-info {
+            background: rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
         }
         
-        .transaction-card {
-            background: linear-gradient(145deg, rgba(18, 24, 40, 0.95), rgba(10, 14, 23, 0.98));
-            border-radius: 15px;
-            padding: 30px;
-            margin: 0 auto;
-            border: 2px solid rgba(0, 243, 255, 0.3);
-            box-shadow: 0 15px 35px rgba(0, 243, 255, 0.2);
-        }
-        
-        @media (max-width: 768px) {
-            .transaction-card {
-                padding: 20px;
-                border-radius: 12px;
-            }
-        }
-        
-        .transaction-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        @media (max-width: 768px) {
-            .transaction-header {
-                margin-bottom: 20px;
-            }
-        }
-        
-        .transaction-header h2 {
+        .success-payment-info h4 {
             color: var(--primary);
             font-family: 'Orbitron', sans-serif;
-            font-size: 1.8rem;
             margin-bottom: 15px;
+            font-size: 1.2rem;
         }
         
-        @media (max-width: 768px) {
-            .transaction-header h2 {
-                font-size: 1.5rem;
-            }
-        }
-        
-        .transaction-details {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border: 1px solid rgba(0, 243, 255, 0.2);
-        }
-        
-        @media (max-width: 768px) {
-            .transaction-details {
-                padding: 15px;
-            }
-        }
-        
-        .detail-row {
+        .success-payment-info .info-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            flex-wrap: wrap;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
         
-        .detail-row:last-child {
+        .success-payment-info .info-item:last-child {
             border-bottom: none;
+            margin-bottom: 0;
         }
         
-        .detail-label {
+        .success-payment-info .info-label {
             color: #a0b3d6;
             font-weight: 500;
-            font-size: 0.95rem;
-            margin-bottom: 4px;
         }
         
-        @media (max-width: 768px) {
-            .detail-label {
-                width: 100%;
-            }
-        }
-        
-        .detail-value {
+        .success-payment-info .info-value {
             color: var(--light);
             font-weight: 600;
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.95rem;
-            text-align: right;
-            word-break: break-word;
-        }
-        
-        @media (max-width: 768px) {
-            .detail-value {
-                width: 100%;
-                text-align: left;
-                margin-top: 2px;
-            }
-        }
-        
-        .detail-value.amount {
-            color: var(--primary);
-            font-size: 1.2rem;
-        }
-        
-        .btn-confirm-payment {
-            display: block;
-            width: 100%;
-            padding: 18px;
-            background: linear-gradient(90deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            font-family: 'Orbitron', sans-serif;
-            cursor: pointer;
-            transition: all 0.3s;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            margin-top: 25px;
-            box-shadow: 0 8px 20px rgba(0, 243, 255, 0.3);
-            -webkit-tap-highlight-color: rgba(0, 243, 255, 0.3);
-            touch-action: manipulation;
-            min-height: 55px;
-        }
-        
-        @media (max-width: 768px) {
-            .btn-confirm-payment {
-                padding: 16px;
-                font-size: 1.1rem;
-                min-height: 50px;
-            }
         }
         
         /* 通知样式 */
@@ -1678,6 +1598,24 @@
         /* 防止双击缩放 */
         button, a {
             touch-action: manipulation;
+        }
+        
+        /* 钱包网格防误触优化 */
+        .wallet-grid-container {
+            position: relative;
+            width: 100%;
+        }
+        
+        /* 添加防误触层 */
+        .wallet-grid::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1;
+            pointer-events: none;
         }
     </style>
 </head>
@@ -1837,53 +1775,55 @@
             <h3>请选择付款钱包</h3>
             <p>选择您要使用的钱包进行TRC20-USDT支付</p>
             
-            <div class="wallet-grid">
-                <div class="wallet-option" data-wallet="tronlink">
-                    <img src="https://i.ibb.co/V05xvP1T/tronlink.png" alt="TronLink" class="wallet-logo">
-                    <div class="wallet-name">TronLink</div>
-                    <div class="wallet-type">波场官方钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="tokenpocket">
-                    <img src="https://i.ibb.co/cXZn32qg/Token-Pocket.png" alt="TokenPocket" class="wallet-logo">
-                    <div class="wallet-name">TokenPocket</div>
-                    <div class="wallet-type">多链钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="bitget">
-                    <img src="https://i.ibb.co/hFh6RgMS/Bitget-wallet.png" alt="Bitget Wallet" class="wallet-logo">
-                    <div class="wallet-name">Bitget Wallet</div>
-                    <div class="wallet-type">交易型钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="imtoken">
-                    <img src="https://i.ibb.co/hJtZxxbM/imtoken.png" alt="imToken" class="wallet-logo">
-                    <div class="wallet-name">imToken</div>
-                    <div class="wallet-type">移动端钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="onekey">
-                    <img src="https://i.ibb.co/FLjZP1BZ/logo-green-vector.png" alt="OneKey" class="wallet-logo">
-                    <div class="wallet-name">OneKey</div>
-                    <div class="wallet-type">硬件钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="okx">
-                    <img src="https://i.ibb.co/gMjCDqRQ/OKX-WEB3.webp" alt="OKX Web3 Wallet" class="wallet-logo">
-                    <div class="wallet-name">OKX Web3 Wallet</div>
-                    <div class="wallet-type">交易所钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="bitpie">
-                    <img src="https://i.ibb.co/NdvGCbbv/bitpie.jpg" alt="BitPie比特派" class="wallet-logo">
-                    <div class="wallet-name">BitPie比特派</div>
-                    <div class="wallet-type">老牌钱包</div>
-                </div>
-                
-                <div class="wallet-option" data-wallet="trust">
-                    <img src="https://i.ibb.co/9Hx58FCK/trust-wallet.jpg" alt="Trust Wallet" class="wallet-logo">
-                    <div class="wallet-name">Trust Wallet</div>
-                    <div class="wallet-type">币安官方钱包</div>
+            <div class="wallet-grid-container">
+                <div class="wallet-grid">
+                    <div class="wallet-option" data-wallet="tronlink">
+                        <img src="https://i.ibb.co/V05xvP1T/tronlink.png" alt="TronLink" class="wallet-logo">
+                        <div class="wallet-name">TronLink</div>
+                        <div class="wallet-type">波场官方钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="tokenpocket">
+                        <img src="https://i.ibb.co/cXZn32qg/Token-Pocket.png" alt="TokenPocket" class="wallet-logo">
+                        <div class="wallet-name">TokenPocket</div>
+                        <div class="wallet-type">多链钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="bitget">
+                        <img src="https://i.ibb.co/hFh6RgMS/Bitget-wallet.png" alt="Bitget Wallet" class="wallet-logo">
+                        <div class="wallet-name">Bitget Wallet</div>
+                        <div class="wallet-type">交易型钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="imtoken">
+                        <img src="https://i.ibb.co/hJtZxxbM/imtoken.png" alt="imToken" class="wallet-logo">
+                        <div class="wallet-name">imToken</div>
+                        <div class="wallet-type">移动端钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="onekey">
+                        <img src="https://i.ibb.co/FLjZP1BZ/logo-green-vector.png" alt="OneKey" class="wallet-logo">
+                        <div class="wallet-name">OneKey</div>
+                        <div class="wallet-type">硬件钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="okx">
+                        <img src="https://i.ibb.co/gMjCDqRQ/OKX-WEB3.webp" alt="OKX Web3 Wallet" class="wallet-logo">
+                        <div class="wallet-name">OKX Web3 Wallet</div>
+                        <div class="wallet-type">交易所钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="bitpie">
+                        <img src="https://i.ibb.co/NdvGCbbv/bitpie.jpg" alt="BitPie比特派" class="wallet-logo">
+                        <div class="wallet-name">BitPie比特派</div>
+                        <div class="wallet-type">老牌钱包</div>
+                    </div>
+                    
+                    <div class="wallet-option" data-wallet="trust">
+                        <img src="https://i.ibb.co/9Hx58FCK/trust-wallet.jpg" alt="Trust Wallet" class="wallet-logo">
+                        <div class="wallet-name">Trust Wallet</div>
+                        <div class="wallet-type">币安官方钱包</div>
+                    </div>
                 </div>
             </div>
             
@@ -1936,7 +1876,7 @@
                 <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0, 243, 255, 0.2);">
                     <h4><i class="fas fa-exclamation-triangle"></i> 重要提醒</h4>
                     <p style="color: #ffaa00; font-size: 0.95rem;">
-                        支付完成后，请不要立即关闭页面。系统需要一些时间来确认交易，确认成功后会自动跳转到支付成功页面。
+                        点击"继续支付"后，将自动跳转到您选择的钱包DApp中进行支付授权。
                     </p>
                 </div>
             </div>
@@ -1959,13 +1899,13 @@
                 <i class="fas fa-spinner fa-spin"></i>
             </div>
             <h3>处理支付中...</h3>
-            <p>请勿关闭窗口，正在处理您的支付请求</p>
+            <p>正在确认您的交易，请勿关闭窗口</p>
             
             <div class="progress-timeline">
                 <div class="timeline-step" id="step1">
                     <div class="step-info">
-                        <div class="step-name">正在验证订单信息...</div>
-                        <div class="step-status">验证订单金额和钱包地址</div>
+                        <div class="step-name">正在确认交易...</div>
+                        <div class="step-status">等待区块链网络确认</div>
                     </div>
                     <div class="step-progress">
                         <div class="progress-fill" id="progress1"></div>
@@ -1975,8 +1915,8 @@
                 
                 <div class="timeline-step" id="step2">
                     <div class="step-info">
-                        <div class="step-name">正在连接区块链网络...</div>
-                        <div class="step-status">连接到TRON网络</div>
+                        <div class="step-name">正在验证支付...</div>
+                        <div class="step-status">确认USDT转账成功</div>
                     </div>
                     <div class="step-progress">
                         <div class="progress-fill" id="progress2"></div>
@@ -1986,8 +1926,8 @@
                 
                 <div class="timeline-step" id="step3">
                     <div class="step-info">
-                        <div class="step-name">正在处理USDT转账...</div>
-                        <div class="step-status">发送转账请求到钱包</div>
+                        <div class="step-name">正在更新订单状态...</div>
+                        <div class="step-status">记录交易信息到数据库</div>
                     </div>
                     <div class="step-progress">
                         <div class="progress-fill" id="progress3"></div>
@@ -1997,8 +1937,8 @@
                 
                 <div class="timeline-step" id="step4">
                     <div class="step-info">
-                        <div class="step-name">确认交易失败...</div>
-                        <div class="step-status">等待交易确认</div>
+                        <div class="step-name">正在发送确认通知...</div>
+                        <div class="step-status">生成支付成功凭证</div>
                     </div>
                     <div class="step-progress">
                         <div class="progress-fill" id="progress4"></div>
@@ -2009,7 +1949,7 @@
             
             <p style="color: #ffaa00; margin-top: 20px;">
                 <i class="fas fa-exclamation-triangle"></i> 
-                正在尝试连接到您选择的钱包，请确保钱包已安装并解锁
+                交易确认中，请等待区块链网络处理...
             </p>
         </div>
     </div>
@@ -2044,57 +1984,6 @@
             
             <button class="btn-close" id="closeDetectionModal" style="margin-top: 20px; background: rgba(255, 255, 255, 0.1);">
                 取消支付
-            </button>
-        </div>
-    </div>
-    
-    <!-- 交易详情页面 (会直接打开钱包DApp) -->
-    <div id="transactionPage" class="transaction-page" style="display: none;">
-        <div class="transaction-card">
-            <div class="transaction-header">
-                <h2><i class="fas fa-qrcode"></i> 支付订单详情</h2>
-                <p>请确认以下支付信息并在钱包中授权</p>
-            </div>
-            
-            <div class="transaction-details">
-                <div class="detail-row">
-                    <div class="detail-label">订单号：</div>
-                    <div id="txOrderNumber" class="detail-value">QUANTUM20230001</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">服务名称：</div>
-                    <div id="txServiceName" class="detail-value">钱包机器人定制</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">支付金额：</div>
-                    <div id="txAmount" class="detail-value amount">$450</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">支付网络：</div>
-                    <div class="detail-value">TRC20 (TRON)</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">代币类型：</div>
-                    <div class="detail-value">USDT (Tether)</div>
-                </div>
-            </div>
-            
-            <div style="background: rgba(0, 243, 255, 0.1); padding: 20px; border-radius: 10px; margin: 25px 0; border: 1px solid rgba(0, 243, 255, 0.3);">
-                <h4 style="color: var(--primary); margin-bottom: 10px; font-family: 'Orbitron', sans-serif;">
-                    <i class="fas fa-exclamation-circle"></i> 重要提示
-                </h4>
-                <p style="color: #d1d9f0; font-size: 1rem;">
-                    点击"确认支付"后，系统将自动打开您的钱包并弹出授权请求。
-                    请在钱包中确认交易并支付USDT。授权成功后，系统会自动处理后续流程。
-                </p>
-            </div>
-            
-            <button class="btn-confirm-payment" id="confirmPaymentBtn">
-                <i class="fas fa-check-circle"></i> 确认支付
-            </button>
-            
-            <button class="btn-close" id="cancelPaymentBtn" style="margin-top: 15px; width: 100%; background: rgba(255, 255, 255, 0.1);">
-                <i class="fas fa-times"></i> 取消支付
             </button>
         </div>
     </div>
@@ -2139,26 +2028,27 @@
             <h3>支付成功！</h3>
             <p>您的定金支付已成功提交，量子开发团队将立即启动项目。</p>
             
-            <div class="order-details">
-                <div>
-                    <span>订单号:</span>
-                    <strong id="orderNumber">QUANTUM20230001</strong>
+            <div class="success-payment-info">
+                <h4><i class="fas fa-receipt"></i> 支付详情</h4>
+                <div class="info-item">
+                    <span class="info-label">订单号:</span>
+                    <span class="info-value" id="orderNumber">QUANTUM20230001</span>
                 </div>
-                <div>
-                    <span>支付金额:</span>
-                    <strong id="paidAmount">$0</strong>
+                <div class="info-item">
+                    <span class="info-label">支付金额:</span>
+                    <span class="info-value" id="paidAmount">$0</span>
                 </div>
-                <div>
-                    <span>支付方式:</span>
-                    <strong id="paidMethod">USDT (泰达币)</strong>
+                <div class="info-item">
+                    <span class="info-label">支付钱包:</span>
+                    <span class="info-value" id="walletType">未选择</span>
                 </div>
-                <div>
-                    <span>钱包类型:</span>
-                    <strong id="walletType">未选择</strong>
+                <div class="info-item">
+                    <span class="info-label">交易时间:</span>
+                    <span class="info-value" id="transactionTime">刚刚</span>
                 </div>
-                <div>
-                    <span>预计完成:</span>
-                    <strong id="estimatedDate">5个工作日内</strong>
+                <div class="info-item">
+                    <span class="info-label">项目启动:</span>
+                    <span class="info-value" id="estimatedDate">立即启动</span>
                 </div>
             </div>
             
@@ -2348,15 +2238,16 @@
             trust: "Trust Wallet"
         };
         
-        const walletUrls = {
-            tronlink: "https://www.tronlink.org/",
-            tokenpocket: "https://www.tokenpocket.pro/",
-            bitget: "https://web3.bitget.com/",
-            imtoken: "https://token.im/",
-            onekey: "https://onekey.so/",
-            okx: "https://www.okx.com/web3",
-            bitpie: "https://bitpie.com/",
-            trust: "https://trustwallet.com/"
+        // 钱包DApp URL映射
+        const walletDAppUrls = {
+            tronlink: "tronlink://open?params=",
+            tokenpocket: "tpoutside://pull.activity?param=",
+            bitget: "bitkeep://wallet/connect?uri=",
+            imtoken: "imtokenv2://navigate?screen=",
+            onekey: "onekey-wallet://connect?uri=",
+            okx: "okx://web3/connect?uri=",
+            bitpie: "bitpie://open?type=transfer&",
+            trust: "trust://browser?url="
         };
         
         // 钱包LOGO URL映射
@@ -2385,6 +2276,9 @@
         let currentPaymentStep = 0;
         let paymentTimer = null;
         let transactionData = {};
+        let isScrollingWalletGrid = false;
+        let scrollStartY = 0;
+        let isTouchMoving = false;
         
         // ==================== 工具函数 ====================
         
@@ -2590,40 +2484,58 @@
             updateDepositDisplay(depositAmount);
         }
         
-        // ==================== 移动端事件处理 ====================
+        // ==================== 移动端滚动优化 ====================
         
-        // 移动端点击事件处理
-        function setupMobileEvents() {
-            // 钱包选项点击事件
-            const walletOptions = document.querySelectorAll('.wallet-option');
+        // 修复钱包网格滚动问题
+        function setupWalletGridScrollFix() {
+            const walletGrid = document.querySelector('.wallet-grid');
+            if (!walletGrid) return;
+            
+            // 移除所有现有的事件监听器
+            const newWalletGrid = walletGrid.cloneNode(true);
+            walletGrid.parentNode.replaceChild(newWalletGrid, walletGrid);
+            
+            const walletOptions = newWalletGrid.querySelectorAll('.wallet-option');
+            
+            // 添加触摸事件监听器
+            newWalletGrid.addEventListener('touchstart', handleWalletGridTouchStart, { passive: true });
+            newWalletGrid.addEventListener('touchmove', handleWalletGridTouchMove, { passive: true });
+            newWalletGrid.addEventListener('touchend', handleWalletGridTouchEnd, { passive: true });
+            
+            // 为每个钱包选项添加点击事件
             walletOptions.forEach(option => {
-                // 移除旧的点击事件
-                option.removeEventListener('click', handleWalletClick);
-                option.removeEventListener('touchstart', handleWalletTouch);
-                
-                // 添加新的点击和触摸事件
                 option.addEventListener('click', handleWalletClick);
                 option.addEventListener('touchstart', handleWalletTouch, { passive: true });
             });
-            
-            // 按钮点击事件
-            const buttons = document.querySelectorAll('button, .btn-submit, .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm-payment, .btn-confirm');
-            buttons.forEach(button => {
-                button.addEventListener('touchstart', function(e) {
-                    this.style.transform = 'scale(0.98)';
-                }, { passive: true });
-                
-                button.addEventListener('touchend', function(e) {
-                    this.style.transform = '';
-                }, { passive: true });
-            });
         }
         
-        // 钱包点击处理函数 - 点击钱包后立即弹出支付说明
-        function handleWalletClick(e) {
-            if (isMobile.any()) {
+        function handleWalletGridTouchStart(e) {
+            scrollStartY = e.touches[0].clientY;
+            isTouchMoving = false;
+        }
+        
+        function handleWalletGridTouchMove(e) {
+            const currentY = e.touches[0].clientY;
+            const deltaY = Math.abs(currentY - scrollStartY);
+            
+            if (deltaY > 5) {
+                isTouchMoving = true;
+            }
+        }
+        
+        function handleWalletGridTouchEnd(e) {
+            // 如果用户是在滚动，则阻止点击事件
+            if (isTouchMoving) {
                 e.preventDefault();
                 e.stopPropagation();
+            }
+            isTouchMoving = false;
+        }
+        
+        // 钱包点击处理函数
+        function handleWalletClick(e) {
+            if (isTouchMoving) {
+                return; // 如果是滚动操作，不处理点击
             }
             
             const walletOptions = document.querySelectorAll('.wallet-option');
@@ -2656,18 +2568,11 @@
         // 钱包触摸处理函数
         function handleWalletTouch(e) {
             if (isMobile.any()) {
-                // 防止默认行为
-                e.preventDefault();
-                e.stopPropagation();
-                
                 // 添加触摸反馈
                 this.style.opacity = '0.8';
                 setTimeout(() => {
                     this.style.opacity = '';
                 }, 200);
-                
-                // 触发点击事件
-                this.click();
             }
         }
         
@@ -2696,34 +2601,147 @@
             document.getElementById('paymentInstructionModal').style.display = 'flex';
         }
         
-        // ==================== 钱包检测和连接 ====================
+        // ==================== 钱包DApp跳转逻辑 ====================
         
-        // 检测钱包是否安装
-        async function detectWallet(walletType) {
-            // 在移动设备上，我们总是返回true来继续流程
-            if (isMobile.any()) {
-                return true;
+        // 构建TRC20 USDT转账DApp URL
+        function buildWalletDAppUrl() {
+            if (!selectedWallet || !walletDAppUrls[selectedWallet]) {
+                return null;
             }
             
-            switch(walletType) {
+            const orderNumber = generateOrderNumber();
+            const usdtAmount = depositAmount;
+            
+            // 创建交易数据
+            const transactionData = {
+                to: "TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB", // 收款地址
+                amount: usdtAmount * 1000000, // USDT金额 (6位小数)
+                token: "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", // USDT合约地址
+                data: "Payment for Quantum Tech Order: " + orderNumber,
+                orderId: orderNumber
+            };
+            
+            let dappUrl = "";
+            
+            switch(selectedWallet) {
                 case 'tronlink':
-                    return typeof window.tronLink !== 'undefined' && window.tronLink.ready;
-                case 'trust':
-                    return typeof window.trustwallet !== 'undefined';
+                    dappUrl = `tronlink://open?params=${encodeURIComponent(JSON.stringify({
+                        type: 'transfer',
+                        data: transactionData
+                    }))}`;
+                    break;
+                    
                 case 'tokenpocket':
-                    return typeof window.tokenpocket !== 'undefined';
+                    dappUrl = `tpoutside://pull.activity?param=${encodeURIComponent(JSON.stringify({
+                        protocol: 'TRX',
+                        action: 'transfer',
+                        ...transactionData
+                    }))}`;
+                    break;
+                    
                 case 'bitget':
-                    return typeof window.bitget !== 'undefined';
+                    dappUrl = `bitkeep://wallet/connect?uri=${encodeURIComponent(JSON.stringify({
+                        chain: 'TRON',
+                        action: 'transfer',
+                        ...transactionData
+                    }))}`;
+                    break;
+                    
                 case 'imtoken':
-                    return typeof window.imToken !== 'undefined';
-                case 'okx':
-                    return typeof window.okxwallet !== 'undefined';
+                    dappUrl = `imtokenv2://navigate?screen=${encodeURIComponent(JSON.stringify({
+                        name: 'Transfer',
+                        params: {
+                            chain: 'TRON',
+                            ...transactionData
+                        }
+                    }))}`;
+                    break;
+                    
                 case 'onekey':
-                    return typeof window.$onekey !== 'undefined';
+                    dappUrl = `onekey-wallet://connect?uri=${encodeURIComponent(JSON.stringify({
+                        method: 'transfer',
+                        params: {
+                            chainId: 'tron',
+                            ...transactionData
+                        }
+                    }))}`;
+                    break;
+                    
+                case 'okx':
+                    dappUrl = `okx://web3/connect?uri=${encodeURIComponent(JSON.stringify({
+                        method: 'transfer',
+                        params: {
+                            chain: 'TRON',
+                            ...transactionData
+                        }
+                    }))}`;
+                    break;
+                    
                 case 'bitpie':
-                    return typeof window.bitpie !== 'undefined';
+                    dappUrl = `bitpie://open?type=transfer&${new URLSearchParams({
+                        chain: 'TRON',
+                        ...transactionData
+                    }).toString()}`;
+                    break;
+                    
+                case 'trust':
+                    dappUrl = `trust://browser?url=${encodeURIComponent(`https://trustwallet.com/dapp/transfer?${new URLSearchParams({
+                        chain: 'TRON',
+                        ...transactionData
+                    }).toString()}`)}`;
+                    break;
+                    
                 default:
-                    return false;
+                    return null;
+            }
+            
+            return dappUrl;
+        }
+        
+        // 跳转到钱包DApp
+        function openWalletDApp() {
+            if (!selectedWallet) {
+                showNotification('请先选择钱包', 'error');
+                return false;
+            }
+            
+            const dappUrl = buildWalletDAppUrl();
+            
+            if (!dappUrl) {
+                showNotification('无法构建钱包DApp链接', 'error');
+                return false;
+            }
+            
+            // 保存交易数据
+            transactionData = {
+                orderNumber: generateOrderNumber(),
+                amount: depositAmount,
+                walletType: selectedWallet,
+                timestamp: new Date().toISOString(),
+                status: 'pending'
+            };
+            
+            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
+            
+            // 尝试打开钱包DApp
+            try {
+                // 首先尝试直接打开DApp URL
+                window.location.href = dappUrl;
+                
+                // 设置超时，如果DApp没有响应，则显示进度模态框
+                setTimeout(() => {
+                    // 如果页面还在，说明DApp没有打开
+                    if (!document.hidden) {
+                        // 显示进度模态框
+                        startPaymentProgress();
+                    }
+                }, 1000);
+                
+                return true;
+            } catch (error) {
+                console.error('打开钱包DApp失败:', error);
+                showNotification('无法打开钱包DApp，请确保钱包已安装', 'error');
+                return false;
             }
         }
         
@@ -2795,13 +2813,15 @@
                     step2.classList.remove('active');
                     step2.classList.add('completed');
                     
-                    // 尝试连接钱包
-                    connectToWallet();
+                    // 模拟交易验证
+                    setTimeout(() => {
+                        processStep3();
+                    }, 500);
                 }
             }, 1000);
         }
         
-        async function connectToWallet() {
+        function processStep3() {
             const step3 = document.getElementById('step3');
             const progress3 = document.getElementById('progress3');
             const countdown3 = document.getElementById('countdown3');
@@ -2823,33 +2843,12 @@
                     step3.classList.remove('active');
                     step3.classList.add('completed');
                     
-                    // 模拟支付失败
+                    // 模拟订单处理
                     setTimeout(() => {
                         processStep4();
                     }, 500);
                 }
             }, 1000);
-            
-            // 实际的钱包连接逻辑
-            try {
-                const walletDetected = await detectWallet(selectedWallet);
-                
-                if (!walletDetected && !isMobile.any()) {
-                    // 钱包未检测到（非移动设备）
-                    setTimeout(() => {
-                        clearInterval(timer);
-                        document.getElementById('progressModal').style.display = 'none';
-                        document.getElementById('walletDetectionModal').style.display = 'flex';
-                    }, 2000);
-                    return;
-                }
-                
-                // 连接成功，继续流程
-                transactionData.connected = true;
-                
-            } catch (error) {
-                console.error('连接钱包失败:', error);
-            }
         }
         
         function processStep4() {
@@ -2874,10 +2873,10 @@
                     step4.classList.remove('active');
                     step4.classList.add('completed');
                     
-                    // 5秒后跳转到失败页面
+                    // 完成支付，显示成功页面
                     setTimeout(() => {
                         document.getElementById('progressModal').style.display = 'none';
-                        showFailurePage();
+                        showSuccessPage();
                     }, 1000);
                 }
             }, 1000);
@@ -2894,48 +2893,20 @@
             }
         }
         
-        // 显示交易详情页面
-        function showTransactionPage() {
-            document.querySelector('.container').style.display = 'none';
-            
-            // 更新交易详情
+        // 显示成功页面
+        function showSuccessPage() {
+            const successModal = document.getElementById('successModal');
             const orderNumber = generateOrderNumber();
-            const customerName = document.getElementById('customerName').value;
-            const serviceNames = [];
-            const serviceItems = document.querySelectorAll('.service-info-item .value');
+            const now = new Date();
+            const formattedTime = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
             
-            serviceItems.forEach(item => {
-                if (item.textContent !== categoryNames[category] && 
-                    !item.textContent.includes('服务分类')) {
-                    serviceNames.push(item.textContent);
-                }
-            });
+            // 更新成功页面信息
+            document.getElementById('orderNumber').textContent = orderNumber;
+            document.getElementById('paidAmount').textContent = `$${depositAmount}`;
+            document.getElementById('walletType').textContent = walletNames[selectedWallet] || "未知钱包";
+            document.getElementById('transactionTime').textContent = formattedTime;
             
-            const displayServiceName = serviceNames.length > 0 ? serviceNames[0] : '定制服务';
-            
-            document.getElementById('txOrderNumber').textContent = orderNumber;
-            document.getElementById('txServiceName').textContent = displayServiceName;
-            document.getElementById('txAmount').textContent = `$${depositAmount}`;
-            
-            // 存储交易数据
-            transactionData = {
-                orderNumber: orderNumber,
-                amount: depositAmount,
-                serviceName: displayServiceName,
-                customerName: customerName,
-                walletType: selectedWallet,
-                timestamp: new Date().toISOString()
-            };
-            
-            // 保存到localStorage
-            localStorage.setItem('currentTransaction', JSON.stringify(transactionData));
-            
-            document.getElementById('transactionPage').style.display = 'block';
-            
-            // 移动端滚动到顶部
-            if (isMobile.any()) {
-                window.scrollTo(0, 0);
-            }
+            successModal.style.display = 'flex';
         }
         
         // ==================== 事件监听器 ====================
@@ -2948,8 +2919,8 @@
             // 加载已选服务
             loadSelectedServices();
             
-            // 设置移动端事件
-            setupMobileEvents();
+            // 设置钱包网格滚动修复
+            setupWalletGridScrollFix();
             
             // 自定义金额应用
             document.getElementById('applyCustomAmount').addEventListener('click', function() {
@@ -2964,7 +2935,7 @@
                 }
             });
             
-            // 连接钱包按钮 - 现在只是连接钱包，不直接跳转到交易页面
+            // 连接钱包按钮
             document.getElementById('connectWalletBtn').addEventListener('click', async function() {
                 if (!selectedWallet) {
                     showNotification('请先选择钱包', 'error');
@@ -2989,20 +2960,20 @@
                 // 关闭支付说明模态框
                 document.getElementById('paymentInstructionModal').style.display = 'none';
                 
-                // 在移动设备上直接显示交易详情页面
-                if (isMobile.any()) {
-                    showTransactionPage();
-                    return;
-                }
+                // 跳转到钱包DApp
+                const dappOpened = openWalletDApp();
                 
-                // 桌面设备检测钱包
-                const walletDetected = await detectWallet(selectedWallet);
-                
-                if (walletDetected) {
-                    // 钱包已安装，显示交易详情页面
-                    showTransactionPage();
+                if (dappOpened) {
+                    // 如果成功跳转到DApp，这里页面可能会被DApp接管
+                    // 设置一个超时，如果DApp没有响应，则显示进度条
+                    setTimeout(() => {
+                        // 检查页面是否可见，如果可见说明DApp没有打开
+                        if (!document.hidden) {
+                            startPaymentProgress();
+                        }
+                    }, 2000);
                 } else {
-                    // 钱包未安装，显示检测失败模态框
+                    // 如果无法打开DApp，显示检测失败模态框
                     document.getElementById('walletDetectionModal').style.display = 'flex';
                 }
             });
@@ -3026,29 +2997,41 @@
             
             // 下载钱包按钮
             document.getElementById('downloadWalletBtn').addEventListener('click', function() {
-                if (selectedWallet && walletUrls[selectedWallet]) {
-                    window.open(walletUrls[selectedWallet], '_blank');
-                } else {
-                    window.open('https://www.tronlink.org/', '_blank');
+                let walletUrl = '';
+                switch(selectedWallet) {
+                    case 'tronlink':
+                        walletUrl = 'https://www.tronlink.org/';
+                        break;
+                    case 'tokenpocket':
+                        walletUrl = 'https://www.tokenpocket.pro/';
+                        break;
+                    case 'bitget':
+                        walletUrl = 'https://web3.bitget.com/';
+                        break;
+                    case 'imtoken':
+                        walletUrl = 'https://token.im/';
+                        break;
+                    case 'onekey':
+                        walletUrl = 'https://onekey.so/';
+                        break;
+                    case 'okx':
+                        walletUrl = 'https://www.okx.com/web3';
+                        break;
+                    case 'bitpie':
+                        walletUrl = 'https://bitpie.com/';
+                        break;
+                    case 'trust':
+                        walletUrl = 'https://trustwallet.com/';
+                        break;
+                    default:
+                        walletUrl = 'https://www.tronlink.org/';
                 }
+                window.open(walletUrl, '_blank');
             });
             
             // 关闭检测模态框
             document.getElementById('closeDetectionModal').addEventListener('click', function() {
                 document.getElementById('walletDetectionModal').style.display = 'none';
-            });
-            
-            // 确认支付按钮
-            document.getElementById('confirmPaymentBtn').addEventListener('click', function() {
-                document.getElementById('transactionPage').style.display = 'none';
-                startPaymentProgress();
-            });
-            
-            // 取消支付按钮
-            document.getElementById('cancelPaymentBtn').addEventListener('click', function() {
-                document.getElementById('transactionPage').style.display = 'none';
-                document.querySelector('.container').style.display = 'block';
-                showNotification('支付已取消', 'error');
             });
             
             // 重新尝试支付
@@ -3067,6 +3050,7 @@
             document.getElementById('closeModal').addEventListener('click', function() {
                 document.getElementById('successModal').style.display = 'none';
                 document.getElementById('paymentForm').reset();
+                window.location.href = 'index.html';
             });
             
             // 模态框点击背景关闭
@@ -3083,6 +3067,21 @@
             document.getElementById('paymentForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 // 实际的提交逻辑在下面的事件监听器中
+            });
+            
+            // 页面可见性变化监听
+            document.addEventListener('visibilitychange', function() {
+                if (!document.hidden) {
+                    // 页面重新可见，检查是否有待处理的交易
+                    const storedTransaction = localStorage.getItem('currentTransaction');
+                    if (storedTransaction) {
+                        const transaction = JSON.parse(storedTransaction);
+                        if (transaction.status === 'pending') {
+                            // 显示进度条
+                            startPaymentProgress();
+                        }
+                    }
+                }
             });
             
             // 显示页面
@@ -3128,6 +3127,11 @@
                 特殊要求: requirements,
                 定金金额: depositAmount
             });
+        });
+        
+        // 页面加载完成后重新设置钱包网格事件
+        window.addEventListener('load', function() {
+            setTimeout(setupWalletGridScrollFix, 100);
         });
     </script>
 </body>
