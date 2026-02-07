@@ -2670,7 +2670,7 @@
             });
         });
         
-        // 跳转到支付页面函数
+        // 跳转到支付页面函数 - 修复支付链接生成代码
         function redirectToPayment(serviceName, categoryName) {
             // 显示通知
             showNotification(`正在跳转到支付页面: ${serviceName}`, 'info');
@@ -2694,9 +2694,26 @@
             // 获取对应的分类代码
             const categoryCode = categoryMap[categoryName] || "robots";
             
-            // 构建支付页面URL参数
-            const servicesParam = encodeURIComponent(JSON.stringify([serviceName]));
-            const paymentUrl = `payment.html?category=${categoryCode}&services=${servicesParam}`;
+            // 获取服务价格
+            const priceElement = document.querySelector(`[data-service="${serviceName}"] .price-badge, [data-service="${serviceName}"] .robot-price`);
+            let servicePrice = 0;
+            
+            if (priceElement) {
+                const priceText = priceElement.textContent;
+                // 提取价格数字
+                const priceMatch = priceText.match(/\$([\d,]+)/);
+                if (priceMatch) {
+                    servicePrice = parseInt(priceMatch[1].replace(/,/g, ''));
+                }
+            }
+            
+            // 计算定金金额（总价的30%）
+            const depositAmount = Math.round(servicePrice * 0.3);
+            
+            // 构建支付页面URL参数 - 修复参数传递
+            // 传递服务名称和价格信息
+            const servicesParam = encodeURIComponent(serviceName);
+            const paymentUrl = `payment.html?category=${categoryCode}&services=${servicesParam}&serviceNames=${encodeURIComponent(serviceName)}&total=${servicePrice}`;
             
             // 跳转到支付页面
             setTimeout(() => {
