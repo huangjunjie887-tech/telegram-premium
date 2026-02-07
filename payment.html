@@ -843,7 +843,7 @@
         }
         
         /* 按钮通用样式 - 移动端优化 */
-        .btn-close, .btn-connect, .btn-wallet, .btn-retry {
+        .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm {
             padding: 14px 30px;
             background: linear-gradient(90deg, var(--primary), var(--secondary));
             color: white;
@@ -865,7 +865,7 @@
         }
         
         @media (max-width: 768px) {
-            .btn-close, .btn-connect, .btn-wallet, .btn-retry {
+            .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm {
                 padding: 12px 20px;
                 font-size: 0.95rem;
                 min-height: 45px;
@@ -873,13 +873,13 @@
             }
         }
         
-        .btn-close:hover, .btn-connect:hover, .btn-wallet:hover, .btn-retry:hover,
-        .btn-close:active, .btn-connect:active, .btn-wallet:active, .btn-retry:active {
+        .btn-close:hover, .btn-connect:hover, .btn-wallet:hover, .btn-retry:hover, .btn-confirm:hover,
+        .btn-close:active, .btn-connect:active, .btn-wallet:active, .btn-retry:active, .btn-confirm:active {
             transform: translateY(-2px);
             box-shadow: 0 8px 15px rgba(0, 243, 255, 0.3);
         }
         
-        .btn-close:active, .btn-connect:active, .btn-wallet:active, .btn-retry:active {
+        .btn-close:active, .btn-connect:active, .btn-wallet:active, .btn-retry:active, .btn-confirm:active {
             transform: translateY(-1px);
         }
         
@@ -913,8 +913,40 @@
         
         @media (max-width: 480px) {
             .wallet-grid {
-                grid-template-columns: 1fr;
                 gap: 10px;
+            }
+        }
+        
+        /* 移动端全屏适应 */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .wallet-modal .modal-content {
+                max-height: 95vh;
+                height: 95vh;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+            
+            .wallet-grid {
+                flex: 1;
+                overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+                max-height: 60vh;
+                padding-right: 5px;
+            }
+            
+            .wallet-grid::-webkit-scrollbar {
+                width: 4px;
+            }
+            
+            .wallet-grid::-webkit-scrollbar-track {
+                background: rgba(0, 0, 0, 0.1);
+                border-radius: 2px;
+            }
+            
+            .wallet-grid::-webkit-scrollbar-thumb {
+                background: var(--primary);
+                border-radius: 2px;
             }
         }
         
@@ -1026,23 +1058,55 @@
             }
         }
         
-        /* 支付说明区域 - 只有在选择钱包后显示 */
-        .payment-instruction {
-            margin-top: 20px;
-            padding: 20px;
+        .btn-connect:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* 支付说明模态框 - 选择钱包后弹出 */
+        .payment-instruction-modal .modal-content {
+            max-width: 600px;
+            padding: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .payment-instruction-modal .modal-content {
+                padding: 20px;
+            }
+        }
+        
+        .instruction-icon {
+            font-size: 3.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @media (max-width: 768px) {
+            .instruction-icon {
+                font-size: 3rem;
+                margin-bottom: 15px;
+            }
+        }
+        
+        .instruction-content {
             background: rgba(0, 0, 0, 0.2);
+            padding: 20px;
             border-radius: 10px;
-            border: 1px solid rgba(0, 243, 255, 0.1);
-            display: none;
-            animation: fadeIn 0.5s ease;
+            margin: 20px 0;
+            border: 1px solid rgba(0, 243, 255, 0.2);
+            text-align: left;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        @media (max-width: 768px) {
+            .instruction-content {
+                padding: 15px;
+            }
         }
         
-        .payment-instruction h4 {
+        .instruction-content h4 {
             color: var(--primary);
             margin-bottom: 10px;
             font-family: 'Orbitron', sans-serif;
@@ -1052,18 +1116,60 @@
             gap: 8px;
         }
         
-        .payment-instruction p {
-            color: #d1d9f0;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            text-align: left;
+        .instruction-content ul {
+            list-style-type: none;
+            margin-top: 10px;
+            padding-left: 0;
         }
         
-        .btn-connect:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
+        .instruction-content li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .instruction-content li:last-child {
+            border-bottom: none;
+        }
+        
+        .instruction-content li i {
+            color: var(--primary);
+            margin-top: 3px;
+            font-size: 0.9rem;
+        }
+        
+        .selected-wallet-display {
+            background: rgba(0, 243, 255, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .selected-wallet-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 5px;
+        }
+        
+        .selected-wallet-info h4 {
+            margin: 0;
+            color: var(--primary);
+            font-size: 1.1rem;
+        }
+        
+        .selected-wallet-info p {
+            margin: 5px 0 0 0;
+            font-size: 0.9rem;
+            color: #a0b3d6;
         }
         
         /* 进度条模态框 */
@@ -1534,13 +1640,13 @@
         @media (hover: none) {
             .back-btn:hover, .btn-submit:hover, .btn-close:hover, 
             .btn-connect:hover, .btn-wallet:hover, .btn-retry:hover,
-            .wallet-option:hover, .btn-confirm-payment:hover {
+            .wallet-option:hover, .btn-confirm-payment:hover, .btn-confirm:hover {
                 transform: none;
             }
             
             .back-btn:active, .btn-submit:active, .btn-close:active, 
             .btn-connect:active, .btn-wallet:active, .btn-retry:active,
-            .wallet-option:active, .btn-confirm-payment:active {
+            .wallet-option:active, .btn-confirm-payment:active, .btn-confirm:active {
                 transform: scale(0.98);
             }
         }
@@ -1554,7 +1660,7 @@
         
         /* 防止长按弹出菜单 */
         .wallet-option, .btn-submit, .btn-close, .btn-connect, 
-        .btn-wallet, .btn-retry, .btn-confirm-payment {
+        .btn-wallet, .btn-retry, .btn-confirm-payment, .btn-confirm {
             -webkit-user-select: none;
             user-select: none;
         }
@@ -1805,19 +1911,72 @@
                 </div>
             </div>
             
-            <!-- 支付说明区域 - 初始隐藏，选择钱包后显示 -->
-            <div id="paymentInstruction" class="payment-instruction">
-                <h4><i class="fas fa-info-circle"></i> 支付说明</h4>
-                <p>请确保您选择的钱包中存有足够的USDT，并已切换到TRC20网络。支付完成后，系统将自动确认订单并启动项目开发。</p>
-            </div>
-            
             <button class="btn-connect" id="connectWalletBtn" disabled>
-                连接钱包并支付
+                连接钱包
             </button>
             
             <button class="btn-close" id="closeWalletModal" style="margin-top: 15px; background: rgba(255, 255, 255, 0.1);">
                 返回修改
             </button>
+        </div>
+    </div>
+    
+    <!-- 支付说明模态框 - 选择钱包后弹出 -->
+    <div id="paymentInstructionModal" class="tech-modal payment-instruction-modal">
+        <div class="modal-content">
+            <div class="instruction-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <h3>支付说明</h3>
+            <p>请仔细阅读以下支付说明，确保顺利完成支付</p>
+            
+            <div class="selected-wallet-display" id="selectedWalletDisplay">
+                <!-- 已选钱包信息将动态填充 -->
+            </div>
+            
+            <div class="instruction-content">
+                <h4><i class="fas fa-check-circle"></i> 支付准备事项</h4>
+                <p>为确保支付顺利进行，请完成以下准备：</p>
+                
+                <ul>
+                    <li>
+                        <i class="fas fa-coins"></i>
+                        <span>确保您的钱包中存有足够的USDT余额（需支付 <strong id="instructionAmount">$0</strong>）</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-network-wired"></i>
+                        <span>确认钱包已切换到TRC20网络（TRON）</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-gas-pump"></i>
+                        <span>确保钱包中有足够的TRX用于支付网络费用（建议5-10 TRX）</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-unlock-alt"></i>
+                        <span>解锁您的钱包并授权USDT使用额度</span>
+                    </li>
+                </ul>
+                
+                <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0, 243, 255, 0.2);">
+                    <h4><i class="fas fa-exclamation-triangle"></i> 重要提醒</h4>
+                    <p style="color: #ffaa00; font-size: 0.95rem;">
+                        支付完成后，请不要立即关闭页面。系统需要一些时间来确认交易，确认成功后会自动跳转到支付成功页面。
+                    </p>
+                </div>
+                
+                <div class="payment-address" style="margin-top: 20px;">
+                    <strong>收款地址：</strong> TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+                <button class="btn-confirm" id="proceedToPaymentBtn">
+                    <i class="fas fa-check"></i> 继续支付
+                </button>
+                <button class="btn-close" id="backToWalletSelectionBtn" style="background: rgba(255, 255, 255, 0.1);">
+                    <i class="fas fa-arrow-left"></i> 重新选择钱包
+                </button>
+            </div>
         </div>
     </div>
     
@@ -2486,7 +2645,7 @@
             });
             
             // 按钮点击事件
-            const buttons = document.querySelectorAll('button, .btn-submit, .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm-payment');
+            const buttons = document.querySelectorAll('button, .btn-submit, .btn-close, .btn-connect, .btn-wallet, .btn-retry, .btn-confirm-payment, .btn-confirm');
             buttons.forEach(button => {
                 button.addEventListener('touchstart', function(e) {
                     this.style.transform = 'scale(0.98)';
@@ -2498,7 +2657,7 @@
             });
         }
         
-        // 钱包点击处理函数
+        // 钱包点击处理函数 - 点击钱包后立即弹出支付说明
         function handleWalletClick(e) {
             if (isMobile.any()) {
                 e.preventDefault();
@@ -2507,7 +2666,6 @@
             
             const walletOptions = document.querySelectorAll('.wallet-option');
             const connectWalletBtn = document.getElementById('connectWalletBtn');
-            const paymentInstruction = document.getElementById('paymentInstruction');
             
             // 移除其他选项的选中状态
             walletOptions.forEach(opt => opt.classList.remove('selected'));
@@ -2520,10 +2678,7 @@
             
             // 启用连接按钮
             connectWalletBtn.disabled = false;
-            connectWalletBtn.textContent = `连接 ${walletNames[selectedWallet]} 并支付`;
-            
-            // 显示支付说明
-            paymentInstruction.style.display = 'block';
+            connectWalletBtn.textContent = `连接 ${walletNames[selectedWallet]}`;
             
             // 移动端触觉反馈
             if (isMobile.iOS() || isMobile.Android()) {
@@ -2531,6 +2686,9 @@
                     navigator.vibrate(50);
                 }
             }
+            
+            // 立即弹出支付说明模态框
+            showPaymentInstruction();
         }
         
         // 钱包触摸处理函数
@@ -2549,6 +2707,31 @@
                 // 触发点击事件
                 this.click();
             }
+        }
+        
+        // 显示支付说明模态框
+        function showPaymentInstruction() {
+            if (!selectedWallet) {
+                showNotification('请先选择钱包', 'error');
+                return;
+            }
+            
+            // 更新支付说明中的金额信息
+            document.getElementById('instructionAmount').textContent = `$${depositAmount}`;
+            
+            // 更新已选钱包显示
+            const selectedWalletDisplay = document.getElementById('selectedWalletDisplay');
+            selectedWalletDisplay.innerHTML = `
+                <img src="${walletLogos[selectedWallet]}" alt="${walletNames[selectedWallet]}" class="selected-wallet-logo">
+                <div class="selected-wallet-info">
+                    <h4>${walletNames[selectedWallet]}</h4>
+                    <p>已选择的付款钱包</p>
+                </div>
+            `;
+            
+            // 关闭钱包选择模态框，打开支付说明模态框
+            document.getElementById('walletModal').style.display = 'none';
+            document.getElementById('paymentInstructionModal').style.display = 'flex';
         }
         
         // ==================== 钱包检测和连接 ====================
@@ -2819,7 +3002,7 @@
                 }
             });
             
-            // 连接钱包并支付
+            // 连接钱包按钮 - 现在只是连接钱包，不直接跳转到交易页面
             document.getElementById('connectWalletBtn').addEventListener('click', async function() {
                 if (!selectedWallet) {
                     showNotification('请先选择钱包', 'error');
@@ -2835,9 +3018,17 @@
                     return;
                 }
                 
+                // 显示支付说明模态框
+                showPaymentInstruction();
+            });
+            
+            // 继续支付按钮 - 在支付说明页面
+            document.getElementById('proceedToPaymentBtn').addEventListener('click', async function() {
+                // 关闭支付说明模态框
+                document.getElementById('paymentInstructionModal').style.display = 'none';
+                
                 // 在移动设备上直接显示交易详情页面
                 if (isMobile.any()) {
-                    document.getElementById('walletModal').style.display = 'none';
                     showTransactionPage();
                     return;
                 }
@@ -2847,13 +3038,17 @@
                 
                 if (walletDetected) {
                     // 钱包已安装，显示交易详情页面
-                    document.getElementById('walletModal').style.display = 'none';
                     showTransactionPage();
                 } else {
                     // 钱包未安装，显示检测失败模态框
-                    document.getElementById('walletModal').style.display = 'none';
                     document.getElementById('walletDetectionModal').style.display = 'flex';
                 }
+            });
+            
+            // 重新选择钱包按钮 - 在支付说明页面
+            document.getElementById('backToWalletSelectionBtn').addEventListener('click', function() {
+                document.getElementById('paymentInstructionModal').style.display = 'none';
+                document.getElementById('walletModal').style.display = 'flex';
             });
             
             // 关闭钱包模态框
@@ -2961,10 +3156,7 @@
             walletOptions.forEach(opt => opt.classList.remove('selected'));
             const connectWalletBtn = document.getElementById('connectWalletBtn');
             connectWalletBtn.disabled = true;
-            connectWalletBtn.textContent = '连接钱包并支付';
-            
-            // 隐藏支付说明
-            document.getElementById('paymentInstruction').style.display = 'none';
+            connectWalletBtn.textContent = '连接钱包';
             
             // 记录订单信息
             console.log('订单信息:', {
