@@ -895,19 +895,24 @@
             }
         }
         
-        /* 钱包网格 - 两钱包一行 */
+        /* 钱包网格 - 移动端滚动优化 */
         .wallet-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
             margin: 25px 0;
+            max-height: 400px;
+            overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            padding: 10px 5px;
+            touch-action: pan-y;
         }
         
         @media (max-width: 768px) {
             .wallet-grid {
                 gap: 12px;
                 margin: 20px 0;
+                max-height: 60vh;
             }
         }
         
@@ -925,6 +930,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: space-between;
+                padding: 15px;
             }
             
             .wallet-grid {
@@ -933,20 +939,7 @@
                 -webkit-overflow-scrolling: touch;
                 max-height: 60vh;
                 padding-right: 5px;
-            }
-            
-            .wallet-grid::-webkit-scrollbar {
-                width: 4px;
-            }
-            
-            .wallet-grid::-webkit-scrollbar-track {
-                background: rgba(0, 0, 0, 0.1);
-                border-radius: 2px;
-            }
-            
-            .wallet-grid::-webkit-scrollbar-thumb {
-                background: var(--primary);
-                border-radius: 2px;
+                margin-bottom: 15px;
             }
         }
         
@@ -1278,26 +1271,6 @@
             .step-countdown {
                 font-size: 1.1rem;
                 min-width: 35px;
-            }
-        }
-        
-        .payment-address {
-            background: rgba(0, 243, 255, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            word-break: break-all;
-            font-family: monospace;
-            font-size: 1rem;
-            color: var(--primary);
-            border: 1px solid rgba(0, 243, 255, 0.3);
-            line-height: 1.4;
-        }
-        
-        @media (max-width: 768px) {
-            .payment-address {
-                padding: 12px;
-                font-size: 0.9rem;
             }
         }
         
@@ -1666,16 +1639,19 @@
         }
         
         /* 滚动条优化 */
-        .modal-content::-webkit-scrollbar {
+        .modal-content::-webkit-scrollbar,
+        .wallet-grid::-webkit-scrollbar {
             width: 6px;
         }
         
-        .modal-content::-webkit-scrollbar-track {
+        .modal-content::-webkit-scrollbar-track,
+        .wallet-grid::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.1);
             border-radius: 3px;
         }
         
-        .modal-content::-webkit-scrollbar-thumb {
+        .modal-content::-webkit-scrollbar-thumb,
+        .wallet-grid::-webkit-scrollbar-thumb {
             background: var(--primary);
             border-radius: 3px;
         }
@@ -1963,10 +1939,6 @@
                         支付完成后，请不要立即关闭页面。系统需要一些时间来确认交易，确认成功后会自动跳转到支付成功页面。
                     </p>
                 </div>
-                
-                <div class="payment-address" style="margin-top: 20px;">
-                    <strong>收款地址：</strong> TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB
-                </div>
             </div>
             
             <div style="display: flex; gap: 15px; margin-top: 20px;">
@@ -2035,10 +2007,6 @@
                 </div>
             </div>
             
-            <div class="payment-address">
-                <strong>收款地址：</strong> TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB
-            </div>
-            
             <p style="color: #ffaa00; margin-top: 20px;">
                 <i class="fas fa-exclamation-triangle"></i> 
                 正在尝试连接到您选择的钱包，请确保钱包已安装并解锁
@@ -2100,12 +2068,6 @@
                 <div class="detail-row">
                     <div class="detail-label">支付金额：</div>
                     <div id="txAmount" class="detail-value amount">$450</div>
-                </div>
-                <div class="detail-row">
-                    <div class="detail-label">收款地址：</div>
-                    <div class="detail-value" style="font-family: monospace; color: var(--primary);">
-                        TX8Dk3KN3sVW2PjaMhnUh86Dj37c4KFFoB
-                    </div>
                 </div>
                 <div class="detail-row">
                     <div class="detail-label">支付网络：</div>
